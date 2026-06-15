@@ -95,14 +95,16 @@
   .folder-section { padding: 12px; border-radius: var(--r); border: 2px dashed transparent; transition: border-color .2s, background .2s; }
   .folder-section.drag-over { border-color: var(--accent); background: rgba(0,200,255,.04); }
 
-  .media-card { height: 195px; perspective: 800px; cursor: grab; }
+  .media-card { cursor: grab; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
   .media-card:active { cursor: grabbing; }
-  .card-inner { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; transition: transform .35s; }
-  .card-inner.flipped { transform: rotateY(180deg); }
-  .card-front { position: absolute; inset: 0; backface-visibility: hidden; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
-  .media-card.is-live .card-front { border-color: rgba(34,197,94,.4); }
-  .card-back { position: absolute; inset: 0; backface-visibility: hidden; transform: rotateY(180deg); background: var(--surface2); border: 1px solid var(--danger); border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 16px; text-align: center; }
-  .back-name { font-size: 11px; color: var(--dim); word-break: break-all; line-height: 1.4; }
+  .media-card.is-live { border-color: rgba(34,197,94,.4); }
+  #trash-zone {
+    border: 2px dashed var(--border); border-radius: var(--r);
+    padding: 20px; text-align: center; margin-top: 16px;
+    color: var(--dim); font-size: 13px; transition: all .2s;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+  }
+  #trash-zone.drag-over { border-color: var(--danger); background: rgba(239,68,68,.08); color: var(--danger); }
 
   .media-thumb-wrap { position: relative; }
   .media-thumb { width: 100%; height: 110px; object-fit: cover; background: #000; display: block; }
@@ -182,6 +184,7 @@
     <button class="btn sec sml" onclick="triggerSync()" title="GitHub Action starten und neu laden">⟳ Sync</button>
   </div>
   <div id="media-grid"><div class="empty"><div class="spin"></div></div></div>
+  <div id="trash-zone">🗑 Datei hierher ziehen zum Löschen</div>
 </section>
 
 <!-- CONFIG -->
@@ -358,6 +361,19 @@ function setupDragDrop() {
       } catch(err) {}
     });
   });
+
+  const trash = document.getElementById('trash-zone');
+  if (!trash) return;
+  trash.addEventListener('dragover', e => { e.preventDefault(); trash.classList.add('drag-over'); });
+  trash.addEventListener('dragleave', e => { if (!trash.contains(e.relatedTarget)) trash.classList.remove('drag-over'); });
+  trash.addEventListener('drop', e => {
+    e.preventDefault(); trash.classList.remove('drag-over');
+    try {
+      const data = JSON.parse(e.dataTransfer.getData('text'));
+      const filename = data.pid.split('/').pop();
+      if (confirm(`"${filename}" wirklich löschen?`)) deleteFile(data.pid, data.rt);
+    } catch(err) {}
+  });
 }
 
 // ── Cloudinary: Verschieben (rename) ──────────────────────
@@ -499,22 +515,12 @@ function renderMedia(items) {
     return `<div class="media-card${folder === 'Sielaff_Live' ? ' is-live' : ''}"
       draggable="true"
       ondragstart="event.dataTransfer.setData('text',JSON.stringify({pid:'${pid}',rt:'${rt}',folder:'${folder}'}))">
-      <div class="card-inner" id="${cardId}">
-        <div class="card-front">
-          <img class="media-thumb" src="${thumb}" alt=""
-            onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-          <div class="media-thumb-fb">${isVideo ? '▶' : '🖼'}</div>
-          <div class="media-info" onclick="document.getElementById('${cardId}').classList.toggle('flipped')">
-            <div class="media-name" title="${filename}">${filename}</div>
-            <div class="media-meta">${(item.format || '').toUpperCase()} · ${size}</div>
-            <div class="media-hint">antippen zum Löschen</div>
-          </div>
-        </div>
-        <div class="card-back">
-          <div class="back-name">${filename}</div>
-          <button class="btn dan" onclick="deleteFile('${pid}','${rt}')">🗑 Löschen</button>
-          <button class="btn sec sml" onclick="document.getElementById('${cardId}').classList.remove('flipped')">Abbrechen</button>
-        </div>
+      <img class="media-thumb" src="${thumb}" alt=""
+        onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="media-thumb-fb">${isVideo ? '▶' : '🖼'}</div>
+      <div class="media-info">
+        <div class="media-name" title="${filename}">${filename}</div>
+        <div class="media-meta">${(item.format || '').toUpperCase()} · ${size}</div>
       </div>
     </div>`;
   }).join('');
