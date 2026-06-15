@@ -291,26 +291,34 @@ async function uploadFiles(files) {
     fill.style.width = (done / files.length * 100) + '%';
     const ts = Math.round(Date.now() / 1000);
     const publicId = file.name.replace(/\.[^.]+$/, '');
-    const sig = await cldSign({ asset_folder: 'Sielaff', public_id: publicId, tags: 'kiosk', timestamp: ts });
+    const sig = await cldSign({ folder: 'Sielaff', public_id: publicId, tags: 'kiosk', timestamp: ts });
     const form = new FormData();
     form.append('file', file);
     form.append('api_key', ckey());
     form.append('timestamp', ts);
     form.append('public_id', publicId);
-    form.append('asset_folder', 'Sielaff');
+    form.append('folder', 'Sielaff');
     form.append('tags', 'kiosk');
     form.append('signature', sig);
     try {
       const r = await fetch(`https://api.cloudinary.com/v1_1/${cloud()}/auto/upload`, { method: 'POST', body: form });
       const d = await r.json();
       if (d.error) throw new Error(d.error.message);
+      allMedia.push({
+        public_id: d.public_id,
+        resource_type: d.resource_type,
+        format: d.format,
+        bytes: d.bytes,
+        tags: d.tags || ['kiosk'],
+        asset_folder: 'Sielaff'
+      });
       done++;
     } catch(e) { toast('Fehler: ' + e.message, 'err'); }
   }
   fill.style.width = '100%';
   status.textContent = `${done} von ${files.length} hochgeladen.`;
   setTimeout(() => { bar.style.display = 'none'; status.style.display = 'none'; fill.style.width = '0%'; }, 2000);
-  if (done > 0) { toast(`${done} Datei(en) hochgeladen ✓`); loadAllMedia(); }
+  if (done > 0) { toast(`${done} Datei(en) hochgeladen ✓`); renderMedia(allMedia); }
 }
 
 // ── Cloudinary: Tag setzen (Upload API explicit) ───────────

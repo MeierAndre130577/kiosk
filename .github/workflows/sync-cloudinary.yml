@@ -18,10 +18,24 @@ jobs:
           CLD_KEY: ${{ secrets.CLOUDINARY_KEY }}
           CLD_SECRET: ${{ secrets.CLOUDINARY_SECRET }}
         run: |
-          ALL=$(curl -sf -u "${CLD_KEY}:${CLD_SECRET}" \
-            "https://api.cloudinary.com/v1_1/dqw5qfpe2/resources/by_asset_folder?asset_folder=Sielaff&max_results=500&tags=true")
+          # Alte Dateien: asset_folder=Sielaff (Cloudinary-native Struktur)
+          BY_FOLDER=$(curl -sf -u "${CLD_KEY}:${CLD_SECRET}" \
+            "https://api.cloudinary.com/v1_1/dqw5qfpe2/resources/by_asset_folder?asset_folder=Sielaff&max_results=500&tags=true" | \
+            jq '[.resources[]]' 2>/dev/null || echo '[]')
 
-          RESOURCES=$(echo "$ALL" | jq '[.resources[]]' 2>/dev/null || echo '[]')
+          # Neue Dateien: über Admin hochgeladen mit folder=Sielaff (public_id beginnt mit Sielaff/)
+          BY_PREFIX_IMG=$(curl -sf -u "${CLD_KEY}:${CLD_SECRET}" \
+            "https://api.cloudinary.com/v1_1/dqw5qfpe2/resources/image?prefix=Sielaff&type=upload&max_results=500&tags=true" | \
+            jq '[.resources[] | . + {resource_type: "image"}]' 2>/dev/null || echo '[]')
+          BY_PREFIX_VID=$(curl -sf -u "${CLD_KEY}:${CLD_SECRET}" \
+            "https://api.cloudinary.com/v1_1/dqw5qfpe2/resources/video?prefix=Sielaff&type=upload&max_results=500&tags=true" | \
+            jq '[.resources[] | . + {resource_type: "video"}]' 2>/dev/null || echo '[]')
+
+          RESOURCES=$(jq -n \
+            --argjson a "$BY_FOLDER" \
+            --argjson b "$BY_PREFIX_IMG" \
+            --argjson c "$BY_PREFIX_VID" \
+            '($a + $b + $c) | unique_by(.asset_id)')
 
           jq -n \
             --argjson res "$RESOURCES" \
