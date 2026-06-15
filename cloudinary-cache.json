@@ -2,7 +2,7 @@
   "resources": [
     {
       "asset_id": "45e99138f6d2715eccdca1e4a9d3c2a8",
-      "public_id": "Sielaff_Live/Klappenautomat",
+      "public_id": "Sielaff_Store/Klappenautomat",
       "format": "png",
       "version": 1781540923,
       "resource_type": "image",
@@ -11,15 +11,15 @@
       "bytes": 1764553,
       "width": 1672,
       "height": 941,
-      "asset_folder": "Sielaff_Live",
+      "asset_folder": "Sielaff_Store",
       "display_name": "Klappenautomat",
-      "url": "http://res.cloudinary.com/dqw5qfpe2/image/upload/v1781540923/Sielaff_Live/Klappenautomat.png",
-      "secure_url": "https://res.cloudinary.com/dqw5qfpe2/image/upload/v1781540923/Sielaff_Live/Klappenautomat.png",
+      "url": "http://res.cloudinary.com/dqw5qfpe2/image/upload/v1781540923/Sielaff_Store/Klappenautomat.png",
+      "secure_url": "https://res.cloudinary.com/dqw5qfpe2/image/upload/v1781540923/Sielaff_Store/Klappenautomat.png",
       "last_updated": {
-        "public_id_updated_at": "2026-06-15T18:08:18+00:00",
-        "updated_at": "2026-06-15T18:08:18+00:00"
+        "public_id_updated_at": "2026-06-15T18:20:31+00:00",
+        "updated_at": "2026-06-15T18:20:31+00:00"
       },
-      "kiosk_folder": "Sielaff_Live"
+      "kiosk_folder": "Sielaff_Store"
     },
     {
       "asset_id": "843c1283af9c13934105ecd884053163",
@@ -140,5 +140,5 @@
       "kiosk_folder": "Sielaff_Store"
     }
   ],
-  "updated": "2026-06-15T18:16:48Z"
+  "updated": "2026-06-15T18:20:34Z"
 }
