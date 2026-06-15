@@ -70,19 +70,22 @@
   #prog-wrap { position: absolute; bottom: 0; left: 0; right: 0; height: 3px; background: rgba(255,255,255,.06); z-index: 5; pointer-events: none; }
   #prog-bar { height: 100%; background: linear-gradient(90deg, #00c8ff, #7c3aed); width: 0%; }
   #site-counter { position: absolute; bottom: 10px; right: 10px; font-size: 11px; color: rgba(255,255,255,.2); z-index: 5; pointer-events: none; font-family: system-ui, sans-serif; }
-  #device-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.85); z-index: 99; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 12px; font-family: monospace; transition: opacity .5s; }
+  #device-overlay { position: fixed; inset: 0; background: rgba(0,30,100,.93); border: 6px solid #00c8ff; z-index: 99; display: none; align-items: center; justify-content: center; flex-direction: column; gap: 12px; font-family: monospace; transition: opacity .5s; }
+  #device-overlay.show { display: flex; }
   #device-overlay.hide { opacity: 0; pointer-events: none; }
-  #device-overlay .do-id { font-size: 28px; color: #fff; letter-spacing: 2px; }
-  #device-overlay .do-name { font-size: 16px; color: #aaa; }
-  #device-overlay .do-hint { font-size: 12px; color: #555; margin-top: 8px; }
+  #device-overlay .do-label { font-size: 13px; color: #00c8ff; letter-spacing: 3px; text-transform: uppercase; }
+  #device-overlay .do-id { font-size: 36px; color: #fff; letter-spacing: 4px; }
+  #device-overlay .do-name { font-size: 18px; color: #aad4ff; }
+  #device-overlay .do-hint { font-size: 11px; color: #4488aa; margin-top: 8px; }
 </style>
 </head>
 <body>
 
 <div id="device-overlay">
+  <div class="do-label">📍 Identifizierung</div>
   <div class="do-id" id="do-id"></div>
   <div class="do-name" id="do-name"></div>
-  <div class="do-hint">Gerät-ID — im Admin sichtbar</div>
+  <div class="do-hint">Ausgelöst vom Admin</div>
 </div>
 <div id="s-kiosk">
   <iframe id="site-frame"
@@ -213,8 +216,9 @@ function baseUrl() {
   if (b.charAt(b.length - 1) !== '/') b += '/';
   return b;
 }
-function configUrl() { return baseUrl() + 'config.json?t=' + Date.now(); }
-function versionUrl() { return baseUrl() + 'version.txt?t=' + Date.now(); }
+function configUrl()   { return baseUrl() + 'config.json?t='   + Date.now(); }
+function versionUrl()  { return baseUrl() + 'version.txt?t='  + Date.now(); }
+function commandsUrl() { return baseUrl() + 'commands.json?t=' + Date.now(); }
 
 /* ── Heartbeat ─────────────────────────────────────────── */
 var loadedVersion = '';
@@ -368,6 +372,35 @@ function checkVersion() {
   }).catch(function() {});
 }
 
+/* ── Remote Identify ───────────────────────────────────── */
+function showIdentifyOverlay() {
+  var ov = document.getElementById('device-overlay');
+  document.getElementById('do-id').textContent = DEVICE_ID.substring(0, 8).toUpperCase();
+  document.getElementById('do-name').textContent = getAutoName(
+    detectOS(navigator.userAgent), getGPU(),
+    (window.screen.width || screen.width) + 'x' + (window.screen.height || screen.height),
+    navigator.platform || ''
+  );
+  ov.classList.remove('hide'); ov.classList.add('show');
+  setTimeout(function() {
+    ov.classList.add('hide');
+    setTimeout(function() { ov.classList.remove('show', 'hide'); }, 600);
+  }, 10000);
+}
+
+function checkCommands() {
+  fetchJSON(commandsUrl()).then(function(cmd) {
+    if (!cmd || cmd.identify !== DEVICE_ID) return;
+    var ts = cmd.ts ? new Date(cmd.ts).getTime() : 0;
+    if (Date.now() - ts > 2 * 60 * 1000) return;
+    var seen = '';
+    try { seen = localStorage.getItem('kiosk_identify_seen') || ''; } catch(e) {}
+    if (seen === cmd.ts) return;
+    try { localStorage.setItem('kiosk_identify_seen', cmd.ts); } catch(e) {}
+    showIdentifyOverlay();
+  }).catch(function() {});
+}
+
 /* ── Config neu laden ──────────────────────────────────── */
 function reloadConfig(callback) {
   fetchJSON(configUrl()).then(function(cfg) {
@@ -390,11 +423,7 @@ function startKiosk() {
       return;
     }
     running = true; curIdx = 0; goFull(); grabWake();
-    // Kurz Device-Info einblenden
-    var ov = document.getElementById('device-overlay');
-    document.getElementById('do-id').textContent = DEVICE_ID.substring(0, 8).toUpperCase();
-    document.getElementById('do-name').textContent = getAutoName(detectOS(navigator.userAgent), getGPU(), (window.screen.width||screen.width)+'x'+(window.screen.height||screen.height), navigator.platform||'');
-    setTimeout(function() { ov.classList.add('hide'); setTimeout(function() { ov.style.display='none'; showSite(0); }, 600); }, 5000);
+    showSite(0);
     sendHeartbeat();
   });
 }
@@ -525,6 +554,10 @@ setInterval(function() {
 /* ── Heartbeat alle 5 Minuten ──────────────────────────── */
 sendHeartbeat();
 setInterval(sendHeartbeat, 5 * 60 * 1000);
+
+/* ── Remote-Identify alle 15 Sekunden prüfen ───────────── */
+checkCommands();
+setInterval(checkCommands, 15 * 1000);
 
 /* ── Init ──────────────────────────────────────────────── */
 loading.classList.add('show');

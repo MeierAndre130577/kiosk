@@ -723,6 +723,7 @@ async function loadDisplays() {
         </div>
         <div class="device-actions">
           <button class="btn sec sml" onclick="renameDevice('${id}','${(d.name||'').replace(/'/g,"\\'")}')">✏️ Umbenennen</button>
+          <button class="btn sec sml" onclick="identifyDevice('${id}')">📍 Identifizieren</button>
           <button class="btn sec sml" onclick="toggleDeviceConfig('${id}')">⚙️ Config</button>
           <button class="btn dan sml" onclick="removeDevice('${id}')">✕</button>
         </div>
@@ -752,6 +753,15 @@ function setDevFit(id, fit) {
 function clearDeviceConfig(id) {
   delete config.devices[id]; saveConfig(true); loadDisplays();
 }
+async function identifyDevice(id) {
+  try {
+    const content = JSON.stringify({ identify: id, ts: new Date().toISOString() }, null, 2);
+    const f = await ghGet('commands.json').catch(() => null);
+    await ghPut('commands.json', content, f ? f.sha : undefined, 'identify device');
+    toast('📍 Signal gesendet — Display leuchtet in ~15 Sek. auf');
+  } catch(e) { toast('Fehler: ' + (e.message || e), 'err'); }
+}
+
 async function renameDevice(id, current) {
   const name = prompt('Name:', current); if (!name) return;
   const hb = await getHeartbeats();
