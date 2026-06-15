@@ -444,6 +444,11 @@
 var PIN     = '0';
 var HOLD_MS = 3000;
 var MIN_DUR = 5;
+
+/* ── Kiosk-Konfiguration (für alle Displays mit ?autostart) ─────────────────── */
+var DEFAULT_SITES = [
+  { type: 'cloudinary', cloudName: 'dqw5qfpe2', tag: 'kiosk', duration: 30, url: '' }
+];
 var CIRC    = 2 * Math.PI * 34;
 
 var sites       = [];
@@ -916,21 +921,25 @@ load(); buildPad(); renderDots(0);
 var _fit = 'cover'; try { _fit = localStorage.getItem('kiosk_fit') || 'cover'; } catch(e) {}
 setFit(_fit);
 
-if (sites.length === 0) {
-  sites = [{ type: 'cloudinary', cloudName: 'dqw5qfpe2', tag: 'kiosk', duration: 30, url: '' }];
-}
+if (sites.length === 0) { sites = DEFAULT_SITES.slice(); }
 
-var hasSites = sites.filter(function(s) { return s.type==='cloudinary'||isValidUrl(s.url); }).length > 0;
-var _as = false; try { _as = localStorage.getItem('kiosk_autostart') === '1'; } catch(e) {}
 var _urlAs = location.search.indexOf('autostart') !== -1;
 
-if ((_as || _urlAs) && hasSites) {
+if (_urlAs) {
+  /* Dumb-Display-Modus: immer hardcodierte Config, kein localStorage */
+  sites = DEFAULT_SITES.slice();
   showOnly('s-kiosk'); startKiosk();
 } else {
-  showOnly('s-start');
-  if (hasSites) {
-    document.getElementById('start-msg').textContent = sites.length + ' Inhalt(e) konfiguriert.';
-    document.getElementById('b-start').style.display = '';
+  var hasSites = sites.filter(function(s) { return s.type==='cloudinary'||isValidUrl(s.url); }).length > 0;
+  var _as = false; try { _as = localStorage.getItem('kiosk_autostart') === '1'; } catch(e) {}
+  if (_as && hasSites) {
+    showOnly('s-kiosk'); startKiosk();
+  } else {
+    showOnly('s-start');
+    if (hasSites) {
+      document.getElementById('start-msg').textContent = sites.length + ' Inhalt(e) konfiguriert.';
+      document.getElementById('b-start').style.display = '';
+    }
   }
 }
 </script>
