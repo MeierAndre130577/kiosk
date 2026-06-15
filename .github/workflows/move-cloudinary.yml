@@ -32,16 +32,23 @@ jobs:
           RT="${{ github.event.inputs.resource_type }}"
           BASE="https://api.cloudinary.com/v1_1/dqw5qfpe2"
           AUTH="${CLD_KEY}:${CLD_SECRET}"
+          TARGET_FOLDER=$(echo "$TO" | cut -d'/' -f1)
 
+          # Rename: changes public_id (URL path)
           RESULT=$(curl -sf -u "$AUTH" \
             --data-urlencode "from_public_id=$FROM" \
             --data-urlencode "to_public_id=$TO" \
             "$BASE/$RT/rename")
-          echo "Result: $RESULT"
+          echo "Rename result: $RESULT"
           if echo "$RESULT" | grep -q '"error"'; then
-            echo "Cloudinary error" >&2
+            echo "Cloudinary rename error" >&2
             exit 1
           fi
+
+          # Update asset_folder so Cloudinary UI matches
+          TO_ENCODED=$(python3 -c 'import urllib.parse,sys; print(urllib.parse.quote(sys.argv[1]))' "$TO")
+          curl -sf -u "$AUTH" -X POST "$BASE/resources/$RT/upload/$TO_ENCODED" \
+            --data-urlencode "asset_folder=$TARGET_FOLDER" || true
 
       - name: Sync cache after move
         env:
