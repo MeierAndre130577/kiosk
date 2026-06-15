@@ -195,7 +195,11 @@ function sendHeartbeat() {
     lastSeen:        new Date().toISOString(),
     browser:         detectBrowser(ua),
     os:              detectOS(ua),
-    screen:          window.screen.width + 'x' + window.screen.height,
+    screen:          (window.screen.width || screen.width) + 'x' + (window.screen.height || screen.height),
+    timezone:        (Intl && Intl.DateTimeFormat ? Intl.DateTimeFormat().resolvedOptions().timeZone : '') || '',
+    language:        navigator.language || '',
+    touch:           ('ontouchstart' in window) || (navigator.maxTouchPoints > 0),
+    platform:        navigator.platform || '',
     version:         loadedVersion,
     playlistUpdated: playlistUpdated
   };

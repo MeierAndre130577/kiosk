@@ -155,7 +155,10 @@
 <section id="tab-displays" class="active">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
     <div class="stitle" style="margin:0">Gemeldete Geräte</div>
-    <button class="btn sec sml" onclick="loadDisplays()">↻ Aktualisieren</button>
+    <div style="display:flex;gap:8px">
+      <button class="btn sec sml" onclick="cleanupDevices()">🧹 Aufräumen</button>
+      <button class="btn sec sml" onclick="loadDisplays()">↻ Aktualisieren</button>
+    </div>
   </div>
   <div id="playlist-updated" style="font-size:11px;color:var(--dim);margin-bottom:14px">Playlist: wird geladen…</div>
   <div id="devices-grid" class="devices-grid"><div class="empty">Lade…</div></div>
@@ -641,8 +644,33 @@ async function getHeartbeats() {
   const d = await r.json();
   try { return JSON.parse(d.files['heartbeat.json'].content); } catch(e) { return {}; }
 }
+async function saveHeartbeats(hb) {
+  await fetch(`https://api.github.com/gists/${GIST_ID}`, {
+    method: 'PATCH',
+    headers: { Authorization: `token ${GIST_TOK}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ files: { 'heartbeat.json': { content: JSON.stringify(hb, null, 2) } } })
+  });
+}
 
 // ── DISPLAYS ───────────────────────────────────────────────
+async function cleanupDevices() {
+  const hb = await getHeartbeats().catch(() => ({}));
+  const cutoff = Date.now() - 24 * 60 * 60 * 1000;
+  const toDelete = Object.keys(hb).filter(id => {
+    const d = hb[id];
+    const old = new Date(d.lastSeen).getTime() < cutoff;
+    const ghost = id.startsWith('unknown-') || !d.screen || d.screen === '0x0';
+    return old || ghost;
+  });
+  if (!toDelete.length) { toast('Nichts zum Aufräumen.'); return; }
+  if (!confirm(`${toDelete.length} Gerät(e) löschen (unbekannte IDs + älter als 24h)?`)) return;
+  toDelete.forEach(id => { delete hb[id]; delete config.devices[id]; });
+  await saveHeartbeats(hb);
+  saveConfig(true);
+  loadDisplays();
+  toast(`${toDelete.length} Gerät(e) entfernt ✓`);
+}
+
 async function loadDisplays() {
   document.getElementById('devices-grid').innerHTML = '<div class="empty"><div class="spin"></div></div>';
   fetch(cacheUrl()).then(r => r.json()).then(d => {
@@ -673,9 +701,11 @@ async function loadDisplays() {
         <div class="device-meta">
           <strong>Zuletzt gesehen:</strong> ${ago}<br>
           <strong>Playlist:</strong> ${d.playlistUpdated ? new Date(d.playlistUpdated).toLocaleString('de-AT') : '–'}<br>
-          <strong>Browser:</strong> ${d.browser || '–'}<br>
-          <strong>OS:</strong> ${d.os || '–'}<br>
-          <strong>Auflösung:</strong> ${d.screen || '–'}<br>
+          <strong>Browser:</strong> ${d.browser || '–'}${d.touch ? ' 👆' : ''}<br>
+          <strong>OS:</strong> ${d.os || '–'}${d.platform ? ' <span style="color:var(--dim)">(${d.platform})</span>' : ''}<br>
+          <strong>Auflösung:</strong> ${d.screen && d.screen !== '0x0' ? d.screen : '–'}<br>
+          <strong>Zeitzone:</strong> ${d.timezone || '–'}<br>
+          <strong>Sprache:</strong> ${d.language || '–'}<br>
           <strong>ID:</strong> <span style="font-family:monospace;font-size:10px">${id.substring(0,8)}…</span>
         </div>
         <div class="device-actions">
