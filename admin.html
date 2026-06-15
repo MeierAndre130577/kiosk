@@ -775,14 +775,19 @@ async function renameDevice(id, current) {
 }
 async function removeDevice(id) {
   if (!confirm('Gerät entfernen?')) return;
-  const hb = await getHeartbeats();
-  delete hb[id]; delete config.devices[id];
-  await fetch(`https://api.github.com/gists/${GIST_ID}`, {
-    method: 'PATCH',
-    headers: { Authorization: `token ${GIST_TOK}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ files: { 'heartbeat.json': { content: JSON.stringify(hb, null, 2) } } })
-  });
-  loadDisplays();
+  try {
+    const hb = await getHeartbeats();
+    delete hb[id]; delete config.devices[id];
+    const r = await fetch(`https://api.github.com/gists/${GIST_ID}`, {
+      method: 'PATCH',
+      headers: { Authorization: `token ${GIST_TOK}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ files: { 'heartbeat.json': { content: JSON.stringify(hb, null, 2) } } })
+    });
+    if (!r.ok) throw new Error('Gist ' + r.status);
+    await saveConfig(true);
+    toast('Gerät entfernt ✓');
+    loadDisplays();
+  } catch(e) { toast('Fehler: ' + (e.message || e), 'err'); }
 }
 
 // ── CONFIG ─────────────────────────────────────────────────
