@@ -333,7 +333,7 @@
   <div class="sh">
     <h1>⚙️ Einstellungen</h1>
     <div class="sh-btns">
-      <button class="btn sec" id="b-cancel" type="button">Abbrechen</button>
+      <button class="btn sec" id="b-cancel" type="button">⏹ Beenden</button>
       <button class="btn pri" id="b-save"   type="button">▶ Starten</button>
     </div>
   </div>
@@ -864,15 +864,14 @@ document.getElementById('b-save').addEventListener('click', () => {
 });
 
 document.getElementById('b-cancel').addEventListener('click', () => {
-  if (running && activeSites.length > 0) {
-    remScreen('s-set');
-    addScreen('s-kiosk');
-    showSite(curIdx);
-  } else if (sites.length > 0) {
-    startKiosk();
-  } else {
-    showOnly('s-start');
-  }
+  running = false;
+  stopRotation();
+  showOnly('s-start');
+  const hasSites = sites.filter(s => s.type === 'cloudinary' || isValidUrl(s.url)).length > 0;
+  document.getElementById('start-msg').textContent = hasSites
+    ? sites.length + ' Inhalt(e) konfiguriert.'
+    : 'Keine Inhalte konfiguriert.';
+  document.getElementById('b-start').style.display = hasSites ? '' : 'none';
 });
 
 // ── Initialisierung ────────────────────────────────────────────────────────────
