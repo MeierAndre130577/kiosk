@@ -80,16 +80,15 @@
 
   .media-toolbar { display: flex; gap: 8px; align-items: center; margin-bottom: 12px; flex-wrap: wrap; }
   .media-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
-  .media-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
-  .media-card.has-kiosk { border-color: rgba(0,200,255,.4); }
+  .media-card { background: var(--surface); border: 2px solid var(--border); border-radius: 8px; overflow: hidden; }
+  .media-card.has-kiosk { border-color: var(--success); }
+  .media-thumb-wrap { position: relative; }
   .media-thumb { width: 100%; height: 100px; object-fit: cover; background: #000; display: block; }
   .media-thumb-fb { width: 100%; height: 100px; background: #111; display: none; align-items: center; justify-content: center; font-size: 28px; color: var(--dim); }
+  .kiosk-badge { position: absolute; top: 6px; right: 6px; background: var(--success); color: #000; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 10px; }
   .media-info { padding: 8px; }
   .media-name { font-size: 11px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 3px; }
-  .media-meta { font-size: 10px; color: var(--dim); margin-bottom: 5px; }
-  .media-tags { display: flex; flex-wrap: wrap; gap: 3px; margin-bottom: 6px; min-height: 18px; }
-  .media-tag { font-size: 10px; padding: 1px 6px; border-radius: 10px; background: rgba(0,200,255,.1); color: var(--accent); border: 1px solid rgba(0,200,255,.2); }
-  .media-tag.active { background: rgba(0,200,255,.25); }
+  .media-meta { font-size: 10px; color: var(--dim); margin-bottom: 6px; }
   .media-acts { display: flex; gap: 4px; flex-wrap: wrap; }
 
   /* ── Config ── */
@@ -157,10 +156,9 @@
       <div id="cache-age" style="font-size:11px;color:var(--dim);margin-top:2px"></div>
     </div>
     <input type="text" id="media-filter" placeholder="Suchen…" style="max-width:160px;width:auto" oninput="filterMedia(this.value)">
-    <button class="btn sec sml" onclick="loadAllMedia()">↻ Laden</button>
     <button class="btn sec sml" onclick="triggerSync()" title="GitHub Action starten und neu laden">⟳ Sync</button>
   </div>
-  <div id="media-grid" class="media-grid"><div class="empty">Auf ↻ Laden klicken.</div></div>
+  <div id="media-grid" class="media-grid"><div class="empty"><div class="spin"></div></div></div>
 </section>
 
 <!-- CONFIG -->
@@ -241,6 +239,7 @@ document.querySelectorAll('.tab').forEach(btn => {
     btn.classList.add('active');
     document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
     if (btn.dataset.tab === 'displays') loadDisplays();
+    if (btn.dataset.tab === 'medien')   loadAllMedia();
     if (btn.dataset.tab === 'config')   renderConfig();
     if (btn.dataset.tab === 'creds')    loadCreds();
   });
@@ -411,20 +410,19 @@ function renderMedia(items) {
     const size = kb > 1024 ? (kb / 1024).toFixed(1) + ' MB' : kb + ' KB';
     const tags = item.tags || [];
     const hasKiosk = tags.includes('kiosk');
-    const tagsHtml = tags.length
-      ? tags.map(t => `<span class="media-tag${t === 'kiosk' ? ' active' : ''}">${t}</span>`).join('')
-      : '<span style="color:var(--dim);font-size:10px">kein Tag</span>';
     const pid = item.public_id.replace(/'/g, "\\'");
     const rt = item.resource_type;
     const tagsEsc = JSON.stringify(tags).replace(/"/g, '&quot;');
     return `<div class="media-card${hasKiosk ? ' has-kiosk' : ''}">
-      <img class="media-thumb" src="${thumb}" alt=""
-        onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-      <div class="media-thumb-fb">${isVideo ? '▶' : '🖼'}</div>
+      <div class="media-thumb-wrap">
+        <img class="media-thumb" src="${thumb}" alt=""
+          onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="media-thumb-fb">${isVideo ? '▶' : '🖼'}</div>
+        ${hasKiosk ? '<div class="kiosk-badge">✓ kiosk</div>' : ''}
+      </div>
       <div class="media-info">
         <div class="media-name" title="${item.public_id}">${item.public_id.split('/').pop()}</div>
         <div class="media-meta">${(item.format || '').toUpperCase()} · ${size}</div>
-        <div class="media-tags">${tagsHtml}</div>
         <div class="media-acts">
           ${hasKiosk
             ? `<button class="btn sec sml" onclick="removeKioskTag('${pid}','${rt}',${tagsEsc})">− kiosk</button>`
