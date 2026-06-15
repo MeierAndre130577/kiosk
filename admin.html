@@ -140,7 +140,7 @@
 <!-- MEDIEN -->
 <section id="tab-medien">
   <div class="media-toolbar">
-    <input type="text" id="media-tag-inp" value="kiosk" style="max-width:140px">
+    <input type="text" id="media-tag-inp" placeholder="Tag filtern (leer = alle)" style="max-width:200px">
     <button class="btn sec" onclick="loadMedia()">↻ Laden</button>
     <button class="btn pri" onclick="openUpload()">+ Hochladen</button>
   </div>
@@ -255,6 +255,18 @@ async function loadGHFile(path) {
 
 // ── Cloudinary API ─────────────────────────────────────────
 async function cldList(tag) {
+  if (!tag) {
+    // Alle Dateien via Admin-API
+    const [imgData, vidData] = await Promise.all([
+      fetch(`https://api.cloudinary.com/v1_1/${cloud()}/resources/image?max_results=100`, { headers: { Authorization: cauth() } }).then(r => r.json()).catch(() => ({})),
+      fetch(`https://api.cloudinary.com/v1_1/${cloud()}/resources/video?max_results=100`, { headers: { Authorization: cauth() } }).then(r => r.json()).catch(() => ({}))
+    ]);
+    return [
+      ...(imgData.resources || []).map(r => ({ ...r, resource_type: 'image' })),
+      ...(vidData.resources || []).map(r => ({ ...r, resource_type: 'video' }))
+    ];
+  }
+  // Tag-gefiltert via öffentlichem Endpunkt
   const [imgData, vidData] = await Promise.all([
     fetch(`https://res.cloudinary.com/${cloud()}/image/list/${tag}.json`).then(r => r.json()).catch(() => ({})),
     fetch(`https://res.cloudinary.com/${cloud()}/video/list/${tag}.json`).then(r => r.json()).catch(() => ({}))
@@ -382,12 +394,14 @@ async function removeDevice(id) {
 
 // ── MEDIEN ─────────────────────────────────────────────────
 async function loadMedia() {
-  const tag = document.getElementById('media-tag-inp').value.trim() || 'kiosk';
+  const tag = document.getElementById('media-tag-inp').value.trim();
   document.getElementById('media-grid').innerHTML = '<div class="empty"><div class="spin"></div></div>';
   try {
     const items = await cldList(tag);
     if (items.length === 0) {
-      document.getElementById('media-grid').innerHTML = `<div class="empty">Keine Medien mit Tag "${tag}" gefunden.</div>`;
+      document.getElementById('media-grid').innerHTML = tag
+        ? `<div class="empty">Keine Medien mit Tag "${tag}" gefunden.</div>`
+        : '<div class="empty">Keine Medien gefunden.</div>';
       return;
     }
     document.getElementById('media-grid').innerHTML = items.map(item => {
@@ -436,19 +450,7 @@ async function deleteMedia(publicId, resourceType) {
 }
 
 function openUpload() {
-  const cl = cloud(); const key = ckey();
-  if (!cl || !key) { alert('Cloudinary-Zugangsdaten fehlen.'); return; }
-  const w = window.open('', '_blank', 'width=800,height=600');
-  w.document.write(`<!DOCTYPE html><html><head><title>Upload</title>
-  <script src="https://upload-widget.cloudinary.com/global/all.js"><\/script></head>
-  <body style="background:#111;display:flex;align-items:center;justify-content:center;height:100vh">
-  <script>
-  var widget = cloudinary.createUploadWidget({
-    cloudName:'${cl}', uploadPreset:'ml_default',
-    sources:['local','camera'], tags:['kiosk'], multiple:true
-  }, function(err,res){ if(res&&res.event==='success') console.log('Uploaded:',res.info.public_id); });
-  widget.open();
-  <\/script></body></html>`);
+  window.open('https://cloudinary.com/console/media_library', '_blank');
 }
 
 // ── CONFIG ─────────────────────────────────────────────────
