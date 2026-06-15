@@ -19,7 +19,7 @@ jobs:
           CLD_SECRET: ${{ secrets.CLOUDINARY_SECRET }}
         run: |
           ALL=$(curl -sf -u "${CLD_KEY}:${CLD_SECRET}" \
-            "https://api.cloudinary.com/v1_1/dqw5qfpe2/resources/by_asset_folder?asset_folder=Sielaff&max_results=500")
+            "https://api.cloudinary.com/v1_1/dqw5qfpe2/resources/by_asset_folder?asset_folder=Sielaff&max_results=500&tags=true")
 
           RESOURCES=$(echo "$ALL" | jq '[.resources[]]' 2>/dev/null || echo '[]')
 
