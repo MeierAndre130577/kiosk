@@ -13,26 +13,21 @@
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body { height: 100%; background: var(--bg); color: var(--text); font-family: system-ui, -apple-system, sans-serif; font-size: 14px; }
-  a { color: var(--accent); }
 
-  /* ── Header ── */
   header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
-  header h1 { font-size: 16px; font-weight: 700; letter-spacing: .02em; }
+  header h1 { font-size: 16px; font-weight: 700; }
   .hbtns { display: flex; gap: 8px; align-items: center; }
   #status { font-size: 12px; color: var(--dim); }
 
-  /* ── Tabs ── */
   nav { background: var(--surface); border-bottom: 1px solid var(--border); display: flex; overflow-x: auto; }
   .tab { padding: 12px 20px; font-size: 13px; font-weight: 600; color: var(--dim); cursor: pointer; border: none; background: none; border-bottom: 2px solid transparent; white-space: nowrap; }
   .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
   .tab:hover { color: var(--text); }
 
-  /* ── Main ── */
   main { max-width: 1100px; margin: 0 auto; padding: 20px; }
   section { display: none; }
   section.active { display: block; }
 
-  /* ── Buttons ── */
   .btn { padding: 8px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; display: inline-flex; align-items: center; gap: 6px; }
   .btn:active { opacity: .75; }
   .pri { background: var(--accent); color: #000; }
@@ -40,16 +35,13 @@
   .dan { background: var(--danger); color: #fff; }
   .sml { padding: 4px 10px; font-size: 11px; border-radius: 6px; }
 
-  /* ── Cards ── */
   .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 16px; margin-bottom: 12px; }
   .card-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
   .card-title { font-size: 13px; font-weight: 700; }
 
-  /* ── Section title ── */
   .stitle { font-size: 10px; font-weight: 700; letter-spacing: .08em; color: var(--dim); text-transform: uppercase; margin: 20px 0 10px; }
   .stitle:first-child { margin-top: 0; }
 
-  /* ── Inputs ── */
   input[type=text], input[type=password], input[type=number], input[type=url], select, textarea {
     background: var(--surface2); border: 1px solid var(--border); color: var(--text);
     border-radius: 8px; padding: 8px 12px; font-size: 13px; width: 100%; outline: none;
@@ -59,7 +51,7 @@
   .field { margin-bottom: 12px; }
   .field-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
 
-  /* ── Display cards ── */
+  /* ── Displays ── */
   .devices-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; }
   .device-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 14px; }
   .device-head { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
@@ -71,23 +63,36 @@
   .device-meta { font-size: 11px; color: var(--dim); line-height: 1.7; }
   .device-meta strong { color: var(--text); }
   .device-actions { display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap; }
-  .tag-badge { display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: 11px; background: rgba(0,200,255,.12); border: 1px solid rgba(0,200,255,.3); color: var(--accent); }
 
-  /* ── Media grid ── */
-  .media-toolbar { display: flex; gap: 8px; align-items: center; margin-bottom: 16px; flex-wrap: wrap; }
-  .media-toolbar input { max-width: 160px; }
+  /* ── Medien ── */
+  #drop-zone {
+    border: 2px dashed var(--border); border-radius: var(--r);
+    padding: 28px; text-align: center; cursor: pointer; margin-bottom: 20px;
+    transition: border-color .2s, background .2s;
+  }
+  #drop-zone:hover, #drop-zone.drag-over { border-color: var(--accent); background: rgba(0,200,255,.05); }
+  #drop-zone .dz-icon { font-size: 32px; margin-bottom: 8px; }
+  #drop-zone .dz-title { font-weight: 600; margin-bottom: 4px; }
+  #drop-zone .dz-sub { font-size: 12px; color: var(--dim); }
+  #upload-bar { margin-top: 12px; background: var(--surface2); border-radius: 4px; height: 6px; display: none; }
+  #upload-bar-fill { height: 100%; background: var(--accent); border-radius: 4px; transition: width .3s; width: 0%; }
+  #upload-status { font-size: 12px; color: var(--dim); margin-top: 6px; display: none; }
+
+  .media-toolbar { display: flex; gap: 8px; align-items: center; margin-bottom: 12px; flex-wrap: wrap; }
   .media-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
   .media-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+  .media-card.has-kiosk { border-color: rgba(0,200,255,.4); }
   .media-thumb { width: 100%; height: 100px; object-fit: cover; background: #000; display: block; }
-  .media-thumb-video { width: 100%; height: 100px; background: #111; display: flex; align-items: center; justify-content: center; color: var(--dim); font-size: 28px; }
+  .media-thumb-fb { width: 100%; height: 100px; background: #111; display: none; align-items: center; justify-content: center; font-size: 28px; color: var(--dim); }
   .media-info { padding: 8px; }
-  .media-name { font-size: 11px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 4px; }
-  .media-meta { font-size: 10px; color: var(--dim); margin-bottom: 6px; }
-  .media-tags { display: flex; flex-wrap: wrap; gap: 3px; margin-bottom: 6px; }
+  .media-name { font-size: 11px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 3px; }
+  .media-meta { font-size: 10px; color: var(--dim); margin-bottom: 5px; }
+  .media-tags { display: flex; flex-wrap: wrap; gap: 3px; margin-bottom: 6px; min-height: 18px; }
   .media-tag { font-size: 10px; padding: 1px 6px; border-radius: 10px; background: rgba(0,200,255,.1); color: var(--accent); border: 1px solid rgba(0,200,255,.2); }
+  .media-tag.active { background: rgba(0,200,255,.25); }
   .media-acts { display: flex; gap: 4px; flex-wrap: wrap; }
 
-  /* ── Config editor ── */
+  /* ── Config ── */
   .site-item { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 12px; margin-bottom: 8px; }
   .site-head { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
   .site-type { font-size: 11px; font-weight: 700; color: var(--accent); }
@@ -95,16 +100,12 @@
   .fit-btn { flex: 1; padding: 6px; font-size: 12px; font-weight: 600; cursor: pointer; background: var(--surface2); color: var(--dim); border: none; }
   .fit-btn.active { background: var(--accent); color: #000; }
 
-  /* ── Toast ── */
-  #toast { position: fixed; bottom: 20px; right: 20px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 10px 16px; font-size: 13px; opacity: 0; transition: opacity .3s; z-index: 999; pointer-events: none; }
+  #toast { position: fixed; bottom: 20px; right: 20px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 10px 16px; font-size: 13px; opacity: 0; transition: opacity .3s; z-index: 999; pointer-events: none; max-width: 320px; }
   #toast.show { opacity: 1; }
   #toast.ok { border-color: var(--success); color: var(--success); }
   #toast.err { border-color: var(--danger); color: var(--danger); }
 
-  /* ── Empty state ── */
-  .empty { text-align: center; padding: 40px; color: var(--dim); }
-
-  /* ── Spinner ── */
+  .empty { text-align: center; padding: 40px; color: var(--dim); font-size: 13px; }
   .spin { display: inline-block; width: 16px; height: 16px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin .6s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
 </style>
@@ -139,12 +140,23 @@
 
 <!-- MEDIEN -->
 <section id="tab-medien">
-  <div class="media-toolbar">
-    <button class="btn pri" onclick="openMLWidget()">📁 Alle Dateien verwalten</button>
-    <button class="btn sec" onclick="loadMedia()">↻ Kiosk-Liste</button>
+  <!-- Upload -->
+  <div id="drop-zone">
+    <input type="file" id="file-input" multiple accept="image/*,video/*" style="display:none">
+    <div class="dz-icon">📤</div>
+    <div class="dz-title">Dateien hochladen</div>
+    <div class="dz-sub">Klicken oder Dateien hierher ziehen · wird automatisch mit Tag "kiosk" versehen</div>
+    <div id="upload-bar"><div id="upload-bar-fill"></div></div>
+    <div id="upload-status"></div>
   </div>
-  <div class="stitle" style="margin-top:16px">Aktive Kiosk-Inhalte (Tag: kiosk)</div>
-  <div id="media-grid" class="media-grid"><div class="empty">Auf "Kiosk-Liste" klicken.</div></div>
+
+  <!-- Liste -->
+  <div class="media-toolbar">
+    <div class="stitle" style="margin:0;flex:1">Alle Dateien</div>
+    <input type="text" id="media-filter" placeholder="Suchen…" style="max-width:160px;width:auto" oninput="filterMedia(this.value)">
+    <button class="btn sec sml" onclick="loadAllMedia()">↻ Laden</button>
+  </div>
+  <div id="media-grid" class="media-grid"><div class="empty">Auf ↻ Laden klicken um alle Dateien anzuzeigen.</div></div>
 </section>
 
 <!-- CONFIG -->
@@ -161,11 +173,10 @@
     <div class="stitle" style="margin-top:16px">Inhalte</div>
     <div id="sites-list"></div>
     <button class="btn sec" style="width:100%;margin-top:8px" onclick="addSite()">+ Inhalt hinzufügen</button>
-    <div style="margin-top:12px;display:flex;gap:8px">
-      <button class="btn pri" style="flex:1" onclick="saveConfig()">💾 Speichern</button>
+    <div style="margin-top:12px">
+      <button class="btn pri" style="width:100%" onclick="saveConfig()">💾 Speichern</button>
     </div>
   </div>
-
   <div class="stitle">Geräte-spezifische Einstellungen</div>
   <div id="device-configs"><div class="empty" style="padding:20px">Noch keine Geräte registriert.</div></div>
 </section>
@@ -195,27 +206,26 @@
 </section>
 
 </main>
-
 <div id="toast"></div>
 
 <script>
-const REPO     = localStorage.getItem('gh_repo')    || 'MeierAndre130577/kiosk';
+const REPO     = localStorage.getItem('gh_repo') || 'MeierAndre130577/kiosk';
 const GIST_ID  = 'dddeed1b06e92a5fabd4d49304b3acb2';
 const GIST_TOK = ['ghp_drGUxR6ckQoymYRSdSy', 'Lf4eqWNorcq2vXPFA'].join('');
 
-const gh    = () => localStorage.getItem('gh_token')     || '';
-const cloud = () => localStorage.getItem('cld_cloud')    || 'dqw5qfpe2';
-const ckey  = () => localStorage.getItem('cld_key')      || '';
-const csec  = () => localStorage.getItem('cld_secret')   || '';
+const gh    = () => localStorage.getItem('gh_token')   || '';
+const cloud = () => localStorage.getItem('cld_cloud')  || 'dqw5qfpe2';
+const ckey  = () => localStorage.getItem('cld_key')    || '';
+const csec  = () => localStorage.getItem('cld_secret') || '';
 const cauth = () => 'Basic ' + btoa(ckey() + ':' + csec());
 
 let config = { default: { sites: [], fit: 'contain' }, devices: {} };
 
-// ── Toast ──────────────────────────────────────────────────
+// ── Toast / Status ─────────────────────────────────────────
 function toast(msg, type = 'ok') {
   const t = document.getElementById('toast');
   t.textContent = msg; t.className = 'show ' + type;
-  setTimeout(() => t.className = '', 2500);
+  setTimeout(() => t.className = '', 3000);
 }
 function setStatus(msg) { document.getElementById('status').textContent = msg; }
 
@@ -227,9 +237,8 @@ document.querySelectorAll('.tab').forEach(btn => {
     btn.classList.add('active');
     document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
     if (btn.dataset.tab === 'displays') loadDisplays();
-    if (btn.dataset.tab === 'medien') loadMedia();
-    if (btn.dataset.tab === 'config') renderConfig();
-    if (btn.dataset.tab === 'creds') loadCreds();
+    if (btn.dataset.tab === 'config')   renderConfig();
+    if (btn.dataset.tab === 'creds')    loadCreds();
   });
 });
 
@@ -253,43 +262,205 @@ async function loadGHFile(path) {
   return { content: decodeURIComponent(escape(atob(d.content))), sha: d.sha };
 }
 
-// ── Cloudinary API ─────────────────────────────────────────
-async function cldList(tag) {
-  if (!tag) {
-    // Alle Dateien via Admin-API
-    const [imgData, vidData] = await Promise.all([
-      fetch(`https://api.cloudinary.com/v1_1/${cloud()}/resources/image?max_results=100`, { headers: { Authorization: cauth() } }).then(r => r.json()).catch(() => ({})),
-      fetch(`https://api.cloudinary.com/v1_1/${cloud()}/resources/video?max_results=100`, { headers: { Authorization: cauth() } }).then(r => r.json()).catch(() => ({}))
-    ]);
-    return [
-      ...(imgData.resources || []).map(r => ({ ...r, resource_type: 'image' })),
-      ...(vidData.resources || []).map(r => ({ ...r, resource_type: 'video' }))
-    ];
+// ── Cloudinary: SHA-1 Signing ──────────────────────────────
+async function sha1(message) {
+  const buf = new TextEncoder().encode(message);
+  const hash = await crypto.subtle.digest('SHA-1', buf);
+  return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+async function cldSign(params) {
+  const str = Object.keys(params).sort().map(k => `${k}=${params[k]}`).join('&');
+  return sha1(str + csec());
+}
+
+// ── Cloudinary: Upload ─────────────────────────────────────
+async function uploadFiles(files) {
+  if (!cloud() || !ckey() || !csec()) { toast('Cloudinary-Zugangsdaten fehlen.', 'err'); return; }
+  const bar = document.getElementById('upload-bar');
+  const fill = document.getElementById('upload-bar-fill');
+  const status = document.getElementById('upload-status');
+  bar.style.display = ''; status.style.display = '';
+  let done = 0;
+  for (const file of files) {
+    status.textContent = `${done + 1} / ${files.length}: ${file.name}`;
+    fill.style.width = (done / files.length * 100) + '%';
+    const ts = Math.round(Date.now() / 1000);
+    const sig = await cldSign({ tags: 'kiosk', timestamp: ts });
+    const form = new FormData();
+    form.append('file', file);
+    form.append('api_key', ckey());
+    form.append('timestamp', ts);
+    form.append('tags', 'kiosk');
+    form.append('signature', sig);
+    try {
+      const r = await fetch(`https://api.cloudinary.com/v1_1/${cloud()}/auto/upload`, { method: 'POST', body: form });
+      const d = await r.json();
+      if (d.error) throw new Error(d.error.message);
+      done++;
+    } catch(e) { toast('Fehler: ' + e.message, 'err'); }
   }
-  // Tag-gefiltert via öffentlichem Endpunkt
-  const [imgData, vidData] = await Promise.all([
-    fetch(`https://res.cloudinary.com/${cloud()}/image/list/${tag}.json`).then(r => r.json()).catch(() => ({})),
-    fetch(`https://res.cloudinary.com/${cloud()}/video/list/${tag}.json`).then(r => r.json()).catch(() => ({}))
-  ]);
-  return [
-    ...(imgData.resources || []).map(r => ({ ...r, resource_type: 'image' })),
-    ...(vidData.resources || []).map(r => ({ ...r, resource_type: 'video' }))
-  ];
+  fill.style.width = '100%';
+  status.textContent = `${done} von ${files.length} hochgeladen.`;
+  setTimeout(() => { bar.style.display = 'none'; status.style.display = 'none'; fill.style.width = '0%'; }, 2000);
+  if (done > 0) { toast(`${done} Datei(en) hochgeladen ✓`); loadAllMedia(); }
 }
-async function cldTagOp(publicId, resourceType, tag, cmd) {
-  const r = await fetch(`https://api.cloudinary.com/v1_1/${cloud()}/tags`, {
-    method: 'POST',
-    headers: { Authorization: cauth(), 'Content-Type': 'application/json' },
-    body: JSON.stringify({ command: cmd, tag, resource_type: resourceType, public_ids: [publicId] })
-  });
+
+// ── Cloudinary: Tag setzen (Upload API explicit) ───────────
+async function cldSetTags(publicId, resourceType, tags) {
+  const ts = Math.round(Date.now() / 1000);
+  const tagsStr = tags.join(',');
+  const sig = await cldSign({ public_id: publicId, tags: tagsStr, timestamp: ts, type: 'upload' });
+  const form = new FormData();
+  form.append('public_id', publicId); form.append('tags', tagsStr);
+  form.append('timestamp', ts); form.append('type', 'upload');
+  form.append('api_key', ckey()); form.append('signature', sig);
+  const r = await fetch(`https://api.cloudinary.com/v1_1/${cloud()}/${resourceType}/explicit`, { method: 'POST', body: form });
   return r.json();
 }
-async function cldDelete(publicId, resourceType) {
-  const r = await fetch(`https://api.cloudinary.com/v1_1/${cloud()}/${resourceType}/upload?public_ids[]=${encodeURIComponent(publicId)}`, {
-    method: 'DELETE', headers: { Authorization: cauth() }
-  });
+
+// ── Cloudinary: Löschen (Upload API destroy) ───────────────
+async function cldDestroy(publicId, resourceType) {
+  const ts = Math.round(Date.now() / 1000);
+  const sig = await cldSign({ public_id: publicId, timestamp: ts });
+  const form = new FormData();
+  form.append('public_id', publicId); form.append('timestamp', ts);
+  form.append('api_key', ckey()); form.append('signature', sig);
+  const r = await fetch(`https://api.cloudinary.com/v1_1/${cloud()}/${resourceType}/destroy`, { method: 'POST', body: form });
   return r.json();
 }
+
+// ── Cloudinary: Alle Dateien laden ────────────────────────
+let allMedia = [];
+
+async function loadAllMedia() {
+  document.getElementById('media-grid').innerHTML = '<div class="empty"><div class="spin"></div><br>Lade…</div>';
+  allMedia = [];
+
+  // Versuch 1: Admin API (alle Dateien)
+  try {
+    const [imgData, vidData] = await Promise.all([
+      fetch(`https://api.cloudinary.com/v1_1/${cloud()}/resources/image?max_results=100`, { headers: { Authorization: cauth() } }).then(r => r.json()),
+      fetch(`https://api.cloudinary.com/v1_1/${cloud()}/resources/video?max_results=100`, { headers: { Authorization: cauth() } }).then(r => r.json())
+    ]);
+    if (!imgData.error && !vidData.error) {
+      allMedia = [
+        ...(imgData.resources || []).map(r => ({ ...r, resource_type: 'image' })),
+        ...(vidData.resources || []).map(r => ({ ...r, resource_type: 'video' }))
+      ];
+      renderMedia(allMedia);
+      return;
+    }
+  } catch(e) {}
+
+  // Versuch 2: Öffentlicher Tag-Endpunkt (nur kiosk-getaggte)
+  try {
+    const [imgData, vidData] = await Promise.all([
+      fetch(`https://res.cloudinary.com/${cloud()}/image/list/kiosk.json`).then(r => r.json()).catch(() => ({})),
+      fetch(`https://res.cloudinary.com/${cloud()}/video/list/kiosk.json`).then(r => r.json()).catch(() => ({}))
+    ]);
+    allMedia = [
+      ...(imgData.resources || []).map(r => ({ ...r, resource_type: 'image', tags: ['kiosk'] })),
+      ...(vidData.resources || []).map(r => ({ ...r, resource_type: 'video', tags: ['kiosk'] }))
+    ];
+    if (allMedia.length > 0) {
+      toast('Hinweis: Nur kiosk-getaggte Dateien sichtbar (CORS)', 'err');
+      renderMedia(allMedia);
+      return;
+    }
+  } catch(e) {}
+
+  document.getElementById('media-grid').innerHTML = '<div class="empty">Keine Dateien gefunden.<br><small>Zugangsdaten prüfen (🔑 Tab)</small></div>';
+}
+
+function filterMedia(q) {
+  const filtered = q ? allMedia.filter(i => i.public_id.toLowerCase().includes(q.toLowerCase())) : allMedia;
+  renderMedia(filtered);
+}
+
+function renderMedia(items) {
+  if (!items.length) {
+    document.getElementById('media-grid').innerHTML = '<div class="empty">Keine Dateien.</div>';
+    return;
+  }
+  document.getElementById('media-grid').innerHTML = items.map(item => {
+    const isVideo = item.resource_type === 'video';
+    const thumb = isVideo
+      ? `https://res.cloudinary.com/${cloud()}/video/upload/w_180,h_100,c_fill,so_0/${item.public_id}.jpg`
+      : `https://res.cloudinary.com/${cloud()}/image/upload/w_180,h_100,c_fill/${item.public_id}.${item.format || 'jpg'}`;
+    const kb = Math.round((item.bytes || 0) / 1024);
+    const size = kb > 1024 ? (kb / 1024).toFixed(1) + ' MB' : kb + ' KB';
+    const tags = item.tags || [];
+    const hasKiosk = tags.includes('kiosk');
+    const tagsHtml = tags.length
+      ? tags.map(t => `<span class="media-tag${t === 'kiosk' ? ' active' : ''}">${t}</span>`).join('')
+      : '<span style="color:var(--dim);font-size:10px">kein Tag</span>';
+    const pid = item.public_id.replace(/'/g, "\\'");
+    const rt = item.resource_type;
+    const tagsEsc = JSON.stringify(tags).replace(/"/g, '&quot;');
+    return `<div class="media-card${hasKiosk ? ' has-kiosk' : ''}">
+      <img class="media-thumb" src="${thumb}" alt=""
+        onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="media-thumb-fb">${isVideo ? '▶' : '🖼'}</div>
+      <div class="media-info">
+        <div class="media-name" title="${item.public_id}">${item.public_id.split('/').pop()}</div>
+        <div class="media-meta">${(item.format || '').toUpperCase()} · ${size}</div>
+        <div class="media-tags">${tagsHtml}</div>
+        <div class="media-acts">
+          ${hasKiosk
+            ? `<button class="btn sec sml" onclick="removeKioskTag('${pid}','${rt}',${tagsEsc})">− kiosk</button>`
+            : `<button class="btn pri sml" onclick="addKioskTag('${pid}','${rt}',${tagsEsc})">+ kiosk</button>`}
+          <button class="btn dan sml" onclick="deleteFile('${pid}','${rt}')">🗑</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function addKioskTag(publicId, resourceType, currentTags) {
+  toast('Füge Tag hinzu…');
+  const newTags = [...new Set([...currentTags, 'kiosk'])];
+  const d = await cldSetTags(publicId, resourceType, newTags);
+  if (d.error) { toast('Fehler: ' + d.error.message, 'err'); return; }
+  toast('kiosk-Tag hinzugefügt ✓');
+  const item = allMedia.find(i => i.public_id === publicId);
+  if (item) item.tags = newTags;
+  renderMedia(allMedia);
+}
+
+async function removeKioskTag(publicId, resourceType, currentTags) {
+  const newTags = currentTags.filter(t => t !== 'kiosk');
+  const d = await cldSetTags(publicId, resourceType, newTags);
+  if (d.error) { toast('Fehler: ' + d.error.message, 'err'); return; }
+  toast('kiosk-Tag entfernt');
+  const item = allMedia.find(i => i.public_id === publicId);
+  if (item) item.tags = newTags;
+  renderMedia(allMedia);
+}
+
+async function deleteFile(publicId, resourceType) {
+  if (!confirm(`"${publicId.split('/').pop()}" wirklich löschen?`)) return;
+  const d = await cldDestroy(publicId, resourceType);
+  if (d.result === 'ok' || d.result === 'not found') {
+    toast('Gelöscht ✓');
+    allMedia = allMedia.filter(i => i.public_id !== publicId);
+    renderMedia(allMedia);
+  } else { toast('Fehler beim Löschen', 'err'); }
+}
+
+// ── Drag & Drop Upload ─────────────────────────────────────
+const dropZone = document.getElementById('drop-zone');
+dropZone.addEventListener('click', () => document.getElementById('file-input').click());
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+dropZone.addEventListener('drop', e => {
+  e.preventDefault(); dropZone.classList.remove('drag-over');
+  const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/') || f.type.startsWith('video/'));
+  if (files.length) uploadFiles(files);
+});
+document.getElementById('file-input').addEventListener('change', e => {
+  if (e.target.files.length) uploadFiles(Array.from(e.target.files));
+  e.target.value = '';
+});
 
 // ── Gist (Heartbeats) ──────────────────────────────────────
 async function getHeartbeats() {
@@ -306,7 +477,7 @@ async function loadDisplays() {
   try {
     const hb = await getHeartbeats();
     const ids = Object.keys(hb);
-    if (ids.length === 0) {
+    if (!ids.length) {
       document.getElementById('devices-grid').innerHTML = '<div class="empty">Noch kein Display gemeldet.<br>Starte einen Kiosk mit dem ?autostart Link.</div>';
       return;
     }
@@ -330,7 +501,7 @@ async function loadDisplays() {
         </div>
         <div class="device-actions">
           <button class="btn sec sml" onclick="renameDevice('${id}','${(d.name||'').replace(/'/g,"\\'")}')">✏️ Umbenennen</button>
-          <button class="btn sec sml" onclick="toggleDeviceConfig('${id}')">⚙️ Eigene Config</button>
+          <button class="btn sec sml" onclick="toggleDeviceConfig('${id}')">⚙️ Config</button>
           <button class="btn dan sml" onclick="removeDevice('${id}')">✕</button>
         </div>
         <div id="dcfg-${id}" style="display:none;margin-top:10px;border-top:1px solid var(--border);padding-top:10px">
@@ -344,7 +515,7 @@ async function loadDisplays() {
       </div>`;
     }).join('');
   } catch(e) {
-    document.getElementById('devices-grid').innerHTML = '<div class="empty">Fehler beim Laden. Zugangsdaten prüfen.</div>';
+    document.getElementById('devices-grid').innerHTML = '<div class="empty">Fehler beim Laden.</div>';
   }
 }
 
@@ -352,23 +523,15 @@ function toggleDeviceConfig(id) {
   const el = document.getElementById('dcfg-' + id);
   el.style.display = el.style.display === 'none' ? '' : 'none';
 }
-
 function setDevFit(id, fit) {
   if (!config.devices[id]) config.devices[id] = {};
-  config.devices[id].fit = fit;
-  saveConfig(true);
-  loadDisplays();
+  config.devices[id].fit = fit; saveConfig(true); loadDisplays();
 }
-
 function clearDeviceConfig(id) {
-  delete config.devices[id];
-  saveConfig(true);
-  loadDisplays();
+  delete config.devices[id]; saveConfig(true); loadDisplays();
 }
-
 async function renameDevice(id, current) {
-  const name = prompt('Name für dieses Gerät:', current);
-  if (!name) return;
+  const name = prompt('Name:', current); if (!name) return;
   const hb = await getHeartbeats();
   if (hb[id]) hb[id].name = name;
   await fetch(`https://api.github.com/gists/${GIST_ID}`, {
@@ -378,119 +541,16 @@ async function renameDevice(id, current) {
   });
   loadDisplays();
 }
-
 async function removeDevice(id) {
-  if (!confirm('Gerät aus der Liste entfernen?')) return;
+  if (!confirm('Gerät entfernen?')) return;
   const hb = await getHeartbeats();
-  delete hb[id];
-  delete config.devices[id];
+  delete hb[id]; delete config.devices[id];
   await fetch(`https://api.github.com/gists/${GIST_ID}`, {
     method: 'PATCH',
     headers: { Authorization: `token ${GIST_TOK}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({ files: { 'heartbeat.json': { content: JSON.stringify(hb, null, 2) } } })
   });
   loadDisplays();
-}
-
-// ── MEDIEN ─────────────────────────────────────────────────
-async function loadMedia() {
-  const tag = document.getElementById('media-tag-inp').value.trim() || 'kiosk';
-  document.getElementById('media-grid').innerHTML = '<div class="empty"><div class="spin"></div></div>';
-  try {
-    const items = await cldList(tag);
-    if (items.length === 0) {
-      document.getElementById('media-grid').innerHTML = tag
-        ? `<div class="empty">Keine Medien mit Tag "${tag}" gefunden.</div>`
-        : '<div class="empty">Keine Medien gefunden.</div>';
-      return;
-    }
-    document.getElementById('media-grid').innerHTML = items.map(item => {
-      const isVideo = item.resource_type === 'video';
-      const thumb = isVideo
-        ? `https://res.cloudinary.com/${cloud()}/video/upload/w_180,h_100,c_fill,so_0/${item.public_id}.jpg`
-        : `https://res.cloudinary.com/${cloud()}/image/upload/w_180,h_100,c_fill/${item.public_id}.${item.format}`;
-      const kb = Math.round((item.bytes || 0) / 1024);
-      const size = kb > 1024 ? (kb/1024).toFixed(1) + ' MB' : kb + ' KB';
-      const tags = (item.tags || []).map(t => `<span class="media-tag">${t}</span>`).join('');
-      return `<div class="media-card">
-        <img class="media-thumb" src="${thumb}" alt="" onerror="this.style.display='none';this.nextSibling.style.display='flex'">
-        <div class="media-thumb-video" style="display:none">${isVideo ? '▶' : '🖼'}</div>
-        <div class="media-info">
-          <div class="media-name" title="${item.public_id}">${item.public_id.split('/').pop()}</div>
-          <div class="media-meta">${item.format.toUpperCase()} · ${size}</div>
-          <div class="media-tags">${tags}</div>
-          <div class="media-acts">
-            <button class="btn sec sml" onclick="addTag('${item.public_id}','${item.resource_type}')">+ Tag</button>
-            <button class="btn sec sml" onclick="removeTag('${item.public_id}','${item.resource_type}','${tag}')">− ${tag}</button>
-            <button class="btn dan sml" onclick="deleteMedia('${item.public_id}','${item.resource_type}')">🗑</button>
-          </div>
-        </div>
-      </div>`;
-    }).join('');
-  } catch(e) {
-    document.getElementById('media-grid').innerHTML = '<div class="empty">Fehler. Cloudinary-Zugangsdaten prüfen.</div>';
-  }
-}
-
-async function addTag(publicId, resourceType) {
-  const tag = prompt('Tag hinzufügen:');
-  if (!tag) return;
-  await cldTagOp(publicId, resourceType, tag, 'add');
-  toast('Tag hinzugefügt'); loadMedia();
-}
-async function removeTag(publicId, resourceType, tag) {
-  if (!confirm(`Tag "${tag}" von "${publicId.split('/').pop()}" entfernen?`)) return;
-  await cldTagOp(publicId, resourceType, tag, 'remove');
-  toast('Tag entfernt'); loadMedia();
-}
-async function deleteMedia(publicId, resourceType) {
-  if (!confirm(`"${publicId.split('/').pop()}" wirklich löschen?`)) return;
-  await cldDelete(publicId, resourceType);
-  toast('Gelöscht'); loadMedia();
-}
-
-let _mlWidget = null;
-function openMLWidget() {
-  if (!cloud() || !ckey()) { toast('Cloudinary-Zugangsdaten fehlen.', 'err'); return; }
-  const doOpen = () => {
-    if (!_mlWidget) {
-      _mlWidget = cloudinary.createMediaLibrary(
-        { cloud_name: cloud(), api_key: ckey(), multiple: true, max_files: 50 },
-        { insertHandler(data) {
-            if (!data.assets || !data.assets.length) return;
-            if (!confirm(`"kiosk"-Tag zu ${data.assets.length} Datei(en) hinzufügen?`)) return;
-            Promise.all(data.assets.map(a =>
-              cldTagOp(a.public_id, a.resource_type || 'image', 'kiosk', 'add')
-            )).then(() => { toast('Tag hinzugefügt ✓'); loadMedia(); });
-        }}
-      );
-    }
-    _mlWidget.show();
-  };
-  if (window.cloudinary && cloudinary.createMediaLibrary) { doOpen(); return; }
-  const s = document.createElement('script');
-  s.src = 'https://media-library.cloudinary.com/global/all.js';
-  s.onload = doOpen;
-  document.head.appendChild(s);
-}
-
-let _upWidget = null;
-function openUpload() {
-  if (!cloud() || !ckey()) { toast('Cloudinary-Zugangsdaten fehlen.', 'err'); return; }
-  const doOpen = () => {
-    _upWidget = cloudinary.createUploadWidget(
-      { cloudName: cloud(), uploadPreset: 'ml_default', tags: ['kiosk'], sources: ['local','camera','url'], multiple: true },
-      (err, res) => {
-        if (!err && res && res.event === 'success') { toast('Hochgeladen ✓'); loadMedia(); }
-      }
-    );
-    _upWidget.open();
-  };
-  if (window.cloudinary && cloudinary.createUploadWidget) { doOpen(); return; }
-  const s = document.createElement('script');
-  s.src = 'https://upload-widget.cloudinary.com/global/all.js';
-  s.onload = doOpen;
-  document.head.appendChild(s);
 }
 
 // ── CONFIG ─────────────────────────────────────────────────
@@ -503,7 +563,6 @@ async function loadConfig() {
   } catch(e) {}
   renderConfig();
 }
-
 function renderConfig() {
   const fit = config.default.fit || 'contain';
   document.getElementById('fit-cover').classList.toggle('active', fit === 'cover');
@@ -517,50 +576,39 @@ function renderConfig() {
         <div style="flex:1"></div>
         <button class="btn dan sml" onclick="removeSite(${i})">✕</button>
       </div>
-      ${isCloud ? `
-        <div class="field-row">
-          <div class="field"><label>Cloud Name</label><input type="text" value="${s.cloudName||''}" onchange="updateSite(${i},'cloudName',this.value)"></div>
-          <div class="field"><label>Tag</label><input type="text" value="${s.tag||''}" onchange="updateSite(${i},'tag',this.value)"></div>
-          <div class="field"><label>Sek. pro Bild</label><input type="number" value="${s.duration||30}" min="5" onchange="updateSite(${i},'duration',+this.value)"></div>
-        </div>` : `
-        <div class="field-row">
-          <div class="field"><label>URL</label><input type="url" value="${s.url||''}" onchange="updateSite(${i},'url',this.value)"></div>
-          <div class="field"><label>Sekunden</label><input type="number" value="${s.duration||30}" min="5" onchange="updateSite(${i},'duration',+this.value)"></div>
-        </div>`}
+      ${isCloud ? `<div class="field-row">
+        <div class="field"><label>Cloud Name</label><input type="text" value="${s.cloudName||''}" onchange="updateSite(${i},'cloudName',this.value)"></div>
+        <div class="field"><label>Tag</label><input type="text" value="${s.tag||''}" onchange="updateSite(${i},'tag',this.value)"></div>
+        <div class="field"><label>Sek. pro Bild</label><input type="number" value="${s.duration||30}" min="5" onchange="updateSite(${i},'duration',+this.value)"></div>
+      </div>` : `<div class="field-row">
+        <div class="field"><label>URL</label><input type="url" value="${s.url||''}" onchange="updateSite(${i},'url',this.value)"></div>
+        <div class="field"><label>Sekunden</label><input type="number" value="${s.duration||30}" min="5" onchange="updateSite(${i},'duration',+this.value)"></div>
+      </div>`}
     </div>`;
   }).join('') || '<div style="color:var(--dim);font-size:12px;margin-bottom:8px">Noch keine Inhalte.</div>';
 }
-
 function setFitUI(mode) {
   config.default.fit = mode;
   document.getElementById('fit-cover').classList.toggle('active', mode === 'cover');
   document.getElementById('fit-contain').classList.toggle('active', mode === 'contain');
 }
-
 function addSite() {
   if (!config.default.sites) config.default.sites = [];
   config.default.sites.push({ type: 'cloudinary', cloudName: 'dqw5qfpe2', tag: 'kiosk', duration: 30, url: '' });
   renderConfig();
 }
-
-function removeSite(i) {
-  config.default.sites.splice(i, 1);
-  renderConfig();
-}
-
-function updateSite(i, key, val) {
-  config.default.sites[i][key] = val;
-}
+function removeSite(i) { config.default.sites.splice(i, 1); renderConfig(); }
+function updateSite(i, key, val) { config.default.sites[i][key] = val; }
 
 async function saveConfig(silent = false) {
   try {
     const f = await loadGHFile('config.json');
     await ghPut('config.json', JSON.stringify(config, null, 2), f.sha, 'Admin: config update');
-    if (!silent) toast('Config gespeichert ✓');
+    if (!silent) toast('Gespeichert ✓');
   } catch(e) { if (!silent) toast('Fehler beim Speichern', 'err'); }
 }
 
-// ── PUSH ALL ───────────────────────────────────────────────
+// ── PUSH ───────────────────────────────────────────────────
 async function pushAll() {
   setStatus('Speichere…');
   try {
@@ -569,12 +617,12 @@ async function pushAll() {
     const vf = await loadGHFile('version.txt');
     const newV = String(parseInt(vf.content.trim()) + 1);
     await ghPut('version.txt', newV, vf.sha, 'Admin: bump version to ' + newV);
-    toast(`Gepusht! Version ${newV} — Displays laden nach nächster Runde neu.`);
+    toast(`Gepusht! Version ${newV} — Displays laden neu.`);
     setStatus('');
   } catch(e) { toast('Fehler beim Pushen', 'err'); setStatus(''); }
 }
 
-// ── CREDENTIALS ────────────────────────────────────────────
+// ── ZUGANGSDATEN ───────────────────────────────────────────
 function loadCreds() {
   document.getElementById('cred-gh').value     = gh();
   document.getElementById('cred-repo').value   = localStorage.getItem('gh_repo') || 'MeierAndre130577/kiosk';
@@ -583,11 +631,11 @@ function loadCreds() {
   document.getElementById('cred-secret').value = csec();
 }
 function saveCreds() {
-  localStorage.setItem('gh_token',    document.getElementById('cred-gh').value.trim());
-  localStorage.setItem('gh_repo',     document.getElementById('cred-repo').value.trim());
-  localStorage.setItem('cld_cloud',   document.getElementById('cred-cloud').value.trim());
-  localStorage.setItem('cld_key',     document.getElementById('cred-key').value.trim());
-  localStorage.setItem('cld_secret',  document.getElementById('cred-secret').value.trim());
+  localStorage.setItem('gh_token',   document.getElementById('cred-gh').value.trim());
+  localStorage.setItem('gh_repo',    document.getElementById('cred-repo').value.trim());
+  localStorage.setItem('cld_cloud',  document.getElementById('cred-cloud').value.trim());
+  localStorage.setItem('cld_key',    document.getElementById('cred-key').value.trim());
+  localStorage.setItem('cld_secret', document.getElementById('cred-secret').value.trim());
   toast('Zugangsdaten gespeichert ✓');
 }
 
@@ -600,12 +648,6 @@ function saveCreds() {
   }
   await loadConfig();
   loadDisplays();
-
-  // Pre-fill credentials in the form
-  localStorage.setItem('gh_token',   localStorage.getItem('gh_token')   || '');
-  localStorage.setItem('cld_cloud',  localStorage.getItem('cld_cloud')  || 'dqw5qfpe2');
-  localStorage.setItem('cld_key',    localStorage.getItem('cld_key')    || '');
-  localStorage.setItem('cld_secret', localStorage.getItem('cld_secret') || '');
 })();
 </script>
 </body>
