@@ -738,10 +738,23 @@ async function startKiosk() {
   showSite(0);
 }
 
+function nextSite() {
+  const nextIdx = (curIdx + 1) % activeSites.length;
+  if (nextIdx === 0) {
+    // Runde komplett — Cloudinary-Liste neu laden
+    expandSites(sites).then(fresh => {
+      if (fresh.length > 0) activeSites = fresh;
+      showSite(0);
+    });
+  } else {
+    showSite(nextIdx);
+  }
+}
+
 function showSite(idx) {
   curIdx = idx;
   const s = activeSites[idx];
-  const next = () => showSite((curIdx + 1) % activeSites.length);
+  const next = nextSite;
 
   // Reset
   clearTimeout(rotTimer);
