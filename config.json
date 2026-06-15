@@ -4,7 +4,7 @@
       {
         "type": "cloudinary",
         "cloudName": "dqw5qfpe2",
-        "duration": 30
+        "duration": 10
       }
     ],
     "fit": "contain"
