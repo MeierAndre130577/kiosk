@@ -376,28 +376,46 @@ function setupDragDrop() {
   });
 }
 
-// ── Cloudinary: Verschieben (rename) ──────────────────────
+// ── Cloudinary: Verschieben via GitHub Action (CORS-sicher) ─
 async function moveToFolder(publicId, resourceType, targetFolder) {
-  toast('Verschiebe…');
+  const item = allMedia.find(i => i.public_id === publicId);
+  if (!item) return;
   const filename = publicId.split('/').pop();
   const newPublicId = targetFolder + '/' + filename;
-  const ts = Math.round(Date.now() / 1000);
-  const sig = await cldSign({ from_public_id: publicId, timestamp: ts, to_public_id: newPublicId });
-  const form = new FormData();
-  form.append('from_public_id', publicId);
-  form.append('to_public_id', newPublicId);
-  form.append('timestamp', ts);
-  form.append('api_key', ckey());
-  form.append('signature', sig);
+
+  // Optimistisches UI-Update sofort
+  item.public_id = newPublicId;
+  item.kiosk_folder = targetFolder;
+  renderMedia(allMedia);
+  toast('Verschiebe…');
+
   try {
-    const r = await fetch(`https://api.cloudinary.com/v1_1/${cloud()}/${resourceType}/rename`, { method: 'POST', body: form });
-    const d = await r.json();
-    if (d.error) { toast('Fehler: ' + d.error.message, 'err'); return; }
-    const item = allMedia.find(i => i.public_id === publicId);
-    if (item) { item.public_id = newPublicId; item.kiosk_folder = targetFolder; }
-    toast(`Verschoben nach ${targetFolder === 'Sielaff_Live' ? '▶ Live' : '📦 Store'} ✓`);
+    const r = await fetch(`https://api.github.com/repos/${REPO}/actions/workflows/move-cloudinary.yml/dispatches`, {
+      method: 'POST',
+      headers: { Authorization: `token ${gh()}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        ref: 'main',
+        inputs: { from_public_id: publicId, to_public_id: newPublicId, resource_type: resourceType }
+      })
+    });
+    if (r.status === 204) {
+      toast(`Verschoben nach ${targetFolder === 'Sielaff_Live' ? '▶ Live' : '📦 Store'} ✓`);
+    } else {
+      const err = await r.json().catch(() => ({}));
+      toast('GitHub Fehler: ' + (err.message || r.status), 'err');
+      // Rollback
+      item.public_id = publicId;
+      item.kiosk_folder = publicId.startsWith('Sielaff_Live') ? 'Sielaff_Live' : 'Sielaff_Store';
+      renderMedia(allMedia);
+    }
+  } catch(e) {
+    toast('Fehler: ' + (e.message || e), 'err');
+    console.error('moveToFolder', e);
+    // Rollback
+    item.public_id = publicId;
+    item.kiosk_folder = publicId.startsWith('Sielaff_Live') ? 'Sielaff_Live' : 'Sielaff_Store';
     renderMedia(allMedia);
-  } catch(e) { toast('Fehler: ' + (e.message || e), 'err'); console.error('moveToFolder', e); }
+  }
 }
 
 // ── Cloudinary: Löschen (Upload API destroy) ───────────────

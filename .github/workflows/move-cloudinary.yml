@@ -1,0 +1,81 @@
+name: Move Cloudinary Asset
+
+on:
+  workflow_dispatch:
+    inputs:
+      from_public_id:
+        required: true
+        type: string
+      to_public_id:
+        required: true
+        type: string
+      resource_type:
+        required: true
+        type: string
+        default: image
+
+jobs:
+  move:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Move asset in Cloudinary
+        env:
+          CLD_KEY: ${{ secrets.CLOUDINARY_KEY }}
+          CLD_SECRET: ${{ secrets.CLOUDINARY_SECRET }}
+        run: |
+          FROM="${{ github.event.inputs.from_public_id }}"
+          TO="${{ github.event.inputs.to_public_id }}"
+          RT="${{ github.event.inputs.resource_type }}"
+          BASE="https://api.cloudinary.com/v1_1/dqw5qfpe2"
+          AUTH="${CLD_KEY}:${CLD_SECRET}"
+
+          RESULT=$(curl -sf -u "$AUTH" \
+            --data-urlencode "from_public_id=$FROM" \
+            --data-urlencode "to_public_id=$TO" \
+            "$BASE/$RT/rename")
+          echo "Result: $RESULT"
+          if echo "$RESULT" | grep -q '"error"'; then
+            echo "Cloudinary error" >&2
+            exit 1
+          fi
+
+      - name: Sync cache after move
+        env:
+          CLD_KEY: ${{ secrets.CLOUDINARY_KEY }}
+          CLD_SECRET: ${{ secrets.CLOUDINARY_SECRET }}
+        run: |
+          BASE="https://api.cloudinary.com/v1_1/dqw5qfpe2"
+          AUTH="${CLD_KEY}:${CLD_SECRET}"
+
+          LIVE_IMG=$(curl -sf -u "$AUTH" "$BASE/resources/image?prefix=Sielaff_Live&type=upload&max_results=500" | \
+            jq '[.resources[] | . + {resource_type: "image", kiosk_folder: "Sielaff_Live"}]' || echo '[]')
+          LIVE_VID=$(curl -sf -u "$AUTH" "$BASE/resources/video?prefix=Sielaff_Live&type=upload&max_results=500" | \
+            jq '[.resources[] | . + {resource_type: "video", kiosk_folder: "Sielaff_Live"}]' || echo '[]')
+          STORE_IMG=$(curl -sf -u "$AUTH" "$BASE/resources/image?prefix=Sielaff_Store&type=upload&max_results=500" | \
+            jq '[.resources[] | . + {resource_type: "image", kiosk_folder: "Sielaff_Store"}]' || echo '[]')
+          STORE_VID=$(curl -sf -u "$AUTH" "$BASE/resources/video?prefix=Sielaff_Store&type=upload&max_results=500" | \
+            jq '[.resources[] | . + {resource_type: "video", kiosk_folder: "Sielaff_Store"}]' || echo '[]')
+
+          RESOURCES=$(jq -n \
+            --argjson a "$LIVE_IMG" --argjson b "$LIVE_VID" \
+            --argjson c "$STORE_IMG" --argjson d "$STORE_VID" \
+            '($a + $b + $c + $d) | unique_by(.asset_id)')
+
+          jq -n \
+            --argjson res "$RESOURCES" \
+            --arg ts "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+            '{resources: $res, updated: $ts}' > cloudinary-cache.json
+
+          echo "Live:  $(echo "$LIVE_IMG" | jq length) Bilder, $(echo "$LIVE_VID" | jq length) Videos"
+          echo "Store: $(echo "$STORE_IMG" | jq length) Bilder, $(echo "$STORE_VID" | jq length) Videos"
+
+      - name: Commit cache
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git add cloudinary-cache.json
+          git diff --staged --quiet || (git commit -m 'chore: sync after move' && git push)
