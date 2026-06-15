@@ -115,6 +115,15 @@ var DEFAULT_SITES = [
 ];
 
 /* ── Device-ID ─────────────────────────────────────────── */
+function fingerprintId() {
+  var gpu = getGPU();
+  var scr = (window.screen.width || screen.width) + 'x' + (window.screen.height || screen.height);
+  var tz  = ''; try { tz = Intl.DateTimeFormat().resolvedOptions().timeZone; } catch(e) {}
+  var str = [gpu, scr, tz, navigator.language || '', navigator.platform || ''].join('|');
+  var h = 5381;
+  for (var i = 0; i < str.length; i++) { h = ((h << 5) + h) ^ str.charCodeAt(i); h = h & h; }
+  return 'fp-' + ('00000000' + (h >>> 0).toString(16)).slice(-8);
+}
 function getDeviceId() {
   try {
     var id = localStorage.getItem('kiosk_device_id');
@@ -126,7 +135,11 @@ function getDeviceId() {
       localStorage.setItem('kiosk_device_id', id);
     }
     return id;
-  } catch(e) { return 'unknown-' + Math.random().toString(36).slice(2); }
+  } catch(e) {
+    var fp = fingerprintId();
+    try { localStorage.setItem('kiosk_device_id', fp); } catch(e2) {}
+    return fp;
+  }
 }
 var DEVICE_ID = getDeviceId();
 

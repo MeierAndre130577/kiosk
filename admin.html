@@ -714,7 +714,7 @@ async function loadDisplays() {
           <strong>Zuletzt gesehen:</strong> ${ago}<br>
           <strong>Playlist:</strong> ${d.playlistUpdated ? new Date(d.playlistUpdated).toLocaleString('de-AT') : '–'}<br>
           <strong>Browser:</strong> ${d.browser || '–'}${d.touch ? ' 👆' : ''}<br>
-          <strong>OS:</strong> ${d.os || '–'}${d.platform ? ' <span style="color:var(--dim)">(${d.platform})</span>' : ''}<br>
+          <strong>OS:</strong> ${d.os || '–'}${d.platform ? ` <span style="color:var(--dim)">(${d.platform})</span>` : ''}<br>
           <strong>Auflösung:</strong> ${d.screen && d.screen !== '0x0' ? d.screen : '–'}<br>
           <strong>GPU:</strong> ${d.gpu || '–'}<br>
           <strong>Zeitzone:</strong> ${d.timezone || '–'}<br>
