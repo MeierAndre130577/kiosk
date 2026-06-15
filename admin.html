@@ -314,12 +314,13 @@ async function uploadFiles(files) {
 async function cldSetTags(publicId, resourceType, tags) {
   const ts = Math.round(Date.now() / 1000);
   const tagsStr = tags.join(',');
+  // Leere Tags: nicht in Signatur (Cloudinary ignoriert leere Werte), aber im Form (damit Tags gelöscht werden)
   const signParams = { public_id: publicId, timestamp: ts };
   if (tagsStr) signParams.tags = tagsStr;
   const sig = await cldSign(signParams);
   const form = new FormData();
   form.append('public_id', publicId);
-  if (tagsStr) form.append('tags', tagsStr);
+  form.append('tags', tagsStr);
   form.append('timestamp', ts);
   form.append('type', 'upload');
   form.append('api_key', ckey());
