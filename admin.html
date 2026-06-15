@@ -67,25 +67,36 @@
   /* ── Medien ── */
   #drop-zone {
     border: 2px dashed var(--border); border-radius: var(--r);
-    padding: 28px; text-align: center; cursor: pointer; margin-bottom: 20px;
+    padding: 24px; text-align: center; cursor: pointer; margin-bottom: 16px;
     transition: border-color .2s, background .2s;
   }
   #drop-zone:hover, #drop-zone.drag-over { border-color: var(--accent); background: rgba(0,200,255,.05); }
-  #drop-zone .dz-icon { font-size: 32px; margin-bottom: 8px; }
+  #drop-zone .dz-icon { font-size: 28px; margin-bottom: 6px; }
   #drop-zone .dz-title { font-weight: 600; margin-bottom: 4px; }
   #drop-zone .dz-sub { font-size: 12px; color: var(--dim); }
-  #upload-bar { margin-top: 12px; background: var(--surface2); border-radius: 4px; height: 6px; display: none; }
+  #upload-bar { margin-top: 10px; background: var(--surface2); border-radius: 4px; height: 6px; display: none; }
   #upload-bar-fill { height: 100%; background: var(--accent); border-radius: 4px; transition: width .3s; width: 0%; }
   #upload-status { font-size: 12px; color: var(--dim); margin-top: 6px; display: none; }
 
+  .upload-dest { display: flex; gap: 8px; align-items: center; margin-bottom: 14px; font-size: 13px; }
+  .dest-btn { padding: 6px 14px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; border: 2px solid var(--border); background: var(--surface2); color: var(--dim); }
+  .dest-btn.active-live { border-color: var(--success); color: var(--success); background: rgba(34,197,94,.1); }
+  .dest-btn.active-store { border-color: var(--warning); color: var(--warning); background: rgba(245,158,11,.1); }
+
+  .folder-section { margin-bottom: 24px; }
+  .folder-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .folder-badge { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 10px; }
+  .badge-live { background: rgba(34,197,94,.15); color: var(--success); border: 1px solid rgba(34,197,94,.3); }
+  .badge-store { background: rgba(245,158,11,.15); color: var(--warning); border: 1px solid rgba(245,158,11,.3); }
+  .folder-count { font-size: 11px; color: var(--dim); }
+
   .media-toolbar { display: flex; gap: 8px; align-items: center; margin-bottom: 12px; flex-wrap: wrap; }
   .media-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
-  .media-card { background: var(--surface); border: 2px solid var(--border); border-radius: 8px; overflow: hidden; }
-  .media-card.has-kiosk { border-color: var(--success); }
+  .media-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+  .media-card.is-live { border-color: rgba(34,197,94,.4); }
   .media-thumb-wrap { position: relative; }
   .media-thumb { width: 100%; height: 100px; object-fit: cover; background: #000; display: block; }
   .media-thumb-fb { width: 100%; height: 100px; background: #111; display: none; align-items: center; justify-content: center; font-size: 28px; color: var(--dim); }
-  .kiosk-badge { position: absolute; top: 6px; right: 6px; background: var(--success); color: #000; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 10px; }
   .media-info { padding: 8px; }
   .media-name { font-size: 11px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 3px; }
   .media-meta { font-size: 10px; color: var(--dim); margin-bottom: 6px; }
@@ -144,21 +155,23 @@
     <input type="file" id="file-input" multiple accept="image/*,video/*" style="display:none">
     <div class="dz-icon">📤</div>
     <div class="dz-title">Dateien hochladen</div>
-    <div class="dz-sub">Klicken oder Dateien hierher ziehen · wird automatisch mit Tag "kiosk" versehen</div>
+    <div class="dz-sub">Klicken oder Dateien hierher ziehen</div>
     <div id="upload-bar"><div id="upload-bar-fill"></div></div>
     <div id="upload-status"></div>
+  </div>
+  <div class="upload-dest">
+    <span style="color:var(--dim)">Hochladen nach:</span>
+    <button class="dest-btn active-live" id="dest-live" onclick="setDest('Sielaff_Live')">▶ Live</button>
+    <button class="dest-btn" id="dest-store" onclick="setDest('Sielaff_Store')">📦 Store</button>
   </div>
 
   <!-- Liste -->
   <div class="media-toolbar">
-    <div style="flex:1">
-      <div class="stitle" style="margin:0">Alle Dateien</div>
-      <div id="cache-age" style="font-size:11px;color:var(--dim);margin-top:2px"></div>
-    </div>
+    <div style="flex:1"><div id="cache-age" style="font-size:11px;color:var(--dim)"></div></div>
     <input type="text" id="media-filter" placeholder="Suchen…" style="max-width:160px;width:auto" oninput="filterMedia(this.value)">
     <button class="btn sec sml" onclick="triggerSync()" title="GitHub Action starten und neu laden">⟳ Sync</button>
   </div>
-  <div id="media-grid" class="media-grid"><div class="empty"><div class="spin"></div></div></div>
+  <div id="media-grid"><div class="empty"><div class="spin"></div></div></div>
 </section>
 
 <!-- CONFIG -->
@@ -278,6 +291,14 @@ async function cldSign(params) {
   return sha1(str + csec());
 }
 
+// ── Upload-Ziel ────────────────────────────────────────────
+let uploadDest = 'Sielaff_Live';
+function setDest(folder) {
+  uploadDest = folder;
+  document.getElementById('dest-live').className  = 'dest-btn' + (folder === 'Sielaff_Live'  ? ' active-live'  : '');
+  document.getElementById('dest-store').className = 'dest-btn' + (folder === 'Sielaff_Store' ? ' active-store' : '');
+}
+
 // ── Cloudinary: Upload ─────────────────────────────────────
 async function uploadFiles(files) {
   if (!cloud() || !ckey() || !csec()) { toast('Cloudinary-Zugangsdaten fehlen.', 'err'); return; }
@@ -291,53 +312,47 @@ async function uploadFiles(files) {
     fill.style.width = (done / files.length * 100) + '%';
     const ts = Math.round(Date.now() / 1000);
     const publicId = file.name.replace(/\.[^.]+$/, '');
-    const sig = await cldSign({ folder: 'Sielaff', public_id: publicId, tags: 'kiosk', timestamp: ts });
+    const sig = await cldSign({ folder: uploadDest, public_id: publicId, timestamp: ts });
     const form = new FormData();
     form.append('file', file);
     form.append('api_key', ckey());
     form.append('timestamp', ts);
     form.append('public_id', publicId);
-    form.append('folder', 'Sielaff');
-    form.append('tags', 'kiosk');
+    form.append('folder', uploadDest);
     form.append('signature', sig);
     try {
       const r = await fetch(`https://api.cloudinary.com/v1_1/${cloud()}/auto/upload`, { method: 'POST', body: form });
       const d = await r.json();
       if (d.error) throw new Error(d.error.message);
-      allMedia.push({
-        public_id: d.public_id,
-        resource_type: d.resource_type,
-        format: d.format,
-        bytes: d.bytes,
-        tags: d.tags || ['kiosk'],
-        asset_folder: 'Sielaff'
-      });
+      allMedia.push({ public_id: d.public_id, resource_type: d.resource_type, format: d.format, bytes: d.bytes, kiosk_folder: uploadDest });
       done++;
     } catch(e) { toast('Fehler: ' + e.message, 'err'); }
   }
   fill.style.width = '100%';
   status.textContent = `${done} von ${files.length} hochgeladen.`;
   setTimeout(() => { bar.style.display = 'none'; status.style.display = 'none'; fill.style.width = '0%'; }, 2000);
-  if (done > 0) { toast(`${done} Datei(en) hochgeladen ✓`); renderMedia(allMedia); }
+  if (done > 0) { toast(`${done} Datei(en) nach ${uploadDest} hochgeladen ✓`); renderMedia(allMedia); }
 }
 
-// ── Cloudinary: Tag setzen (Upload API explicit) ───────────
-async function cldSetTags(publicId, resourceType, tags) {
+// ── Cloudinary: Verschieben (rename) ──────────────────────
+async function moveToFolder(publicId, resourceType, targetFolder) {
+  const filename = publicId.split('/').pop();
+  const newPublicId = targetFolder + '/' + filename;
   const ts = Math.round(Date.now() / 1000);
-  const tagsStr = tags.join(',');
-  // Leere Tags: nicht in Signatur (Cloudinary ignoriert leere Werte), aber im Form (damit Tags gelöscht werden)
-  const signParams = { public_id: publicId, timestamp: ts };
-  if (tagsStr) signParams.tags = tagsStr;
-  const sig = await cldSign(signParams);
+  const sig = await cldSign({ from_public_id: publicId, timestamp: ts, to_public_id: newPublicId });
   const form = new FormData();
-  form.append('public_id', publicId);
-  form.append('tags', tagsStr);
+  form.append('from_public_id', publicId);
+  form.append('to_public_id', newPublicId);
   form.append('timestamp', ts);
-  form.append('type', 'upload');
   form.append('api_key', ckey());
   form.append('signature', sig);
-  const r = await fetch(`https://api.cloudinary.com/v1_1/${cloud()}/${resourceType}/explicit`, { method: 'POST', body: form });
-  return r.json();
+  const r = await fetch(`https://api.cloudinary.com/v1_1/${cloud()}/${resourceType}/rename`, { method: 'POST', body: form });
+  const d = await r.json();
+  if (d.error) { toast('Fehler: ' + d.error.message, 'err'); return; }
+  const item = allMedia.find(i => i.public_id === publicId);
+  if (item) { item.public_id = newPublicId; item.kiosk_folder = targetFolder; }
+  toast(`Verschoben nach ${targetFolder} ✓`);
+  renderMedia(allMedia);
 }
 
 // ── Cloudinary: Löschen (Upload API destroy) ───────────────
@@ -425,68 +440,65 @@ async function triggerSync() {
   } catch(e) { toast('Sync fehlgeschlagen', 'err'); }
 }
 
+let mediaFilter = '';
 function filterMedia(q) {
-  const filtered = q ? allMedia.filter(i => i.public_id.toLowerCase().includes(q.toLowerCase())) : allMedia;
-  renderMedia(filtered);
+  mediaFilter = q;
+  renderMedia(allMedia);
 }
 
 function renderMedia(items) {
-  if (!items.length) {
-    document.getElementById('media-grid').innerHTML = '<div class="empty">Keine Dateien.</div>';
-    return;
-  }
-  document.getElementById('media-grid').innerHTML = items.map(item => {
+  const q = mediaFilter.toLowerCase();
+  const filtered = q ? items.filter(i => i.public_id.toLowerCase().includes(q)) : items;
+  const live  = filtered.filter(i => i.kiosk_folder === 'Sielaff_Live');
+  const store = filtered.filter(i => i.kiosk_folder === 'Sielaff_Store');
+  const grid  = document.getElementById('media-grid');
+
+  if (!filtered.length) { grid.innerHTML = '<div class="empty">Keine Dateien.</div>'; return; }
+
+  const makeCards = (list, folder) => list.map(item => {
     const isVideo = item.resource_type === 'video';
     const thumb = isVideo
       ? `https://res.cloudinary.com/${cloud()}/video/upload/w_180,h_100,c_fill,so_0/${item.public_id}.jpg`
       : `https://res.cloudinary.com/${cloud()}/image/upload/w_180,h_100,c_fill/${item.public_id}.${item.format || 'jpg'}`;
     const kb = Math.round((item.bytes || 0) / 1024);
     const size = kb > 1024 ? (kb / 1024).toFixed(1) + ' MB' : kb + ' KB';
-    const tags = item.tags || [];
-    const hasKiosk = tags.includes('kiosk');
     const pid = item.public_id.replace(/'/g, "\\'");
     const rt = item.resource_type;
-    const tagsEsc = JSON.stringify(tags).replace(/"/g, '&quot;');
-    return `<div class="media-card${hasKiosk ? ' has-kiosk' : ''}">
+    const isLive = folder === 'Sielaff_Live';
+    return `<div class="media-card${isLive ? ' is-live' : ''}">
       <div class="media-thumb-wrap">
         <img class="media-thumb" src="${thumb}" alt=""
           onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
         <div class="media-thumb-fb">${isVideo ? '▶' : '🖼'}</div>
-        ${hasKiosk ? '<div class="kiosk-badge">✓ kiosk</div>' : ''}
       </div>
       <div class="media-info">
         <div class="media-name" title="${item.public_id}">${item.public_id.split('/').pop()}</div>
         <div class="media-meta">${(item.format || '').toUpperCase()} · ${size}</div>
         <div class="media-acts">
-          ${hasKiosk
-            ? `<button class="btn sec sml" onclick="removeKioskTag('${pid}','${rt}',${tagsEsc})">− kiosk</button>`
-            : `<button class="btn pri sml" onclick="addKioskTag('${pid}','${rt}',${tagsEsc})">+ kiosk</button>`}
+          ${isLive
+            ? `<button class="btn sec sml" onclick="moveToFolder('${pid}','${rt}','Sielaff_Store')">→ Store</button>`
+            : `<button class="btn pri sml" onclick="moveToFolder('${pid}','${rt}','Sielaff_Live')">→ Live</button>`}
           <button class="btn dan sml" onclick="deleteFile('${pid}','${rt}')">🗑</button>
         </div>
       </div>
     </div>`;
   }).join('');
-}
 
-async function addKioskTag(publicId, resourceType, currentTags) {
-  toast('Füge Tag hinzu…');
-  const newTags = [...new Set([...currentTags, 'kiosk'])];
-  const d = await cldSetTags(publicId, resourceType, newTags);
-  if (d.error) { toast('Fehler: ' + d.error.message, 'err'); return; }
-  toast('kiosk-Tag hinzugefügt ✓');
-  const item = allMedia.find(i => i.public_id === publicId);
-  if (item) item.tags = newTags;
-  renderMedia(allMedia);
-}
-
-async function removeKioskTag(publicId, resourceType, currentTags) {
-  const newTags = currentTags.filter(t => t !== 'kiosk');
-  const d = await cldSetTags(publicId, resourceType, newTags);
-  if (d.error) { toast('Fehler: ' + d.error.message, 'err'); return; }
-  toast('kiosk-Tag entfernt');
-  const item = allMedia.find(i => i.public_id === publicId);
-  if (item) item.tags = newTags;
-  renderMedia(allMedia);
+  grid.innerHTML =
+    `<div class="folder-section">
+      <div class="folder-header">
+        <span class="folder-badge badge-live">▶ Live</span>
+        <span class="folder-count">${live.length} Datei(en) — wird auf Displays abgespielt</span>
+      </div>
+      <div class="media-grid">${live.length ? makeCards(live, 'Sielaff_Live') : '<div class="empty" style="padding:20px">Keine Live-Dateien.</div>'}</div>
+    </div>
+    <div class="folder-section">
+      <div class="folder-header">
+        <span class="folder-badge badge-store">📦 Store</span>
+        <span class="folder-count">${store.length} Datei(en) — geparkt</span>
+      </div>
+      <div class="media-grid">${store.length ? makeCards(store, 'Sielaff_Store') : '<div class="empty" style="padding:20px">Keine Store-Dateien.</div>'}</div>
+    </div>`;
 }
 
 async function deleteFile(publicId, resourceType) {

@@ -289,13 +289,13 @@ function expandSites(list) {
   for (var i = 0; i < list.length; i++) {
     var s = list[i];
     if (s.type === 'cloudinary' && s.cloudName) {
-      (function(cn, tag, dur) {
-        var cacheUrl = baseUrl() + 'cloudinary-cache.json?t=' + Date.now();
-        promises.push(fetchJSON(cacheUrl).then(function(data) {
+      (function(cn, dur) {
+        var url = baseUrl() + 'cloudinary-cache.json?t=' + Date.now();
+        promises.push(fetchJSON(url).then(function(data) {
           var res = data.resources || [];
           for (var r = 0; r < res.length; r++) {
             var item = res[r];
-            if (tag && item.tags && item.tags.indexOf(tag) === -1) continue;
+            if (item.kiosk_folder !== 'Sielaff_Live') continue;
             var kind = item.resource_type === 'video' ? 'video' : 'image';
             var transform = kind === 'video' ? 'f_mp4,vc_h264/' : '';
             var ext = kind === 'video' ? 'mp4' : (item.format || 'jpg');
@@ -306,7 +306,7 @@ function expandSites(list) {
             });
           }
         }).catch(function() {}));
-      })(s.cloudName, s.tag, s.duration || 30);
+      })(s.cloudName, s.duration || 30);
     } else {
       result.push(s);
     }
