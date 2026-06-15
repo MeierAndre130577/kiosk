@@ -470,6 +470,22 @@ window.addEventListener('popstate',      () => history.pushState(null, '', locat
 window.addEventListener('beforeunload',   e => { e.preventDefault(); e.returnValue = ''; });
 document.addEventListener('contextmenu',  e => e.preventDefault());
 
+// ── Täglicher Neustart um 3:00 Uhr ────────────────────────────────────────────
+setInterval(() => {
+  const now = new Date();
+  if (now.getHours() === 3 && now.getMinutes() === 0) location.reload();
+}, 60 * 1000);
+
+// ── Automatisch erholen nach WLAN-Ausfall ──────────────────────────────────────
+window.addEventListener('online', () => {
+  if (running) {
+    expandSites(sites).then(fresh => {
+      if (fresh.length > 0) activeSites = fresh;
+      showSite(curIdx < activeSites.length ? curIdx : 0);
+    });
+  }
+});
+
 // ── Langdruck-Entsperrung ──────────────────────────────────────────────────────
 let holdTimer = null;
 let holdRAF   = null;
@@ -843,6 +859,7 @@ img.addEventListener('error', () => loading.classList.remove('show'));
 video.addEventListener('error', () => {
   video.classList.remove('show');
   videoError.classList.add('show');
+  if (running) setTimeout(nextSite, 5000);
 });
 
 // ── Buttons verdrahten ─────────────────────────────────────────────────────────
