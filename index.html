@@ -65,6 +65,14 @@
   }
   #site-video.show { display: block; }
 
+  #site-image {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: contain; background: #000;
+    display: none;
+  }
+  #site-image.show { display: block; }
+
   /* Loading spinner */
   #frame-loading {
     position: absolute; inset: 0; background: #000; z-index: 4;
@@ -290,6 +298,7 @@
     allow="autoplay; fullscreen"
     allowfullscreen></iframe>
   <video id="site-video" autoplay muted playsinline loop></video>
+  <img id="site-image" alt="">
   <div id="video-error">
     <div class="ve-ico">⚠️</div>
     <p>Video kann nicht geladen werden.</p>
@@ -378,6 +387,7 @@ let pinBuf   = '';
 // ── DOM-Referenzen ─────────────────────────────────────────────────────────────
 const frame      = document.getElementById('site-frame');
 const video      = document.getElementById('site-video');
+const img        = document.getElementById('site-image');
 const videoError = document.getElementById('video-error');
 const loading    = document.getElementById('frame-loading');
 const progBar = document.getElementById('prog-bar');
@@ -684,20 +694,22 @@ async function expandSites(list) {
   const result = [];
   for (const s of list) {
     if (s.type === 'cloudinary' && s.cloudName && s.tag) {
-      try {
-        const url  = `https://res.cloudinary.com/${s.cloudName}/video/list/${s.tag}.json`;
-        const resp = await fetch(url);
-        if (!resp.ok) throw new Error(resp.status);
-        const data = await resp.json();
-        for (const r of (data.resources || [])) {
-          result.push({
-            type:     'video',
-            url:      `https://res.cloudinary.com/${s.cloudName}/video/upload/${r.public_id}.${r.format}`,
-            duration: s.duration
-          });
+      for (const kind of ['video', 'image']) {
+        try {
+          const url  = `https://res.cloudinary.com/${s.cloudName}/${kind}/list/${s.tag}.json`;
+          const resp = await fetch(url);
+          if (!resp.ok) continue;
+          const data = await resp.json();
+          for (const r of (data.resources || [])) {
+            result.push({
+              type:     kind,
+              url:      `https://res.cloudinary.com/${s.cloudName}/${kind}/upload/${r.public_id}.${r.format}`,
+              duration: s.duration
+            });
+          }
+        } catch(e) {
+          console.warn(`Cloudinary ${kind} fetch fehlgeschlagen:`, e);
         }
-      } catch(e) {
-        console.warn('Cloudinary fetch fehlgeschlagen:', e);
       }
     } else {
       result.push(s);
@@ -730,21 +742,22 @@ function showSite(idx) {
   curIdx = idx;
   const s = activeSites[idx];
 
+  // Reset alle Inhalts-Elemente
+  video.pause(); video.removeAttribute('src'); video.classList.remove('show');
+  img.classList.remove('show'); img.src = '';
+  videoError.classList.remove('show');
+  frame.classList.add('hidden');
+
   if (s.type === 'video') {
-    frame.classList.add('hidden');
     loading.classList.remove('show');
-    videoError.classList.remove('show');
-    video.muted = true;
-    video.loop  = true;
-    video.src   = s.url;
+    video.muted = true; video.loop = true; video.src = s.url;
     video.classList.add('show');
-    video.load();
-    video.play().catch(() => {});
+    video.load(); video.play().catch(() => {});
+  } else if (s.type === 'image') {
+    loading.classList.add('show');
+    img.src = s.url;
+    img.classList.add('show');
   } else {
-    video.pause();
-    video.removeAttribute('src');
-    video.classList.remove('show');
-    videoError.classList.remove('show');
     frame.classList.remove('hidden');
     loading.classList.add('show');
     frame.src = resolveWebUrl(s.url);
@@ -782,6 +795,8 @@ function startProgress(durationSec) {
 }
 
 frame.addEventListener('load', () => loading.classList.remove('show'));
+img.addEventListener('load',  () => loading.classList.remove('show'));
+img.addEventListener('error', () => loading.classList.remove('show'));
 video.addEventListener('error', () => {
   video.classList.remove('show');
   videoError.classList.add('show');
