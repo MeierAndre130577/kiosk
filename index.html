@@ -743,14 +743,15 @@ async function startKiosk() {
   syncFields();
   sites = sites.filter(s => s.type === 'cloudinary' || isValidUrl(s.url));
   save();
-  if (sites.length === 0) { running = false; showOnly('s-start'); return; }
+  if (sites.length === 0) { running = false; localStorage.removeItem('kiosk_autostart'); showOnly('s-start'); return; }
 
+  localStorage.setItem('kiosk_autostart', '1');
   showOnly('s-kiosk');
   loading.classList.add('show');
 
   activeSites = await expandSites(sites);
 
-  if (activeSites.length === 0) { running = false; showOnly('s-start'); return; }
+  if (activeSites.length === 0) { running = false; localStorage.removeItem('kiosk_autostart'); showOnly('s-start'); return; }
   running = true;
   curIdx  = 0;
   goFull();
@@ -938,6 +939,7 @@ document.getElementById('b-save').addEventListener('click', () => {
 document.getElementById('b-cancel').addEventListener('click', () => {
   running = false;
   stopRotation();
+  localStorage.removeItem('kiosk_autostart');
   showOnly('s-start');
   const hasSites = sites.filter(s => s.type === 'cloudinary' || isValidUrl(s.url)).length > 0;
   document.getElementById('start-msg').textContent = hasSites
@@ -951,16 +953,22 @@ load();
 buildPad();
 renderDots(0);
 
-// Standardwert falls noch nichts gespeichert ist
 if (sites.length === 0) {
   sites = [{ type: 'cloudinary', cloudName: 'dqw5qfpe2', tag: 'kiosk', duration: 30, url: '' }];
 }
 
-showOnly('s-start');
 const hasSites = sites.filter(s => s.type === 'cloudinary' || isValidUrl(s.url)).length > 0;
-if (hasSites) {
-  document.getElementById('start-msg').textContent = sites.length + ' Inhalt(e) konfiguriert.';
-  document.getElementById('b-start').style.display = '';
+
+// Autostart nach nächtlichem Neustart
+if (localStorage.getItem('kiosk_autostart') === '1' && hasSites) {
+  showOnly('s-kiosk');
+  startKiosk();
+} else {
+  showOnly('s-start');
+  if (hasSites) {
+    document.getElementById('start-msg').textContent = sites.length + ' Inhalt(e) konfiguriert.';
+    document.getElementById('b-start').style.display = '';
+  }
 }
 </script>
 </body>
