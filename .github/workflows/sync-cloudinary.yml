@@ -48,4 +48,4 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email 'github-actions[bot]@users.noreply.github.com'
           git add cloudinary-cache.json
-          git diff --staged --quiet || (git commit -m 'chore: sync cloudinary cache' && git push)
+          git diff --staged --quiet || (git commit -m 'chore: sync cloudinary cache' && git pull --rebase && git push)
