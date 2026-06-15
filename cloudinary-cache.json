@@ -1,48 +1,6 @@
 {
   "resources": [
     {
-      "asset_id": "f79eb7c58ca7737f6ff1d6ea9c5e2634",
-      "public_id": "Sielaff_Live/Willkommen Sielaff AT",
-      "format": "png",
-      "version": 1781540925,
-      "resource_type": "image",
-      "type": "upload",
-      "created_at": "2026-06-15T16:28:45Z",
-      "bytes": 1602651,
-      "width": 1672,
-      "height": 941,
-      "asset_folder": "Sielaff_Live",
-      "display_name": "Willkommen Sielaff AT",
-      "url": "http://res.cloudinary.com/dqw5qfpe2/image/upload/v1781540925/Sielaff_Live/Willkommen%20Sielaff%20AT.png",
-      "secure_url": "https://res.cloudinary.com/dqw5qfpe2/image/upload/v1781540925/Sielaff_Live/Willkommen%20Sielaff%20AT.png",
-      "last_updated": {
-        "public_id_updated_at": "2026-06-15T17:28:25+00:00",
-        "updated_at": "2026-06-15T17:28:25+00:00"
-      },
-      "kiosk_folder": "Sielaff_Live"
-    },
-    {
-      "asset_id": "ac6013a7e73f7c139ae19e252cb55a6c",
-      "public_id": "Sielaff_Live/Logo",
-      "format": "mp4",
-      "version": 1781540848,
-      "resource_type": "video",
-      "type": "upload",
-      "created_at": "2026-06-15T16:27:28Z",
-      "bytes": 470894,
-      "width": 480,
-      "height": 800,
-      "asset_folder": "Sielaff_Store",
-      "display_name": "Logo",
-      "url": "http://res.cloudinary.com/dqw5qfpe2/video/upload/v1781540848/Sielaff_Live/Logo.mp4",
-      "secure_url": "https://res.cloudinary.com/dqw5qfpe2/video/upload/v1781540848/Sielaff_Live/Logo.mp4",
-      "last_updated": {
-        "public_id_updated_at": "2026-06-15T17:00:23+00:00",
-        "updated_at": "2026-06-15T17:00:23+00:00"
-      },
-      "kiosk_folder": "Sielaff_Live"
-    },
-    {
       "asset_id": "45e99138f6d2715eccdca1e4a9d3c2a8",
       "public_id": "Sielaff_Store/Klappenautomat",
       "format": "png",
@@ -81,27 +39,6 @@
       "kiosk_folder": "Sielaff_Store"
     },
     {
-      "asset_id": "fa92339c1a1d8bb3ab7f29e68f89c566",
-      "public_id": "Sielaff_Store/SIELAFF   Maxibar   Deutsch English Français",
-      "format": "mp4",
-      "version": 1781540887,
-      "resource_type": "video",
-      "type": "upload",
-      "created_at": "2026-06-15T16:28:07Z",
-      "bytes": 18723480,
-      "width": 1920,
-      "height": 1080,
-      "asset_folder": "Sielaff_Store",
-      "display_name": "SIELAFF   Maxibar   Deutsch English Français",
-      "url": "http://res.cloudinary.com/dqw5qfpe2/video/upload/v1781540887/Sielaff_Store/SIELAFF%20%20%20Maxibar%20%20%20Deutsch%20English%20Fran%C3%A7ais.mp4",
-      "secure_url": "https://res.cloudinary.com/dqw5qfpe2/video/upload/v1781540887/Sielaff_Store/SIELAFF%20%20%20Maxibar%20%20%20Deutsch%20English%20Fran%C3%A7ais.mp4",
-      "last_updated": {
-        "public_id_updated_at": "2026-06-15T17:28:37+00:00",
-        "updated_at": "2026-06-15T17:28:37+00:00"
-      },
-      "kiosk_folder": "Sielaff_Store"
-    },
-    {
       "asset_id": "a1f82e79957b85edfc109945e7b88702",
       "public_id": "Sielaff_Store/SIELAFF   SiLine®",
       "format": "mp4",
@@ -123,6 +60,27 @@
       "kiosk_folder": "Sielaff_Store"
     },
     {
+      "asset_id": "ac6013a7e73f7c139ae19e252cb55a6c",
+      "public_id": "Sielaff_Live/Logo",
+      "format": "mp4",
+      "version": 1781540848,
+      "resource_type": "video",
+      "type": "upload",
+      "created_at": "2026-06-15T16:27:28Z",
+      "bytes": 470894,
+      "width": 480,
+      "height": 800,
+      "asset_folder": "Sielaff_Store",
+      "display_name": "Logo",
+      "url": "http://res.cloudinary.com/dqw5qfpe2/video/upload/v1781540848/Sielaff_Live/Logo.mp4",
+      "secure_url": "https://res.cloudinary.com/dqw5qfpe2/video/upload/v1781540848/Sielaff_Live/Logo.mp4",
+      "last_updated": {
+        "public_id_updated_at": "2026-06-15T17:00:23+00:00",
+        "updated_at": "2026-06-15T17:00:23+00:00"
+      },
+      "kiosk_folder": "Sielaff_Live"
+    },
+    {
       "asset_id": "eeeeedf837db3985e608f1168d64f845",
       "public_id": "Sielaff_Store/SiLine SiOne M Softdrop - Einfach Mehrweg",
       "format": "mp4",
@@ -138,7 +96,49 @@
       "url": "http://res.cloudinary.com/dqw5qfpe2/video/upload/v1781540895/Sielaff_Store/SiLine%20SiOne%20M%20Softdrop%20-%20Einfach%20Mehrweg.mp4",
       "secure_url": "https://res.cloudinary.com/dqw5qfpe2/video/upload/v1781540895/Sielaff_Store/SiLine%20SiOne%20M%20Softdrop%20-%20Einfach%20Mehrweg.mp4",
       "kiosk_folder": "Sielaff_Store"
+    },
+    {
+      "asset_id": "f79eb7c58ca7737f6ff1d6ea9c5e2634",
+      "public_id": "Sielaff_Live/Willkommen Sielaff AT",
+      "format": "png",
+      "version": 1781540925,
+      "resource_type": "image",
+      "type": "upload",
+      "created_at": "2026-06-15T16:28:45Z",
+      "bytes": 1602651,
+      "width": 1672,
+      "height": 941,
+      "asset_folder": "Sielaff_Live",
+      "display_name": "Willkommen Sielaff AT",
+      "url": "http://res.cloudinary.com/dqw5qfpe2/image/upload/v1781540925/Sielaff_Live/Willkommen%20Sielaff%20AT.png",
+      "secure_url": "https://res.cloudinary.com/dqw5qfpe2/image/upload/v1781540925/Sielaff_Live/Willkommen%20Sielaff%20AT.png",
+      "last_updated": {
+        "public_id_updated_at": "2026-06-15T17:28:25+00:00",
+        "updated_at": "2026-06-15T17:28:25+00:00"
+      },
+      "kiosk_folder": "Sielaff_Live"
+    },
+    {
+      "asset_id": "fa92339c1a1d8bb3ab7f29e68f89c566",
+      "public_id": "Sielaff_Store/SIELAFF   Maxibar   Deutsch English Français",
+      "format": "mp4",
+      "version": 1781540887,
+      "resource_type": "video",
+      "type": "upload",
+      "created_at": "2026-06-15T16:28:07Z",
+      "bytes": 18723480,
+      "width": 1920,
+      "height": 1080,
+      "asset_folder": "Sielaff_Store",
+      "display_name": "SIELAFF   Maxibar   Deutsch English Français",
+      "url": "http://res.cloudinary.com/dqw5qfpe2/video/upload/v1781540887/Sielaff_Store/SIELAFF%20%20%20Maxibar%20%20%20Deutsch%20English%20Fran%C3%A7ais.mp4",
+      "secure_url": "https://res.cloudinary.com/dqw5qfpe2/video/upload/v1781540887/Sielaff_Store/SIELAFF%20%20%20Maxibar%20%20%20Deutsch%20English%20Fran%C3%A7ais.mp4",
+      "last_updated": {
+        "public_id_updated_at": "2026-06-15T17:28:37+00:00",
+        "updated_at": "2026-06-15T17:28:37+00:00"
+      },
+      "kiosk_folder": "Sielaff_Store"
     }
   ],
-  "updated": "2026-06-15T17:57:24.884Z"
+  "updated": "2026-06-15T17:59:39Z"
 }
