@@ -371,6 +371,15 @@
       Voraussetzung: In Cloudinary unter <strong>Settings → Security → Resource list</strong> deaktivieren, dann allen Videos denselben Tag vergeben.
     </div>
 
+    <div class="stitle">Anzeige-Modus</div>
+    <div class="ibox">
+      <div class="type-toggle" style="margin-bottom:10px">
+        <button class="ttbtn" id="fit-cover" type="button" onclick="setFit('cover')">⬛ Vollbild</button>
+        <button class="ttbtn" id="fit-contain" type="button" onclick="setFit('contain')">🔲 Alles sichtbar</button>
+      </div>
+      <span id="fit-desc" style="font-size:13px;color:var(--text-dim)"></span>
+    </div>
+
     <div class="stitle">Gerät &amp; Auflösung</div>
     <button class="btn sec" id="b-detect" type="button" onclick="detectDevice()" style="width:100%;min-height:48px;touch-action:manipulation">📐 Gerät analysieren</button>
     <div class="ibox" id="device-info" style="display:none;margin-top:10px"></div>
@@ -790,6 +799,20 @@ video.addEventListener('error', function() {
   if (running) setTimeout(nextSite, 5000);
 });
 
+function setFit(mode) {
+  try { localStorage.setItem('kiosk_fit', mode); } catch(e) {}
+  video.style.objectFit = mode;
+  img.style.objectFit   = mode;
+  var cover   = document.getElementById('fit-cover');
+  var contain = document.getElementById('fit-contain');
+  var desc    = document.getElementById('fit-desc');
+  if (cover)   { if (mode==='cover')   cover.classList.add('active');   else cover.classList.remove('active'); }
+  if (contain) { if (mode==='contain') contain.classList.add('active'); else contain.classList.remove('active'); }
+  if (desc) desc.textContent = mode === 'cover'
+    ? 'Vollbild – Bildschirm wird vollständig gefüllt, Ränder ggf. abgeschnitten.'
+    : 'Alles sichtbar – komplettes Bild/Video, schwarze Balken möglich.';
+}
+
 function detectDevice() {
   var sw = window.screen.width, sh = window.screen.height, dpr = window.devicePixelRatio || 1;
   var ew = Math.round(sw * dpr), eh = Math.round(sh * dpr);
@@ -832,6 +855,8 @@ document.getElementById('b-add').addEventListener('click', function() {
 });
 
 load(); buildPad(); renderDots(0);
+var _fit = 'cover'; try { _fit = localStorage.getItem('kiosk_fit') || 'cover'; } catch(e) {}
+setFit(_fit);
 
 if (sites.length === 0) {
   sites = [{ type: 'cloudinary', cloudName: 'dqw5qfpe2', tag: 'kiosk', duration: 30, url: '' }];
