@@ -839,8 +839,9 @@ if (sites.length === 0) {
 
 var hasSites = sites.filter(function(s) { return s.type==='cloudinary'||isValidUrl(s.url); }).length > 0;
 var _as = false; try { _as = localStorage.getItem('kiosk_autostart') === '1'; } catch(e) {}
+var _urlAs = location.search.indexOf('autostart') !== -1;
 
-if (_as && hasSites) {
+if ((_as || _urlAs) && hasSites) {
   showOnly('s-kiosk'); startKiosk();
 } else {
   showOnly('s-start');
