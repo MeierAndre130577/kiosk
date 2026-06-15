@@ -654,7 +654,7 @@ function saveCreds() {
   localStorage.setItem('cld_cloud',  document.getElementById('cred-cloud').value.trim());
   localStorage.setItem('cld_key',    document.getElementById('cred-key').value.trim());
   localStorage.setItem('cld_secret', document.getElementById('cred-secret').value.trim());
-  toast('Zugangsdaten gespeichert ✓');
+  toast(`Zugangsdaten gespeichert ✓ (Key: …${ckey().slice(-4)})`);
 }
 
 // ── INIT ───────────────────────────────────────────────────
