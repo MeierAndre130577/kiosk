@@ -206,38 +206,43 @@
 
   .ulist { display: -webkit-flex; display: flex; -webkit-flex-direction: column; flex-direction: column; }
   .ulist > * + * { margin-top: 10px; }
-  .ucard {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: var(--r); padding: 12px;
-    display: -webkit-flex; display: flex; -webkit-align-items: flex-start; align-items: flex-start;
-  }
-  .ucard > * + * { margin-left: 10px; }
-  .unum {
-    width: 28px; height: 28px; border-radius: 50%;
-    background: var(--surface2); border: 1px solid var(--border);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 12px; color: var(--text-dim); flex-shrink: 0; margin-top: 8px;
-  }
-  .ufields { -webkit-flex: 1; flex: 1; display: -webkit-flex; display: flex; -webkit-flex-direction: column; flex-direction: column; min-width: 0; }
-  .ufields > * + * { margin-top: 8px; }
-  .urow { display: -webkit-flex; display: flex; -webkit-align-items: center; align-items: center; }
-  .urow > * + * { margin-left: 8px; }
+  .ucard { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; }
 
-  /* Typ-Umschalter Website / Video */
-  .type-toggle {
-    display: flex; border-radius: 8px; overflow: hidden;
-    border: 1px solid var(--border);
+  .ucard-head {
+    display: -webkit-flex; display: flex; -webkit-align-items: center; align-items: center;
+    padding: 10px 12px; border-bottom: 1px solid var(--border);
   }
-  .ttbtn {
-    -webkit-flex: 1; flex: 1; padding: 9px 4px; font-size: 12px; font-weight: 600; cursor: pointer;
-    background: var(--surface2); color: var(--text-dim); border: none;
+  .ucard-head > * + * { margin-left: 8px; }
+  .unum {
+    width: 24px; height: 24px; border-radius: 50%;
+    background: var(--surface2); border: 1px solid var(--border);
     display: -webkit-flex; display: flex; -webkit-align-items: center; align-items: center; -webkit-justify-content: center; justify-content: center;
-    -webkit-tap-highlight-color: transparent; transition: background .15s, color .15s;
-    touch-action: manipulation;
+    font-size: 11px; color: var(--text-dim); flex-shrink: 0;
   }
-  .ttbtn > * + * { margin-left: 5px; }
-  .ttbtn + .ttbtn { border-left: 1px solid var(--border); }
-  .ttbtn.active { background: var(--accent); color: #000; }
+  .pill-group { display: -webkit-flex; display: flex; -webkit-flex: 1; flex: 1; }
+  .pill-group > * + * { margin-left: 5px; }
+  .pill {
+    padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer;
+    background: var(--surface2); color: var(--text-dim); border: 1px solid var(--border);
+    -webkit-tap-highlight-color: transparent; touch-action: manipulation; min-height: 34px;
+  }
+  .pill.active { background: rgba(0,200,255,.15); border-color: var(--accent); color: var(--accent); }
+  .dbtn {
+    background: var(--surface2); border: 1px solid var(--border);
+    color: var(--text-dim); border-radius: 8px;
+    width: 34px; height: 34px; cursor: pointer; flex-shrink: 0;
+    display: -webkit-flex; display: flex; -webkit-align-items: center; align-items: center; -webkit-justify-content: center; justify-content: center;
+    font-size: 14px; -webkit-tap-highlight-color: transparent;
+  }
+  .dbtn:active { background: var(--danger); color: #fff; border-color: var(--danger); }
+
+  .ucard-body { padding: 12px; display: -webkit-flex; display: flex; -webkit-flex-direction: column; flex-direction: column; }
+  .ucard-body > * + * { margin-top: 10px; }
+  .ufield { display: -webkit-flex; display: flex; -webkit-flex-direction: column; flex-direction: column; }
+  .ufield > * + * { margin-top: 4px; }
+  .flbl { font-size: 11px; color: var(--text-dim); font-weight: 600; letter-spacing: .04em; }
+  .dur-row { display: -webkit-flex; display: flex; -webkit-align-items: center; align-items: center; }
+  .dur-row > * + * { margin-left: 8px; }
 
   .inp {
     background: var(--surface2); border: 1px solid var(--border);
@@ -247,16 +252,19 @@
   }
   .inp:focus { border-color: var(--accent); }
   .inp::placeholder { color: var(--text-dim); }
-  .dur-f { width: 76px; text-align: center; flex-shrink: 0; }
-  .dlbl { font-size: 12px; color: var(--text-dim); white-space: nowrap; }
-  .dbtn {
-    background: var(--surface2); border: 1px solid var(--border);
-    color: var(--text-dim); border-radius: 8px;
-    width: 44px; height: 44px; cursor: pointer; flex-shrink: 0; margin-top: 2px;
-    display: flex; align-items: center; justify-content: center; font-size: 16px;
-    -webkit-tap-highlight-color: transparent;
+  .dur-f { width: 72px; text-align: center; flex-shrink: 0; }
+  .dlbl { font-size: 13px; color: var(--text-dim); white-space: nowrap; }
+
+  /* Typ-Umschalter im Wiedergabe-Bereich */
+  .type-toggle { display: -webkit-flex; display: flex; border-radius: 8px; overflow: hidden; border: 1px solid var(--border); }
+  .ttbtn {
+    -webkit-flex: 1; flex: 1; padding: 7px 10px; font-size: 12px; font-weight: 600; cursor: pointer;
+    background: var(--surface2); color: var(--text-dim); border: none;
+    display: -webkit-flex; display: flex; -webkit-align-items: center; align-items: center; -webkit-justify-content: center; justify-content: center;
+    -webkit-tap-highlight-color: transparent; touch-action: manipulation; min-height: 40px;
   }
-  .dbtn:active { background: var(--danger); color: #fff; border-color: var(--danger); }
+  .ttbtn + .ttbtn { border-left: 1px solid var(--border); }
+  .ttbtn.active { background: var(--accent); color: #000; }
 
   .addbtn {
     background: var(--surface); border: 2px dashed var(--border);
@@ -644,29 +652,32 @@ function renderList() {
       c.className = 'ucard';
       var isCloud = (t === 'cloudinary');
       var fields = isCloud
-        ? '<div class="urow"><input class="inp" type="text" inputmode="text" placeholder="Cloud Name (z.B. abc123)" value="' + esc(s.cloudName||'') + '" data-i="' + i + '" data-f="cloudName"></div>' +
-          '<div class="urow"><input class="inp" type="text" inputmode="text" placeholder="Tag (z.B. kiosk)" value="' + esc(s.tag||'kiosk') + '" data-i="' + i + '" data-f="tag"></div>'
-        : '<div class="urow"><input class="inp" type="url" inputmode="url" placeholder="https://beispiel.de" value="' + esc(s.url||'') + '" data-i="' + i + '" data-f="url"></div>';
-      var durField = '<div class="urow"><input class="inp dur-f" type="number" inputmode="numeric" min="' + MIN_DUR + '" max="3600" value="' + (s.duration||30) + '" data-i="' + i + '" data-f="dur"><span class="dlbl">' + (isCloud ? 'Sek. pro Bild' : 'Sek. anzeigen') + '</span></div>';
+        ? '<div class="ufield"><span class="flbl">Cloud Name</span><input class="inp" type="text" inputmode="text" placeholder="z.B. abc123" value="' + esc(s.cloudName||'') + '" data-i="' + i + '" data-f="cloudName"></div>' +
+          '<div class="ufield"><span class="flbl">Tag</span><input class="inp" type="text" inputmode="text" placeholder="z.B. kiosk" value="' + esc(s.tag||'kiosk') + '" data-i="' + i + '" data-f="tag"></div>'
+        : '<div class="ufield"><span class="flbl">URL</span><input class="inp" type="url" inputmode="url" placeholder="https://beispiel.de" value="' + esc(s.url||'') + '" data-i="' + i + '" data-f="url"></div>';
+      var durField =
+        '<div class="ufield"><span class="flbl">' + (isCloud ? 'Sekunden pro Bild' : 'Anzeigedauer') + '</span>' +
+        '<div class="dur-row"><input class="inp dur-f" type="number" inputmode="numeric" min="' + MIN_DUR + '" max="3600" value="' + (s.duration||30) + '" data-i="' + i + '" data-f="dur"><span class="dlbl">Sekunden</span></div></div>';
       c.innerHTML =
-        '<div class="unum">' + (i+1) + '</div>' +
-        '<div class="ufields">' +
-          '<div class="type-toggle">' +
-            '<button class="ttbtn' + (!isCloud?' active':'') + '" type="button" data-i="' + i + '" data-type="url">&#127760; Website</button>' +
-            '<button class="ttbtn' + (isCloud?' active':'') + '" type="button" data-i="' + i + '" data-type="cloudinary">&#9729; Ordner</button>' +
-          '</div>' + fields + durField +
+        '<div class="ucard-head">' +
+          '<div class="unum">' + (i+1) + '</div>' +
+          '<div class="pill-group">' +
+            '<button class="pill' + (!isCloud?' active':'') + '" type="button" data-i="' + i + '" data-type="url">&#127760; Website</button>' +
+            '<button class="pill' + (isCloud?' active':'') + '" type="button" data-i="' + i + '" data-type="cloudinary">&#9729; Ordner</button>' +
+          '</div>' +
+          '<button class="dbtn" type="button" data-del="' + i + '">&#10005;</button>' +
         '</div>' +
-        '<button class="dbtn" type="button" data-del="' + i + '">&#10005;</button>';
+        '<div class="ucard-body">' + fields + durField + '</div>';
       ul.appendChild(c);
     })(i);
   }
-  var ttbtns = ul.querySelectorAll('.ttbtn');
-  for (var j = 0; j < ttbtns.length; j++) {
+  var pills = ul.querySelectorAll('.pill');
+  for (var j = 0; j < pills.length; j++) {
     (function(btn) {
       btn.addEventListener('click', function() {
         syncFields(); sites[parseInt(btn.getAttribute('data-i'))].type = btn.getAttribute('data-type'); renderList();
       });
-    })(ttbtns[j]);
+    })(pills[j]);
   }
   var inps = ul.querySelectorAll('.inp');
   for (var k = 0; k < inps.length; k++) {
