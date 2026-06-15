@@ -92,15 +92,25 @@
 
   .media-toolbar { display: flex; gap: 8px; align-items: center; margin-bottom: 12px; flex-wrap: wrap; }
   .media-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
-  .media-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
-  .media-card.is-live { border-color: rgba(34,197,94,.4); }
+  .folder-section { padding: 12px; border-radius: var(--r); border: 2px dashed transparent; transition: border-color .2s, background .2s; }
+  .folder-section.drag-over { border-color: var(--accent); background: rgba(0,200,255,.04); }
+
+  .media-card { height: 195px; perspective: 800px; cursor: grab; }
+  .media-card:active { cursor: grabbing; }
+  .card-inner { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; transition: transform .35s; }
+  .card-inner.flipped { transform: rotateY(180deg); }
+  .card-front { position: absolute; inset: 0; backface-visibility: hidden; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+  .media-card.is-live .card-front { border-color: rgba(34,197,94,.4); }
+  .card-back { position: absolute; inset: 0; backface-visibility: hidden; transform: rotateY(180deg); background: var(--surface2); border: 1px solid var(--danger); border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 16px; text-align: center; }
+  .back-name { font-size: 11px; color: var(--dim); word-break: break-all; line-height: 1.4; }
+
   .media-thumb-wrap { position: relative; }
-  .media-thumb { width: 100%; height: 100px; object-fit: cover; background: #000; display: block; }
-  .media-thumb-fb { width: 100%; height: 100px; background: #111; display: none; align-items: center; justify-content: center; font-size: 28px; color: var(--dim); }
-  .media-info { padding: 8px; }
-  .media-name { font-size: 11px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 3px; }
-  .media-meta { font-size: 10px; color: var(--dim); margin-bottom: 6px; }
-  .media-acts { display: flex; gap: 4px; flex-wrap: wrap; }
+  .media-thumb { width: 100%; height: 110px; object-fit: cover; background: #000; display: block; }
+  .media-thumb-fb { width: 100%; height: 110px; background: #111; display: none; align-items: center; justify-content: center; font-size: 28px; color: var(--dim); }
+  .media-info { padding: 8px; cursor: pointer; }
+  .media-name { font-size: 11px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 2px; }
+  .media-meta { font-size: 10px; color: var(--dim); }
+  .media-hint { font-size: 9px; color: var(--dim); margin-top: 3px; opacity: .6; }
 
   /* ── Config ── */
   .site-item { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 12px; margin-bottom: 8px; }
@@ -334,8 +344,25 @@ async function uploadFiles(files) {
   if (done > 0) { toast(`${done} Datei(en) nach ${uploadDest} hochgeladen ✓`); renderMedia(allMedia); }
 }
 
+// ── Drag & Drop Setup ──────────────────────────────────────
+function setupDragDrop() {
+  document.querySelectorAll('.folder-section[data-folder]').forEach(section => {
+    const targetFolder = section.dataset.folder;
+    section.addEventListener('dragover', e => { e.preventDefault(); section.classList.add('drag-over'); });
+    section.addEventListener('dragleave', e => { if (!section.contains(e.relatedTarget)) section.classList.remove('drag-over'); });
+    section.addEventListener('drop', e => {
+      e.preventDefault(); section.classList.remove('drag-over');
+      try {
+        const data = JSON.parse(e.dataTransfer.getData('text'));
+        if (data.folder !== targetFolder) moveToFolder(data.pid, data.rt, targetFolder);
+      } catch(err) {}
+    });
+  });
+}
+
 // ── Cloudinary: Verschieben (rename) ──────────────────────
 async function moveToFolder(publicId, resourceType, targetFolder) {
+  toast('Verschiebe…');
   const filename = publicId.split('/').pop();
   const newPublicId = targetFolder + '/' + filename;
   const ts = Math.round(Date.now() / 1000);
@@ -346,13 +373,15 @@ async function moveToFolder(publicId, resourceType, targetFolder) {
   form.append('timestamp', ts);
   form.append('api_key', ckey());
   form.append('signature', sig);
-  const r = await fetch(`https://api.cloudinary.com/v1_1/${cloud()}/${resourceType}/rename`, { method: 'POST', body: form });
-  const d = await r.json();
-  if (d.error) { toast('Fehler: ' + d.error.message, 'err'); return; }
-  const item = allMedia.find(i => i.public_id === publicId);
-  if (item) { item.public_id = newPublicId; item.kiosk_folder = targetFolder; }
-  toast(`Verschoben nach ${targetFolder} ✓`);
-  renderMedia(allMedia);
+  try {
+    const r = await fetch(`https://api.cloudinary.com/v1_1/${cloud()}/${resourceType}/rename`, { method: 'POST', body: form });
+    const d = await r.json();
+    if (d.error) { toast('Fehler: ' + d.error.message, 'err'); return; }
+    const item = allMedia.find(i => i.public_id === publicId);
+    if (item) { item.public_id = newPublicId; item.kiosk_folder = targetFolder; }
+    toast(`Verschoben nach ${targetFolder === 'Sielaff_Live' ? '▶ Live' : '📦 Store'} ✓`);
+    renderMedia(allMedia);
+  } catch(e) { toast('Fehler beim Verschieben', 'err'); }
 }
 
 // ── Cloudinary: Löschen (Upload API destroy) ───────────────
@@ -458,47 +487,55 @@ function renderMedia(items) {
   const makeCards = (list, folder) => list.map(item => {
     const isVideo = item.resource_type === 'video';
     const thumb = isVideo
-      ? `https://res.cloudinary.com/${cloud()}/video/upload/w_180,h_100,c_fill,so_0/${item.public_id}.jpg`
-      : `https://res.cloudinary.com/${cloud()}/image/upload/w_180,h_100,c_fill/${item.public_id}.${item.format || 'jpg'}`;
+      ? `https://res.cloudinary.com/${cloud()}/video/upload/w_180,h_110,c_fill,so_0/${item.public_id}.jpg`
+      : `https://res.cloudinary.com/${cloud()}/image/upload/w_180,h_110,c_fill/${item.public_id}.${item.format || 'jpg'}`;
     const kb = Math.round((item.bytes || 0) / 1024);
     const size = kb > 1024 ? (kb / 1024).toFixed(1) + ' MB' : kb + ' KB';
-    const pid = item.public_id.replace(/'/g, "\\'");
+    const pid = item.public_id.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
     const rt = item.resource_type;
-    const isLive = folder === 'Sielaff_Live';
-    return `<div class="media-card${isLive ? ' is-live' : ''}">
-      <div class="media-thumb-wrap">
-        <img class="media-thumb" src="${thumb}" alt=""
-          onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-        <div class="media-thumb-fb">${isVideo ? '▶' : '🖼'}</div>
-      </div>
-      <div class="media-info">
-        <div class="media-name" title="${item.public_id}">${item.public_id.split('/').pop()}</div>
-        <div class="media-meta">${(item.format || '').toUpperCase()} · ${size}</div>
-        <div class="media-acts">
-          ${isLive
-            ? `<button class="btn sec sml" onclick="moveToFolder('${pid}','${rt}','Sielaff_Store')">→ Store</button>`
-            : `<button class="btn pri sml" onclick="moveToFolder('${pid}','${rt}','Sielaff_Live')">→ Live</button>`}
-          <button class="btn dan sml" onclick="deleteFile('${pid}','${rt}')">🗑</button>
+    const filename = item.public_id.split('/').pop();
+    const cardId = 'c' + Math.random().toString(36).slice(2);
+    const dragData = JSON.stringify({pid: item.public_id, rt: item.resource_type, folder}).replace(/"/g, '&quot;');
+    return `<div class="media-card${folder === 'Sielaff_Live' ? ' is-live' : ''}"
+      draggable="true"
+      ondragstart="event.dataTransfer.setData('text',JSON.stringify({pid:'${pid}',rt:'${rt}',folder:'${folder}'}))">
+      <div class="card-inner" id="${cardId}">
+        <div class="card-front">
+          <img class="media-thumb" src="${thumb}" alt=""
+            onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <div class="media-thumb-fb">${isVideo ? '▶' : '🖼'}</div>
+          <div class="media-info" onclick="document.getElementById('${cardId}').classList.toggle('flipped')">
+            <div class="media-name" title="${filename}">${filename}</div>
+            <div class="media-meta">${(item.format || '').toUpperCase()} · ${size}</div>
+            <div class="media-hint">antippen zum Löschen</div>
+          </div>
+        </div>
+        <div class="card-back">
+          <div class="back-name">${filename}</div>
+          <button class="btn dan" onclick="deleteFile('${pid}','${rt}')">🗑 Löschen</button>
+          <button class="btn sec sml" onclick="document.getElementById('${cardId}').classList.remove('flipped')">Abbrechen</button>
         </div>
       </div>
     </div>`;
   }).join('');
 
   grid.innerHTML =
-    `<div class="folder-section">
+    `<div class="folder-section" id="drop-live" data-folder="Sielaff_Live">
       <div class="folder-header">
         <span class="folder-badge badge-live">▶ Live</span>
         <span class="folder-count">${live.length} Datei(en) — wird auf Displays abgespielt</span>
       </div>
-      <div class="media-grid">${live.length ? makeCards(live, 'Sielaff_Live') : '<div class="empty" style="padding:20px">Keine Live-Dateien.</div>'}</div>
+      <div class="media-grid">${live.length ? makeCards(live, 'Sielaff_Live') : '<div class="empty" style="padding:20px">Hierher ziehen um Live zu setzen.</div>'}</div>
     </div>
-    <div class="folder-section">
+    <div class="folder-section" id="drop-store" data-folder="Sielaff_Store">
       <div class="folder-header">
         <span class="folder-badge badge-store">📦 Store</span>
         <span class="folder-count">${store.length} Datei(en) — geparkt</span>
       </div>
-      <div class="media-grid">${store.length ? makeCards(store, 'Sielaff_Store') : '<div class="empty" style="padding:20px">Keine Store-Dateien.</div>'}</div>
+      <div class="media-grid">${store.length ? makeCards(store, 'Sielaff_Store') : '<div class="empty" style="padding:20px">Hierher ziehen zum Parken.</div>'}</div>
     </div>`;
+
+  setupDragDrop();
 }
 
 async function deleteFile(publicId, resourceType) {
