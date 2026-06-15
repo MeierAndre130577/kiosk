@@ -153,10 +153,11 @@
 
 <!-- DISPLAYS -->
 <section id="tab-displays" class="active">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
     <div class="stitle" style="margin:0">Gemeldete Geräte</div>
     <button class="btn sec sml" onclick="loadDisplays()">↻ Aktualisieren</button>
   </div>
+  <div id="playlist-updated" style="font-size:11px;color:var(--dim);margin-bottom:14px">Playlist: wird geladen…</div>
   <div id="devices-grid" class="devices-grid"><div class="empty">Lade…</div></div>
 </section>
 
@@ -616,6 +617,13 @@ async function getHeartbeats() {
 // ── DISPLAYS ───────────────────────────────────────────────
 async function loadDisplays() {
   document.getElementById('devices-grid').innerHTML = '<div class="empty"><div class="spin"></div></div>';
+  fetch(cacheUrl()).then(r => r.json()).then(d => {
+    if (d.updated) {
+      const dt = new Date(d.updated);
+      const el = document.getElementById('playlist-updated');
+      if (el) el.textContent = 'Playlist zuletzt aktualisiert: ' + dt.toLocaleString('de-AT') + ' (' + d.resources.filter(r => r.kiosk_folder === 'Sielaff_Live').length + ' Dateien Live)';
+    }
+  }).catch(() => {});
   try {
     const hb = await getHeartbeats();
     const ids = Object.keys(hb);
