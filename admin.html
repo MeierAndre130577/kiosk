@@ -400,7 +400,21 @@ async function moveToFolder(publicId, resourceType, targetFolder) {
       })
     });
     if (r.status === 204) {
-      toast(`Verschoben nach ${targetFolder === 'Sielaff_Live' ? '▶ Live' : '📦 Store'} ✓`);
+      toast(`Verschoben ✓ — warte auf Sync…`);
+      const currentUpdated = (await fetch(cacheUrl()).then(r => r.json()).catch(() => ({}))).updated || '';
+      let tries = 0;
+      const poll = setInterval(async () => {
+        tries++;
+        const d = await fetch(cacheUrl()).then(r => r.json()).catch(() => ({}));
+        if (d.updated && d.updated !== currentUpdated) {
+          clearInterval(poll);
+          allMedia = []; loadAllMedia();
+          toast(`Verschoben nach ${targetFolder === 'Sielaff_Live' ? '▶ Live' : '📦 Store'} ✓`);
+        } else if (tries >= 36) {
+          clearInterval(poll);
+          toast('Sync dauert länger — bitte ↻ Laden klicken', 'err');
+        }
+      }, 5000);
     } else {
       const err = await r.json().catch(() => ({}));
       toast('GitHub Fehler: ' + (err.message || r.status), 'err');
