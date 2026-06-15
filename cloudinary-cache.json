@@ -1,6 +1,25 @@
 {
   "resources": [
     {
+      "asset_id": "62718cd6790f4badfdb4453bdd97771c",
+      "public_id": "SiLine SiOne M Softdrop - Einfach Mehrweg",
+      "format": "mp4",
+      "version": 1781539028,
+      "resource_type": "video",
+      "type": "upload",
+      "created_at": "2026-06-15T15:57:08Z",
+      "bytes": 18029582,
+      "width": 1800,
+      "height": 1080,
+      "asset_folder": "Sielaff",
+      "display_name": "SiLine SiOne M Softdrop - Einfach Mehrweg",
+      "url": "http://res.cloudinary.com/dqw5qfpe2/video/upload/v1781539028/SiLine%20SiOne%20M%20Softdrop%20-%20Einfach%20Mehrweg.mp4",
+      "secure_url": "https://res.cloudinary.com/dqw5qfpe2/video/upload/v1781539028/SiLine%20SiOne%20M%20Softdrop%20-%20Einfach%20Mehrweg.mp4",
+      "tags": [
+        "kiosk"
+      ]
+    },
+    {
       "asset_id": "faa089f2f401c1e2d8b9522ea0d811dc",
       "public_id": "e191f6a1-f379-4527-b3a4-e46a181abe0e_ad5jwd",
       "format": "png",
@@ -47,5 +66,5 @@
       }
     }
   ],
-  "updated": "2026-06-15T15:49:03Z"
+  "updated": "2026-06-15T15:57:42Z"
 }
