@@ -1,0 +1,6 @@
+{
+  "sites": [
+    { "type": "cloudinary", "cloudName": "dqw5qfpe2", "tag": "kiosk", "duration": 30, "url": "" }
+  ],
+  "fit": "cover"
+}

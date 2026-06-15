@@ -983,10 +983,23 @@ if (sites.length === 0) { sites = DEFAULT_SITES.slice(); }
 
 var _urlAs = location.search.indexOf('autostart') !== -1;
 
+function configUrl() {
+  var base = location.href.split('?')[0];
+  if (base.charAt(base.length - 1) !== '/') base += '/';
+  return base + 'config.json';
+}
+
 if (_urlAs) {
-  /* Dumb-Display-Modus: immer hardcodierte Config, kein localStorage */
-  sites = DEFAULT_SITES.slice();
-  showOnly('s-kiosk'); startKiosk();
+  showOnly('s-kiosk');
+  fetchJSON(configUrl()).then(function(cfg) {
+    if (cfg.sites && cfg.sites.length) sites = cfg.sites;
+    else sites = DEFAULT_SITES.slice();
+    if (cfg.fit) setFit(cfg.fit);
+    startKiosk();
+  }).catch(function() {
+    sites = DEFAULT_SITES.slice();
+    startKiosk();
+  });
 } else {
   var hasSites = sites.filter(function(s) { return s.type==='cloudinary'||isValidUrl(s.url); }).length > 0;
   var _as = false; try { _as = localStorage.getItem('kiosk_autostart') === '1'; } catch(e) {}
