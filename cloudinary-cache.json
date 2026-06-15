@@ -57,7 +57,7 @@
     },
     {
       "asset_id": "ac6013a7e73f7c139ae19e252cb55a6c",
-      "public_id": "Sielaff_Store/Logo",
+      "public_id": "Sielaff_Live/Logo",
       "format": "mp4",
       "version": 1781540848,
       "resource_type": "video",
@@ -66,15 +66,15 @@
       "bytes": 470894,
       "width": 480,
       "height": 800,
-      "asset_folder": "Sielaff_Store",
+      "asset_folder": "Sielaff_Live",
       "display_name": "Logo",
-      "url": "http://res.cloudinary.com/dqw5qfpe2/video/upload/v1781540848/Sielaff_Store/Logo.mp4",
-      "secure_url": "https://res.cloudinary.com/dqw5qfpe2/video/upload/v1781540848/Sielaff_Store/Logo.mp4",
+      "url": "http://res.cloudinary.com/dqw5qfpe2/video/upload/v1781540848/Sielaff_Live/Logo.mp4",
+      "secure_url": "https://res.cloudinary.com/dqw5qfpe2/video/upload/v1781540848/Sielaff_Live/Logo.mp4",
       "last_updated": {
-        "public_id_updated_at": "2026-06-15T18:42:25+00:00",
-        "updated_at": "2026-06-15T18:42:25+00:00"
+        "public_id_updated_at": "2026-06-15T19:19:02+00:00",
+        "updated_at": "2026-06-15T19:19:02+00:00"
       },
-      "kiosk_folder": "Sielaff_Store"
+      "kiosk_folder": "Sielaff_Live"
     },
     {
       "asset_id": "eeeeedf837db3985e608f1168d64f845",
@@ -136,5 +136,5 @@
       "kiosk_folder": "Sielaff_Store"
     }
   ],
-  "updated": "2026-06-15T18:58:04Z"
+  "updated": "2026-06-15T19:19:04Z"
 }
