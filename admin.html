@@ -644,6 +644,7 @@ async function loadDisplays() {
         </div>
         <div class="device-meta">
           <strong>Zuletzt gesehen:</strong> ${ago}<br>
+          <strong>Playlist:</strong> ${d.playlistUpdated ? new Date(d.playlistUpdated).toLocaleString('de-AT') : '–'}<br>
           <strong>Browser:</strong> ${d.browser || '–'}<br>
           <strong>OS:</strong> ${d.os || '–'}<br>
           <strong>Auflösung:</strong> ${d.screen || '–'}<br>

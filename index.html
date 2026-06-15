@@ -186,16 +186,18 @@ function versionUrl() { return baseUrl() + 'version.txt?t=' + Date.now(); }
 
 /* ── Heartbeat ─────────────────────────────────────────── */
 var loadedVersion = '';
+var playlistUpdated = '';
 
 function sendHeartbeat() {
   var ua = navigator.userAgent;
   var myData = {
-    id:       DEVICE_ID,
-    lastSeen: new Date().toISOString(),
-    browser:  detectBrowser(ua),
-    os:       detectOS(ua),
-    screen:   window.screen.width + 'x' + window.screen.height,
-    version:  loadedVersion
+    id:              DEVICE_ID,
+    lastSeen:        new Date().toISOString(),
+    browser:         detectBrowser(ua),
+    os:              detectOS(ua),
+    screen:          window.screen.width + 'x' + window.screen.height,
+    version:         loadedVersion,
+    playlistUpdated: playlistUpdated
   };
   var gistUrl = 'https://api.github.com/gists/' + GIST_ID;
   var auth = { 'Authorization': 'token ' + GIST_TOKEN, 'Content-Type': 'application/json' };
@@ -292,6 +294,7 @@ function expandSites(list) {
       (function(cn, dur) {
         var url = baseUrl() + 'cloudinary-cache.json?t=' + Date.now();
         promises.push(fetchJSON(url).then(function(data) {
+          if (data.updated) playlistUpdated = data.updated;
           var res = data.resources || [];
           for (var r = 0; r < res.length; r++) {
             var item = res[r];
