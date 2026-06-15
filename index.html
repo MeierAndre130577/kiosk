@@ -407,8 +407,7 @@
         </button>
         <div class="acc-body" style="display:none">
           <div class="acc-row"><strong>🌐 Website</strong> — Webseite im iframe. YouTube/Vimeo-Links werden automatisch zu Embed-URLs mit Autoplay umgewandelt.</div>
-          <div class="acc-row"><strong>🎬 Video</strong> — direkte .mp4-URL (z.B. von Cloudinary, eigenem Server).</div>
-          <div class="acc-row"><strong>☁️ Ordner</strong> — alle Medien eines Cloudinary-Tags automatisch abspielen. In Cloudinary: Settings → Security → Resource list deaktivieren, dann Tag vergeben.</div>
+          <div class="acc-row"><strong>☁️ Ordner</strong> — alle Videos und Bilder eines Cloudinary-Tags automatisch abspielen. In Cloudinary: Settings → Security → Resource list deaktivieren, dann Tag vergeben.</div>
         </div>
       </div>
       <div class="acc-item">
@@ -482,7 +481,9 @@ function load() {
   try {
     var d = localStorage.getItem('kiosk_sites');
     if (d) { sites = JSON.parse(d); }
-    for (var i = 0; i < sites.length; i++) { if (!sites[i].type) sites[i].type = 'url'; }
+    for (var i = 0; i < sites.length; i++) {
+      if (!sites[i].type || sites[i].type === 'video') sites[i].type = 'url';
+    }
   } catch(e) {}
 }
 
@@ -641,22 +642,18 @@ function renderList() {
       var t = s.type || 'url';
       var c = document.createElement('div');
       c.className = 'ucard';
-      var fields = '';
-      if (t === 'cloudinary') {
-        fields = '<div class="urow"><input class="inp" type="text" inputmode="text" placeholder="Cloud Name (z.B. abc123)" value="' + esc(s.cloudName||'') + '" data-i="' + i + '" data-f="cloudName"></div>' +
-                 '<div class="urow"><input class="inp" type="text" inputmode="text" placeholder="Tag (z.B. kiosk)" value="' + esc(s.tag||'kiosk') + '" data-i="' + i + '" data-f="tag"></div>';
-      } else {
-        fields = '<div class="urow"><input class="inp" type="url" inputmode="url" placeholder="' + (t === 'video' ? 'https://res.cloudinary.com/.../video.mp4' : 'https://beispiel.de') + '" value="' + esc(s.url||'') + '" data-i="' + i + '" data-f="url"></div>';
-      }
-      var durField = t === 'video' ? '' :
-        '<div class="urow"><input class="inp dur-f" type="number" inputmode="numeric" min="' + MIN_DUR + '" max="3600" value="' + (s.duration||30) + '" data-i="' + i + '" data-f="dur"><span class="dlbl">' + (t === 'cloudinary' ? 'Sek. pro Bild' : 'Sek. anzeigen') + '</span></div>';
+      var isCloud = (t === 'cloudinary');
+      var fields = isCloud
+        ? '<div class="urow"><input class="inp" type="text" inputmode="text" placeholder="Cloud Name (z.B. abc123)" value="' + esc(s.cloudName||'') + '" data-i="' + i + '" data-f="cloudName"></div>' +
+          '<div class="urow"><input class="inp" type="text" inputmode="text" placeholder="Tag (z.B. kiosk)" value="' + esc(s.tag||'kiosk') + '" data-i="' + i + '" data-f="tag"></div>'
+        : '<div class="urow"><input class="inp" type="url" inputmode="url" placeholder="https://beispiel.de" value="' + esc(s.url||'') + '" data-i="' + i + '" data-f="url"></div>';
+      var durField = '<div class="urow"><input class="inp dur-f" type="number" inputmode="numeric" min="' + MIN_DUR + '" max="3600" value="' + (s.duration||30) + '" data-i="' + i + '" data-f="dur"><span class="dlbl">' + (isCloud ? 'Sek. pro Bild' : 'Sek. anzeigen') + '</span></div>';
       c.innerHTML =
         '<div class="unum">' + (i+1) + '</div>' +
         '<div class="ufields">' +
           '<div class="type-toggle">' +
-            '<button class="ttbtn' + (t==='url'?' active':'') + '" type="button" data-i="' + i + '" data-type="url">&#127760; Website</button>' +
-            '<button class="ttbtn' + (t==='video'?' active':'') + '" type="button" data-i="' + i + '" data-type="video">&#127902; Video</button>' +
-            '<button class="ttbtn' + (t==='cloudinary'?' active':'') + '" type="button" data-i="' + i + '" data-type="cloudinary">&#9729; Ordner</button>' +
+            '<button class="ttbtn' + (!isCloud?' active':'') + '" type="button" data-i="' + i + '" data-type="url">&#127760; Website</button>' +
+            '<button class="ttbtn' + (isCloud?' active':'') + '" type="button" data-i="' + i + '" data-type="cloudinary">&#9729; Ordner</button>' +
           '</div>' + fields + durField +
         '</div>' +
         '<button class="dbtn" type="button" data-del="' + i + '">&#10005;</button>';
