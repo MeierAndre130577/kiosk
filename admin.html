@@ -696,7 +696,7 @@ async function loadDisplays() {
       return `<div class="device-card">
         <div class="device-head">
           <div class="dot ${dotClass}"></div>
-          <div class="device-name">${d.name || 'Unbenannt'}</div>
+          <div class="device-name">${d.name || d.autoName || 'Unbenannt'}</div>
         </div>
         <div class="device-meta">
           <strong>Zuletzt gesehen:</strong> ${ago}<br>
@@ -704,6 +704,7 @@ async function loadDisplays() {
           <strong>Browser:</strong> ${d.browser || '–'}${d.touch ? ' 👆' : ''}<br>
           <strong>OS:</strong> ${d.os || '–'}${d.platform ? ' <span style="color:var(--dim)">(${d.platform})</span>' : ''}<br>
           <strong>Auflösung:</strong> ${d.screen && d.screen !== '0x0' ? d.screen : '–'}<br>
+          <strong>GPU:</strong> ${d.gpu || '–'}<br>
           <strong>Zeitzone:</strong> ${d.timezone || '–'}<br>
           <strong>Sprache:</strong> ${d.language || '–'}<br>
           <strong>ID:</strong> <span style="font-family:monospace;font-size:10px">${id.substring(0,8)}…</span>

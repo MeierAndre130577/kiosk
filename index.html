@@ -117,6 +117,28 @@ function getDeviceId() {
 }
 var DEVICE_ID = getDeviceId();
 
+/* ── GPU Erkennung (WebGL) ──────────────────────────────── */
+function getGPU() {
+  try {
+    var c = document.createElement('canvas');
+    var gl = c.getContext('webgl') || c.getContext('experimental-webgl');
+    if (!gl) return '';
+    var ext = gl.getExtension('WEBGL_debug_renderer_info');
+    var r = ext ? gl.getParameter(ext.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER);
+    return (r || '').replace(/\s*\(.*?\)/g, '').trim();
+  } catch(e) { return ''; }
+}
+
+/* ── Auto-Name aus Hardware-Fingerprint ─────────────────── */
+function getAutoName(os, gpu, scr, platform) {
+  var parts = [];
+  if (gpu) parts.push(gpu.split('/')[0].trim());
+  else if (platform && platform !== 'Win32' && platform !== 'MacIntel') parts.push(platform);
+  if (scr && scr !== '0x0') parts.push(scr);
+  if (!parts.length) parts.push(os || 'Unbekannt');
+  return parts.join(' · ');
+}
+
 /* ── Browser / OS Erkennung ────────────────────────────── */
 function detectBrowser(ua) {
   if (/CriOS/.test(ua))  return 'Chrome iOS';
@@ -190,16 +212,22 @@ var playlistUpdated = '';
 
 function sendHeartbeat() {
   var ua = navigator.userAgent;
+  var os  = detectOS(ua);
+  var scr = (window.screen.width || screen.width) + 'x' + (window.screen.height || screen.height);
+  var gpu = getGPU();
+  var plt = navigator.platform || '';
   var myData = {
     id:              DEVICE_ID,
     lastSeen:        new Date().toISOString(),
     browser:         detectBrowser(ua),
-    os:              detectOS(ua),
-    screen:          (window.screen.width || screen.width) + 'x' + (window.screen.height || screen.height),
+    os:              os,
+    screen:          scr,
     timezone:        (Intl && Intl.DateTimeFormat ? Intl.DateTimeFormat().resolvedOptions().timeZone : '') || '',
     language:        navigator.language || '',
     touch:           ('ontouchstart' in window) || (navigator.maxTouchPoints > 0),
-    platform:        navigator.platform || '',
+    platform:        plt,
+    gpu:             gpu,
+    autoName:        getAutoName(os, gpu, scr, plt),
     version:         loadedVersion,
     playlistUpdated: playlistUpdated
   };
