@@ -401,12 +401,27 @@ async function loadAllMedia() {
 async function triggerSync() {
   toast('Synchronisierung gestartet…');
   try {
+    const currentUpdated = (await fetch(cacheUrl()).then(r => r.json()).catch(() => ({}))).updated || '';
     await fetch(`https://api.github.com/repos/${REPO}/actions/workflows/sync-cloudinary.yml/dispatches`, {
       method: 'POST',
       headers: { Authorization: `token ${gh()}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({ ref: 'main' })
     });
-    setTimeout(() => { loadAllMedia(); toast('Sync abgeschlossen — Liste aktualisiert ✓'); }, 35000);
+    // Warte bis cache-Datei aktualisiert wurde (max. 3 Min.)
+    let tries = 0;
+    const poll = setInterval(async () => {
+      tries++;
+      const d = await fetch(cacheUrl()).then(r => r.json()).catch(() => ({}));
+      if (d.updated && d.updated !== currentUpdated) {
+        clearInterval(poll);
+        allMedia = [];
+        loadAllMedia();
+        toast('Sync abgeschlossen ✓');
+      } else if (tries >= 36) {
+        clearInterval(poll);
+        toast('Sync dauert länger — bitte später ↻ Laden klicken', 'err');
+      }
+    }, 5000);
   } catch(e) { toast('Sync fehlgeschlagen', 'err'); }
 }
 
