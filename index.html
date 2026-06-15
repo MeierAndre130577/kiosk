@@ -358,6 +358,10 @@
       Voraussetzung: In Cloudinary unter <strong>Settings → Security → Resource list</strong> deaktivieren, dann allen Videos denselben Tag vergeben.
     </div>
 
+    <div class="stitle">Gerät &amp; Auflösung</div>
+    <button class="btn sec" id="b-detect" type="button" onclick="detectDevice()" style="width:100%;min-height:48px;touch-action:manipulation">📐 Gerät analysieren</button>
+    <div class="ibox" id="device-info" style="display:none;margin-top:10px"></div>
+
     <div class="stitle">Entsperren im Kiosk-Modus</div>
     <div class="ibox">
       <strong>Obere linke oder rechte Ecke 3 Sekunden gedrückt halten</strong> → PIN <strong>0</strong> eingeben.
@@ -870,6 +874,44 @@ document.getElementById('b-add').addEventListener('click', () => {
     }
   }, 50);
 });
+
+function detectDevice() {
+  const sw  = window.screen.width;
+  const sh  = window.screen.height;
+  const dpr = window.devicePixelRatio || 1;
+  const ew  = Math.round(sw * dpr);
+  const eh  = Math.round(sh * dpr);
+  const landscape = sw >= sh;
+  const longSide  = Math.max(ew, eh);
+  const shortSide = Math.min(ew, eh);
+
+  // Seitenverhältnis
+  const r = longSide / shortSide;
+  let ratioStr = Math.abs(r - 16/9)  < 0.08 ? '16:9'
+               : Math.abs(r - 4/3)   < 0.08 ? '4:3'
+               : Math.abs(r - 16/10) < 0.08 ? '16:10'
+               : Math.abs(r - 21/9)  < 0.08 ? '21:9'
+               : (Math.round(r * 10) / 10) + ':1';
+
+  // Empfohlene Upload-Auflösung (nächste Standardgröße)
+  let recL, recS;
+  if      (longSide <= 1280)  { recL = 1280;  recS = 720;  }
+  else if (longSide <= 1920)  { recL = 1920;  recS = 1080; }
+  else if (longSide <= 2560)  { recL = 2560;  recS = 1440; }
+  else                        { recL = 3840;  recS = 2160; }
+  const recStr = landscape ? `${recL} × ${recS}` : `${recS} × ${recL}`;
+
+  const box = document.getElementById('device-info');
+  box.style.display = '';
+  box.innerHTML = `
+    <strong>Bildschirmgröße:</strong> ${sw} × ${sh} px<br>
+    <strong>Pixel-Dichte:</strong> ${dpr}× &nbsp;→&nbsp; Effektiv: <strong>${ew} × ${eh} px</strong><br>
+    <strong>Ausrichtung:</strong> ${landscape ? '🖥 Querformat' : '📱 Hochformat'} (${ratioStr})<br>
+    <br>
+    Empfohlene Upload-Auflösung für Cloudinary:<br>
+    <span style="font-size:17px;font-weight:700;color:var(--accent)">${recStr}</span>
+  `;
+}
 
 document.getElementById('b-save').addEventListener('click', () => {
   syncFields();
