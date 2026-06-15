@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<title>Kiosk</title>
+<style>
+  :root {
+    --bg: #0a0a0f; --surface: #13131a; --surface2: #1c1c28;
+    --accent: #00c8ff; --accent2: #7c3aed;
+    --danger: #ef4444; --success: #22c55e;
+    --text: #f0f0f8; --text-dim: #6b6b88; --border: #2a2a3d; --r: 12px;
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #f2f2f7; --surface: #ffffff; --surface2: #e8e8f0;
+      --accent: #0099cc; --accent2: #6d28d9;
+      --text: #111118; --text-dim: #6b6b88; --border: #d0d0e0;
+    }
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    width: 100%; height: 100%; overflow: hidden; background: #000;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    color: var(--text);
+    -webkit-user-select: none; user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+  }
+
+  /* ── Screens ── */
+  .screen {
+    position: fixed; inset: 0;
+    display: flex; flex-direction: column;
+    visibility: hidden; pointer-events: none;
+  }
+  .screen.show { visibility: visible; pointer-events: auto; }
+
+  /* ── START ── */
+  #s-start {
+    background: var(--bg); z-index: 80;
+    align-items: center; justify-content: center; gap: 20px;
+  }
+  #s-start .ico { font-size: 56px; }
+  #s-start h2 { font-size: 20px; font-weight: 600; }
+  #s-start p { font-size: 14px; color: var(--text-dim); text-align: center; max-width: 260px; }
+  #s-start .btn-row { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+
+  /* ── KIOSK ── */
+  #s-kiosk { background: #000; z-index: 2; }
+
+  #site-frame {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%; border: none; background: #000;
+  }
+  #site-frame.hidden { display: none; }
+
+  #site-video {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover; background: #000;
+    display: none;
+  }
+  #site-video.show { display: block; }
+
+  /* Loading spinner */
+  #frame-loading {
+    position: absolute; inset: 0; background: #000; z-index: 4;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none; transition: opacity .3s;
+  }
+  #frame-loading.show { opacity: 1; }
+  .spinner {
+    width: 42px; height: 42px;
+    border: 3px solid rgba(255,255,255,.1);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin .8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Corner zones */
+  .zone {
+    position: absolute; width: 120px; height: 120px;
+    z-index: 10; pointer-events: none;
+  }
+  #s-kiosk.show .zone { pointer-events: auto; }
+  #z-tl { top: 0; left: 0; }
+  #z-tr { top: 0; right: 0; }
+
+  /* Hold ring */
+  #hold-ring {
+    position: fixed; z-index: 20;
+    display: none; pointer-events: none;
+    transform: translate(-50%, -50%);
+  }
+  #hold-ring.show { display: block; }
+
+  /* Progress bar */
+  #prog-wrap {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    height: 3px; background: rgba(255,255,255,.08); z-index: 5; pointer-events: none;
+  }
+  #prog-bar { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); width: 0%; }
+
+  /* Site counter */
+  #site-counter {
+    position: absolute; bottom: 10px; right: 10px;
+    font-size: 11px; color: rgba(255,255,255,.22);
+    z-index: 5; pointer-events: none;
+  }
+
+  /* Video-Fehleranzeige */
+  #video-error {
+    position: absolute; inset: 0; background: #111; z-index: 4;
+    display: none; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 12px; color: #888; text-align: center; padding: 24px;
+  }
+  #video-error.show { display: flex; }
+  #video-error .ve-ico { font-size: 40px; }
+  #video-error p { font-size: 14px; line-height: 1.6; max-width: 320px; }
+  #video-error small { font-size: 12px; color: #555; }
+
+  /* ── LOCK ── */
+  #s-lock {
+    background: rgba(0,0,0,.93); z-index: 50;
+    align-items: center; justify-content: center;
+    -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+  }
+  .lbox {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 20px; padding: 32px 24px 24px;
+    width: min(300px, 88vw); text-align: center;
+  }
+  .l-ico { font-size: 40px; margin-bottom: 12px; }
+  .l-title { font-size: 18px; font-weight: 600; margin-bottom: 4px; }
+  .l-sub { font-size: 13px; color: var(--text-dim); margin-bottom: 20px; }
+  .dots { display: flex; justify-content: center; gap: 14px; margin-bottom: 20px; }
+  .dot {
+    width: 14px; height: 14px; border-radius: 50%;
+    border: 2px solid var(--border); background: transparent; transition: all .15s;
+  }
+  .dot.on { background: var(--accent); border-color: var(--accent); }
+  .pad { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; }
+  .key {
+    background: var(--surface2); border: 1px solid var(--border);
+    color: var(--text); font-size: 22px; font-weight: 500;
+    border-radius: 10px; height: 58px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+  .key:active { background: var(--accent); color: #000; border-color: var(--accent); }
+  .key.ghost { visibility: hidden; pointer-events: none; }
+  .l-err { color: var(--danger); font-size: 13px; margin-top: 10px; min-height: 18px; }
+  @keyframes shake {
+    0%,100%{transform:translateX(0)} 20%{transform:translateX(-8px)}
+    40%{transform:translateX(8px)}  60%{transform:translateX(-5px)} 80%{transform:translateX(5px)}
+  }
+  .shake { animation: shake .4s ease; }
+
+  /* ── SETTINGS ── */
+  #s-set { background: var(--bg); z-index: 60; }
+  .sh {
+    background: var(--surface); border-bottom: 1px solid var(--border);
+    padding: 12px 16px; display: flex; align-items: center;
+    justify-content: space-between; flex-shrink: 0; gap: 8px;
+  }
+  .sh h1 { font-size: 16px; font-weight: 600; }
+  .sh-btns { display: flex; gap: 8px; }
+  .sb { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 16px; }
+
+  .btn {
+    padding: 10px 16px; border-radius: 8px;
+    font-size: 14px; font-weight: 600; cursor: pointer; border: none;
+    min-height: 44px; min-width: 84px;
+    display: inline-flex; align-items: center; justify-content: center;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+  .btn:active { opacity: .75; }
+  .pri { background: var(--accent); color: #000; }
+  .sec { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+
+  .stitle {
+    font-size: 11px; font-weight: 700; letter-spacing: .08em;
+    color: var(--text-dim); text-transform: uppercase; margin: 22px 0 10px;
+  }
+  .stitle:first-child { margin-top: 0; }
+
+  .ulist { display: flex; flex-direction: column; gap: 10px; }
+  .ucard {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--r); padding: 12px;
+    display: flex; gap: 10px; align-items: flex-start;
+  }
+  .unum {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: var(--surface2); border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; color: var(--text-dim); flex-shrink: 0; margin-top: 8px;
+  }
+  .ufields { flex: 1; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+  .urow { display: flex; gap: 8px; align-items: center; }
+
+  /* Typ-Umschalter Website / Video */
+  .type-toggle {
+    display: flex; border-radius: 8px; overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .ttbtn {
+    flex: 1; padding: 9px 4px; font-size: 12px; font-weight: 600; cursor: pointer;
+    background: var(--surface2); color: var(--text-dim); border: none;
+    display: flex; align-items: center; justify-content: center; gap: 5px;
+    -webkit-tap-highlight-color: transparent; transition: background .15s, color .15s;
+    touch-action: manipulation;
+  }
+  .ttbtn + .ttbtn { border-left: 1px solid var(--border); }
+  .ttbtn.active { background: var(--accent); color: #000; }
+
+  .inp {
+    background: var(--surface2); border: 1px solid var(--border);
+    color: var(--text); border-radius: 8px; padding: 10px 12px;
+    font-size: 14px; outline: none; -webkit-appearance: none;
+    min-height: 44px; width: 100%;
+  }
+  .inp:focus { border-color: var(--accent); }
+  .inp::placeholder { color: var(--text-dim); }
+  .dur-f { width: 76px; text-align: center; flex-shrink: 0; }
+  .dlbl { font-size: 12px; color: var(--text-dim); white-space: nowrap; }
+  .dbtn {
+    background: var(--surface2); border: 1px solid var(--border);
+    color: var(--text-dim); border-radius: 8px;
+    width: 44px; height: 44px; cursor: pointer; flex-shrink: 0; margin-top: 2px;
+    display: flex; align-items: center; justify-content: center; font-size: 16px;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .dbtn:active { background: var(--danger); color: #fff; border-color: var(--danger); }
+
+  .addbtn {
+    background: var(--surface); border: 2px dashed var(--border);
+    color: var(--text-dim); border-radius: var(--r);
+    padding: 14px; width: 100%; font-size: 15px; cursor: pointer;
+    margin-top: 10px; display: flex; align-items: center;
+    justify-content: center; gap: 8px; min-height: 52px;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+  .addbtn:active { border-color: var(--accent); color: var(--accent); }
+
+  .ibox {
+    background: rgba(0,200,255,.05); border: 1px solid rgba(0,200,255,.18);
+    border-radius: var(--r); padding: 14px;
+    font-size: 13px; color: var(--text-dim); line-height: 1.65; margin-top: 8px;
+  }
+  .ibox strong { color: var(--accent); }
+
+  .wrow {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 14px; border-radius: 8px;
+    border: 1px solid var(--border); background: var(--surface2); font-size: 13px;
+  }
+  .wdot {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--text-dim); flex-shrink: 0; transition: background .3s;
+  }
+  .wdot.on { background: var(--success); box-shadow: 0 0 8px var(--success); }
+</style>
+</head>
+<body>
+
+<!-- START -->
+<div id="s-start" class="screen show">
+  <div class="ico">🖥️</div>
+  <h2>Kiosk</h2>
+  <p id="start-msg">Keine Inhalte konfiguriert.</p>
+  <div class="btn-row">
+    <button class="btn pri" id="b-start" type="button" style="display:none" onclick="startKiosk()">▶ Kiosk starten</button>
+    <button class="btn sec" id="b-open"  type="button" onclick="openSettings()">⚙️ Einstellungen</button>
+  </div>
+</div>
+
+<!-- KIOSK -->
+<div id="s-kiosk" class="screen">
+  <iframe id="site-frame"
+    sandbox="allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox"
+    allow="autoplay; fullscreen"
+    allowfullscreen></iframe>
+  <video id="site-video" autoplay muted playsinline loop></video>
+  <div id="video-error">
+    <div class="ve-ico">⚠️</div>
+    <p>Video kann nicht geladen werden.</p>
+    <small>Nur direkte .mp4-URLs funktionieren.<br>OneDrive/Dropbox-Links werden blockiert.</small>
+  </div>
+  <div id="frame-loading"><div class="spinner"></div></div>
+  <div class="zone" id="z-tl"></div>
+  <div class="zone" id="z-tr"></div>
+  <svg id="hold-ring" width="80" height="80" viewBox="0 0 80 80" aria-hidden="true">
+    <circle cx="40" cy="40" r="34" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="6"/>
+    <circle id="hc" cx="40" cy="40" r="34" fill="none" stroke="var(--accent)" stroke-width="6"
+      stroke-linecap="round" transform="rotate(-90 40 40)"/>
+  </svg>
+  <div id="prog-wrap"><div id="prog-bar"></div></div>
+  <div id="site-counter"></div>
+</div>
+
+<!-- LOCK -->
+<div id="s-lock" class="screen">
+  <div class="lbox" id="lbox">
+    <div class="l-ico">🔒</div>
+    <div class="l-title">Gesperrt</div>
+    <div class="l-sub">PIN eingeben zum Entsperren</div>
+    <div class="dots" id="dots"></div>
+    <div class="pad" id="pad"></div>
+    <div class="l-err" id="lerr"></div>
+  </div>
+</div>
+
+<!-- SETTINGS -->
+<div id="s-set" class="screen">
+  <div class="sh">
+    <h1>⚙️ Einstellungen</h1>
+    <div class="sh-btns">
+      <button class="btn sec" id="b-cancel" type="button">Abbrechen</button>
+      <button class="btn pri" id="b-save"   type="button">▶ Starten</button>
+    </div>
+  </div>
+  <div class="sb">
+    <div class="stitle">Inhalte</div>
+    <div class="ulist" id="ulist"></div>
+    <button class="addbtn" id="b-add" type="button">＋ Inhalt hinzufügen</button>
+    <button class="btn sec" id="b-persist" type="button" style="width:100%;margin-top:10px;min-height:48px;">💾 Speichern</button>
+
+    <div class="stitle">Bildschirm wach halten</div>
+    <div class="wrow"><div class="wdot" id="wdot"></div><span id="wtxt">–</span></div>
+    <div class="ibox" style="margin-top:10px">
+      <strong>Wake Lock</strong> verhindert automatisches Abdunkeln des Bildschirms.<br><br>
+      Empfohlen für Fire Tablet: Einstellungen → Display → <strong>Ruhemodus: Nie</strong>.
+    </div>
+
+    <div class="stitle">Inhalts-Typen</div>
+    <div class="ibox">
+      <strong>🌐 Website</strong> — Webseite im iframe. YouTube/Vimeo-Links werden automatisch zu Embed-URLs mit Autoplay umgewandelt.<br><br>
+      <strong>🎬 Video</strong> — direkte .mp4-URL (z.B. von Cloudinary, eigenem Server).<br><br>
+      <strong>☁️ Ordner</strong> — alle Videos eines Cloudinary-Tags automatisch abspielen.<br>
+      Voraussetzung: In Cloudinary unter <strong>Settings → Security → Resource list</strong> deaktivieren, dann allen Videos denselben Tag vergeben.
+    </div>
+
+    <div class="stitle">Entsperren im Kiosk-Modus</div>
+    <div class="ibox">
+      <strong>Obere linke oder rechte Ecke 3 Sekunden gedrückt halten</strong> → PIN <strong>0</strong> eingeben.
+    </div>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+// ── Konstanten ─────────────────────────────────────────────────────────────────
+const PIN     = '0';
+const HOLD_MS = 3000;
+const MIN_DUR = 5;
+const CIRC    = 2 * Math.PI * 34;
+
+// ── Zustand ────────────────────────────────────────────────────────────────────
+let sites       = [];   // konfigurierte Einträge (inkl. Cloudinary-Ordner)
+let activeSites = [];   // zur Laufzeit expandierte Wiedergabeliste
+let curIdx   = 0;
+let rotTimer = null;
+let rafId    = null;
+let wakeLock = null;
+let running  = false;
+let pinBuf   = '';
+
+// ── DOM-Referenzen ─────────────────────────────────────────────────────────────
+const frame      = document.getElementById('site-frame');
+const video      = document.getElementById('site-video');
+const videoError = document.getElementById('video-error');
+const loading    = document.getElementById('frame-loading');
+const progBar = document.getElementById('prog-bar');
+const counter = document.getElementById('site-counter');
+const ring    = document.getElementById('hold-ring');
+const hc      = document.getElementById('hc');
+const lbox    = document.getElementById('lbox');
+const dotsEl  = document.getElementById('dots');
+const padEl   = document.getElementById('pad');
+const lerrEl  = document.getElementById('lerr');
+
+hc.setAttribute('stroke-dasharray',  CIRC);
+hc.setAttribute('stroke-dashoffset', CIRC);
+
+// ── Screen-Manager ─────────────────────────────────────────────────────────────
+function showOnly(id) {
+  ['s-start','s-kiosk','s-lock','s-set'].forEach(s =>
+    document.getElementById(s).classList.toggle('show', s === id)
+  );
+}
+function addScreen(id) { document.getElementById(id).classList.add('show'); }
+function remScreen(id) { document.getElementById(id).classList.remove('show'); }
+
+// ── Persistenz ─────────────────────────────────────────────────────────────────
+function save() {
+  try { localStorage.setItem('kiosk_sites', JSON.stringify(sites)); } catch(_) {}
+}
+function load() {
+  try {
+    const d = localStorage.getItem('kiosk_sites');
+    if (d) sites = JSON.parse(d);
+    // Migriere alte Einträge ohne type-Feld
+    sites.forEach(s => { if (!s.type) s.type = 'url'; });
+  } catch(_) {}
+}
+
+// ── Wake Lock ──────────────────────────────────────────────────────────────────
+async function grabWake() {
+  if (!('wakeLock' in navigator)) { wakeUI(false); return; }
+  try {
+    wakeLock = await navigator.wakeLock.request('screen');
+    wakeLock.addEventListener('release', () => { wakeLock = null; wakeUI(false); });
+    wakeUI(true);
+  } catch(_) { wakeUI(false); }
+}
+function wakeUI(on) {
+  const dot = document.getElementById('wdot');
+  const txt = document.getElementById('wtxt');
+  if (dot) dot.className = 'wdot' + (on ? ' on' : '');
+  if (txt) txt.textContent = on
+    ? 'Aktiv – Bildschirm bleibt an'
+    : 'Nicht verfügbar – Ruhemodus manuell deaktivieren';
+}
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible' && !wakeLock && running) grabWake();
+});
+
+// ── Vollbild ───────────────────────────────────────────────────────────────────
+function goFull() {
+  const el  = document.documentElement;
+  const req = el.requestFullscreen || el.webkitRequestFullscreen || el.mozRequestFullScreen;
+  if (req) req.call(el).catch(() => {});
+}
+['fullscreenchange','webkitfullscreenchange','mozfullscreenchange'].forEach(ev => {
+  document.addEventListener(ev, () => {
+    const active = document.fullscreenElement
+      || document.webkitFullscreenElement
+      || document.mozFullScreenElement;
+    if (!active && running) goFull();
+  });
+});
+
+// ── Navigation blockieren ──────────────────────────────────────────────────────
+history.pushState(null, '', location.href);
+window.addEventListener('popstate',      () => history.pushState(null, '', location.href));
+window.addEventListener('beforeunload',   e => { e.preventDefault(); e.returnValue = ''; });
+document.addEventListener('contextmenu',  e => e.preventDefault());
+
+// ── Langdruck-Entsperrung ──────────────────────────────────────────────────────
+let holdTimer = null;
+let holdRAF   = null;
+let holdStart = 0;
+
+function startHold(e, zoneEl) {
+  e.preventDefault();
+  if (holdTimer) return;
+  holdStart = Date.now();
+  const r = zoneEl.getBoundingClientRect();
+  ring.style.left = (r.left + r.width  / 2) + 'px';
+  ring.style.top  = (r.top  + r.height / 2) + 'px';
+  ring.classList.add('show');
+  animRing();
+  holdTimer = setTimeout(() => {
+    cancelAnimationFrame(holdRAF);
+    hc.setAttribute('stroke-dashoffset', CIRC);
+    ring.classList.remove('show');
+    holdTimer = null;
+    openLock();
+  }, HOLD_MS);
+}
+function stopHold() {
+  if (!holdTimer) return;
+  clearTimeout(holdTimer);
+  cancelAnimationFrame(holdRAF);
+  holdTimer = null;
+  ring.classList.remove('show');
+  hc.setAttribute('stroke-dashoffset', CIRC);
+}
+function animRing() {
+  const p = Math.min((Date.now() - holdStart) / HOLD_MS, 1);
+  hc.setAttribute('stroke-dashoffset', CIRC * (1 - p));
+  if (p < 1) holdRAF = requestAnimationFrame(animRing);
+}
+// 5x schnell Mitte tippen als alternativer Entsperr-Weg
+let tapCount = 0, tapTimer = null;
+document.getElementById('s-kiosk').addEventListener('click', e => {
+  const el = e.target;
+  if (el.classList.contains('zone')) return;
+  tapCount++;
+  clearTimeout(tapTimer);
+  tapTimer = setTimeout(() => { tapCount = 0; }, 800);
+  if (tapCount >= 5) { tapCount = 0; openLock(); }
+});
+
+['z-tl','z-tr'].forEach(id => {
+  const z = document.getElementById(id);
+  z.addEventListener('touchstart',  e => startHold(e, z), { passive: false });
+  z.addEventListener('touchend',    stopHold, { passive: true });
+  z.addEventListener('touchcancel', stopHold, { passive: true });
+  z.addEventListener('mousedown',   e => startHold(e, z));
+  z.addEventListener('mouseup',     stopHold);
+  z.addEventListener('mouseleave',  stopHold);
+});
+
+// ── PIN-Eingabe ────────────────────────────────────────────────────────────────
+function renderDots(n) {
+  dotsEl.innerHTML = '';
+  for (let i = 0; i < Math.max(PIN.length, 1); i++) {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i < n ? ' on' : '');
+    dotsEl.appendChild(d);
+  }
+}
+function buildPad() {
+  ['1','2','3','4','5','6','7','8','9','','0','⌫'].forEach(k => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'key' + (k === '' ? ' ghost' : '');
+    b.textContent = k;
+    if (k !== '') b.addEventListener('click', () => numPress(k));
+    padEl.appendChild(b);
+  });
+}
+function numPress(k) {
+  pinBuf = k === '⌫' ? pinBuf.slice(0, -1) : pinBuf + k;
+  renderDots(pinBuf.length);
+  if (pinBuf.length < PIN.length) return;
+  if (pinBuf === PIN) {
+    pinBuf = '';
+    lerrEl.textContent = '';
+    remScreen('s-lock');
+    openSettings();
+  } else {
+    lbox.classList.add('shake');
+    setTimeout(() => lbox.classList.remove('shake'), 420);
+    lerrEl.textContent = 'Falscher PIN';
+    pinBuf = '';
+    renderDots(0);
+  }
+}
+document.addEventListener('keydown', e => {
+  if (!document.getElementById('s-lock').classList.contains('show')) return;
+  if (e.key >= '0' && e.key <= '9') { numPress(e.key); return; }
+  if (e.key === 'Backspace')        { numPress('⌫');  return; }
+});
+function openLock() {
+  pinBuf = '';
+  renderDots(0);
+  lerrEl.textContent = '';
+  addScreen('s-lock');
+}
+
+// ── Einstellungen ──────────────────────────────────────────────────────────────
+function openSettings() {
+  stopRotation();
+  showOnly('s-set');
+  renderList();
+  wakeUI(wakeLock !== null);
+}
+
+function renderList() {
+  const ul = document.getElementById('ulist');
+  ul.innerHTML = '';
+  sites.forEach((s, i) => {
+    const t = s.type || 'url';
+    const c = document.createElement('div');
+    c.className = 'ucard';
+
+    let fields = '';
+    if (t === 'cloudinary') {
+      fields = `
+        <div class="urow">
+          <input class="inp" type="text" inputmode="text"
+            placeholder="Cloud Name (z.B. abc123)" value="${esc(s.cloudName||'')}"
+            data-i="${i}" data-f="cloudName">
+        </div>
+        <div class="urow">
+          <input class="inp" type="text" inputmode="text"
+            placeholder="Tag (z.B. kiosk)" value="${esc(s.tag||'kiosk')}"
+            data-i="${i}" data-f="tag">
+        </div>`;
+    } else {
+      fields = `
+        <div class="urow">
+          <input class="inp" type="url" inputmode="url"
+            placeholder="${t === 'video' ? 'https://res.cloudinary.com/.../video.mp4' : 'https://beispiel.de'}"
+            value="${esc(s.url||'')}" data-i="${i}" data-f="url">
+        </div>`;
+    }
+
+    c.innerHTML = `
+      <div class="unum">${i + 1}</div>
+      <div class="ufields">
+        <div class="type-toggle">
+          <button class="ttbtn${t==='url'?' active':''}" type="button" data-i="${i}" data-type="url">🌐 Website</button>
+          <button class="ttbtn${t==='video'?' active':''}" type="button" data-i="${i}" data-type="video">🎬 Video</button>
+          <button class="ttbtn${t==='cloudinary'?' active':''}" type="button" data-i="${i}" data-type="cloudinary">☁️ Ordner</button>
+        </div>
+        ${fields}
+        <div class="urow">
+          <input class="inp dur-f" type="number" inputmode="numeric"
+            min="${MIN_DUR}" max="3600" value="${s.duration||30}" data-i="${i}" data-f="dur">
+          <span class="dlbl">Sek. pro Video</span>
+        </div>
+      </div>
+      <button class="dbtn" type="button" data-del="${i}" aria-label="Löschen">✕</button>`;
+    ul.appendChild(c);
+  });
+
+  ul.querySelectorAll('.ttbtn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      syncFields();
+      sites[+btn.dataset.i].type = btn.dataset.type;
+      renderList();
+    });
+  });
+  ul.querySelectorAll('.inp').forEach(inp => {
+    inp.addEventListener('change', syncFields);
+    inp.addEventListener('blur',   syncFields);
+  });
+  ul.querySelectorAll('.dbtn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      syncFields();
+      sites.splice(+btn.dataset.del, 1);
+      renderList();
+    });
+  });
+}
+
+function syncFields() {
+  document.querySelectorAll('#ulist .ucard').forEach((c, i) => {
+    if (!sites[i]) return;
+    const d  = c.querySelector('[data-f="dur"]');
+    const u  = c.querySelector('[data-f="url"]');
+    const cn = c.querySelector('[data-f="cloudName"]');
+    const tg = c.querySelector('[data-f="tag"]');
+    if (d)  sites[i].duration  = Math.max(MIN_DUR, parseInt(d.value) || 30);
+    if (u)  sites[i].url       = u.value.trim();
+    if (cn) sites[i].cloudName = cn.value.trim();
+    if (tg) sites[i].tag       = tg.value.trim() || 'kiosk';
+  });
+}
+
+function esc(s) {
+  return String(s)
+    .replace(/&/g,'&amp;').replace(/"/g,'&quot;')
+    .replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function isValidUrl(u) {
+  try {
+    const url = new URL(u);
+    return url.protocol === 'http:' || url.protocol === 'https:';
+  } catch(_) { return false; }
+}
+
+// Wandelt YouTube/Vimeo-Links automatisch in Embed-URLs um (für Website-Typ)
+function resolveWebUrl(url) {
+  // YouTube: watch-Link → Embed mit Autoplay, Mute, Loop
+  const yt = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]+)/);
+  if (yt) {
+    return `https://www.youtube-nocookie.com/embed/${yt[1]}?autoplay=1&mute=1&loop=1&playlist=${yt[1]}&controls=0&disablekb=1`;
+  }
+  // Vimeo: normale URL → Embed
+  const vi = url.match(/vimeo\.com\/(\d+)/);
+  if (vi) {
+    return `https://player.vimeo.com/video/${vi[1]}?autoplay=1&muted=1&loop=1&background=1`;
+  }
+  return url;
+}
+
+// ── Cloudinary-Ordner expandieren ─────────────────────────────────────────────
+async function expandSites(list) {
+  const result = [];
+  for (const s of list) {
+    if (s.type === 'cloudinary' && s.cloudName && s.tag) {
+      try {
+        const url  = `https://res.cloudinary.com/${s.cloudName}/video/list/${s.tag}.json`;
+        const resp = await fetch(url);
+        if (!resp.ok) throw new Error(resp.status);
+        const data = await resp.json();
+        for (const r of (data.resources || [])) {
+          result.push({
+            type:     'video',
+            url:      `https://res.cloudinary.com/${s.cloudName}/video/upload/${r.public_id}.${r.format}`,
+            duration: s.duration
+          });
+        }
+      } catch(e) {
+        console.warn('Cloudinary fetch fehlgeschlagen:', e);
+      }
+    } else {
+      result.push(s);
+    }
+  }
+  return result;
+}
+
+// ── Kiosk / Rotation ───────────────────────────────────────────────────────────
+async function startKiosk() {
+  syncFields();
+  sites = sites.filter(s => s.type === 'cloudinary' || isValidUrl(s.url));
+  save();
+  if (sites.length === 0) { running = false; showOnly('s-start'); return; }
+
+  showOnly('s-kiosk');
+  loading.classList.add('show');
+
+  activeSites = await expandSites(sites);
+
+  if (activeSites.length === 0) { running = false; showOnly('s-start'); return; }
+  running = true;
+  curIdx  = 0;
+  goFull();
+  grabWake();
+  showSite(0);
+}
+
+function showSite(idx) {
+  curIdx = idx;
+  const s = activeSites[idx];
+
+  if (s.type === 'video') {
+    frame.classList.add('hidden');
+    loading.classList.remove('show');
+    videoError.classList.remove('show');
+    video.muted = true;
+    video.loop  = true;
+    video.src   = s.url;
+    video.classList.add('show');
+    video.load();
+    video.play().catch(() => {});
+  } else {
+    video.pause();
+    video.removeAttribute('src');
+    video.classList.remove('show');
+    videoError.classList.remove('show');
+    frame.classList.remove('hidden');
+    loading.classList.add('show');
+    frame.src = resolveWebUrl(s.url);
+  }
+
+  counter.textContent = activeSites.length > 1 ? `${idx + 1} / ${activeSites.length}` : '';
+  startProgress(s.duration);
+  clearTimeout(rotTimer);
+  rotTimer = setTimeout(() => showSite((curIdx + 1) % activeSites.length), s.duration * 1000);
+}
+
+function stopRotation() {
+  clearTimeout(rotTimer);
+  cancelAnimationFrame(rafId);
+  video.pause();
+  video.removeAttribute('src');
+  video.classList.remove('show');
+  frame.classList.remove('hidden');
+  progBar.style.transition = 'none';
+  progBar.style.width = '0%';
+}
+
+function startProgress(durationSec) {
+  cancelAnimationFrame(rafId);
+  const start   = Date.now();
+  const totalMs = durationSec * 1000;
+  progBar.style.transition = 'none';
+  progBar.style.width = '0%';
+  function tick() {
+    const pct = Math.min((Date.now() - start) / totalMs * 100, 100);
+    progBar.style.width = pct + '%';
+    if (pct < 100) rafId = requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+
+frame.addEventListener('load', () => loading.classList.remove('show'));
+video.addEventListener('error', () => {
+  video.classList.remove('show');
+  videoError.classList.add('show');
+});
+
+// ── Buttons verdrahten ─────────────────────────────────────────────────────────
+document.getElementById('b-open').addEventListener('click', openSettings);
+document.getElementById('b-start').addEventListener('click', startKiosk);
+
+document.getElementById('b-persist').addEventListener('click', () => {
+  syncFields();
+  sites = sites.filter(s => s.type === 'cloudinary' ? (s.cloudName && s.tag) : s.url.trim() !== '');
+  save();
+  renderList();
+  const btn = document.getElementById('b-persist');
+  const orig = btn.textContent;
+  btn.textContent = '✓ Gespeichert';
+  btn.disabled = true;
+  setTimeout(() => { btn.textContent = orig; btn.disabled = false; }, 1800);
+});
+
+document.getElementById('b-add').addEventListener('click', () => {
+  syncFields();
+  sites.push({ url: '', duration: 30, type: 'url' });
+  renderList();
+  setTimeout(() => {
+    const ul   = document.getElementById('ulist');
+    const last = ul.lastElementChild;
+    if (last) {
+      last.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      last.querySelector('.inp')?.focus();
+    }
+  }, 50);
+});
+
+document.getElementById('b-save').addEventListener('click', () => {
+  syncFields();
+  startKiosk();
+});
+
+document.getElementById('b-cancel').addEventListener('click', () => {
+  if (running && sites.length > 0) {
+    remScreen('s-set');
+    addScreen('s-kiosk');
+  } else if (sites.filter(s => isValidUrl(s.url)).length > 0) {
+    startKiosk();
+  } else {
+    showOnly('s-start');
+  }
+});
+
+// ── Initialisierung ────────────────────────────────────────────────────────────
+load();
+buildPad();
+renderDots(0);
+
+// Standardwert falls noch nichts gespeichert ist
+if (sites.length === 0) {
+  sites = [{ type: 'cloudinary', cloudName: 'dqw5qfpe2', tag: 'kiosk', duration: 30, url: '' }];
+}
+
+showOnly('s-start');
+const hasSites = sites.filter(s => s.type === 'cloudinary' || isValidUrl(s.url)).length > 0;
+if (hasSites) {
+  document.getElementById('start-msg').textContent = sites.length + ' Inhalt(e) konfiguriert.';
+  document.getElementById('b-start').style.display = '';
+}
+</script>
+</body>
+</html>
