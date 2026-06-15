@@ -1,68 +1,124 @@
 {
   "resources": [
     {
-      "asset_id": "266557df297ad0b22aaf07c6454ca9c5",
-      "public_id": "Sielaff/Klappenautomat",
+      "asset_id": "45e99138f6d2715eccdca1e4a9d3c2a8",
+      "public_id": "Sielaff_Live/Klappenautomat",
       "format": "png",
-      "version": 1781539748,
+      "version": 1781540923,
       "resource_type": "image",
       "type": "upload",
-      "created_at": "2026-06-15T16:09:08Z",
+      "created_at": "2026-06-15T16:28:43Z",
       "bytes": 1764553,
       "width": 1672,
       "height": 941,
-      "asset_folder": "Sielaff",
+      "asset_folder": "Sielaff_Live",
       "display_name": "Klappenautomat",
-      "url": "http://res.cloudinary.com/dqw5qfpe2/image/upload/v1781539748/Sielaff/Klappenautomat.png",
-      "secure_url": "https://res.cloudinary.com/dqw5qfpe2/image/upload/v1781539748/Sielaff/Klappenautomat.png",
-      "tags": [],
-      "last_updated": {
-        "tags_updated_at": "2026-06-15T16:09:56+00:00",
-        "updated_at": "2026-06-15T16:09:56+00:00"
-      }
+      "url": "http://res.cloudinary.com/dqw5qfpe2/image/upload/v1781540923/Sielaff_Live/Klappenautomat.png",
+      "secure_url": "https://res.cloudinary.com/dqw5qfpe2/image/upload/v1781540923/Sielaff_Live/Klappenautomat.png",
+      "kiosk_folder": "Sielaff_Live"
     },
     {
-      "asset_id": "dc6f15edd968a2cb76aff1b1961b7685",
-      "public_id": "Sielaff/SiLine SiOne M Softdrop - Einfach Mehrweg",
+      "asset_id": "843c1283af9c13934105ecd884053163",
+      "public_id": "Sielaff_Store/SIELAFF    SiLine Combi DV   Deutsch English Français",
       "format": "mp4",
-      "version": 1781539745,
+      "version": 1781540877,
       "resource_type": "video",
       "type": "upload",
-      "created_at": "2026-06-15T16:09:05Z",
+      "created_at": "2026-06-15T16:27:57Z",
+      "bytes": 75305487,
+      "width": 1920,
+      "height": 1080,
+      "asset_folder": "Sielaff_Store",
+      "display_name": "SIELAFF    SiLine Combi DV   Deutsch English Français",
+      "url": "http://res.cloudinary.com/dqw5qfpe2/video/upload/v1781540877/Sielaff_Store/SIELAFF%20%20%20%20SiLine%20Combi%20DV%20%20%20Deutsch%20English%20Fran%C3%A7ais.mp4",
+      "secure_url": "https://res.cloudinary.com/dqw5qfpe2/video/upload/v1781540877/Sielaff_Store/SIELAFF%20%20%20%20SiLine%20Combi%20DV%20%20%20Deutsch%20English%20Fran%C3%A7ais.mp4",
+      "kiosk_folder": "Sielaff_Store"
+    },
+    {
+      "asset_id": "a1f82e79957b85edfc109945e7b88702",
+      "public_id": "Sielaff_Live/SIELAFF   SiLine®",
+      "format": "mp4",
+      "version": 1781540832,
+      "resource_type": "video",
+      "type": "upload",
+      "created_at": "2026-06-15T16:27:12Z",
+      "bytes": 14131898,
+      "width": 1920,
+      "height": 1080,
+      "asset_folder": "Sielaff_Live",
+      "display_name": "SIELAFF   SiLine®",
+      "url": "http://res.cloudinary.com/dqw5qfpe2/video/upload/v1781540832/Sielaff_Live/SIELAFF%20%20%20SiLine%C2%AE.mp4",
+      "secure_url": "https://res.cloudinary.com/dqw5qfpe2/video/upload/v1781540832/Sielaff_Live/SIELAFF%20%20%20SiLine%C2%AE.mp4",
+      "kiosk_folder": "Sielaff_Live"
+    },
+    {
+      "asset_id": "ac6013a7e73f7c139ae19e252cb55a6c",
+      "public_id": "Sielaff_Store/Logo",
+      "format": "mp4",
+      "version": 1781540848,
+      "resource_type": "video",
+      "type": "upload",
+      "created_at": "2026-06-15T16:27:28Z",
+      "bytes": 470894,
+      "width": 480,
+      "height": 800,
+      "asset_folder": "Sielaff_Store",
+      "display_name": "Logo",
+      "url": "http://res.cloudinary.com/dqw5qfpe2/video/upload/v1781540848/Sielaff_Store/Logo.mp4",
+      "secure_url": "https://res.cloudinary.com/dqw5qfpe2/video/upload/v1781540848/Sielaff_Store/Logo.mp4",
+      "kiosk_folder": "Sielaff_Store"
+    },
+    {
+      "asset_id": "eeeeedf837db3985e608f1168d64f845",
+      "public_id": "Sielaff_Store/SiLine SiOne M Softdrop - Einfach Mehrweg",
+      "format": "mp4",
+      "version": 1781540895,
+      "resource_type": "video",
+      "type": "upload",
+      "created_at": "2026-06-15T16:28:15Z",
       "bytes": 18029582,
       "width": 1800,
       "height": 1080,
-      "asset_folder": "Sielaff",
+      "asset_folder": "Sielaff_Store",
       "display_name": "SiLine SiOne M Softdrop - Einfach Mehrweg",
-      "url": "http://res.cloudinary.com/dqw5qfpe2/video/upload/v1781539745/Sielaff/SiLine%20SiOne%20M%20Softdrop%20-%20Einfach%20Mehrweg.mp4",
-      "secure_url": "https://res.cloudinary.com/dqw5qfpe2/video/upload/v1781539745/Sielaff/SiLine%20SiOne%20M%20Softdrop%20-%20Einfach%20Mehrweg.mp4",
-      "tags": [
-        "kiosk"
-      ],
-      "last_updated": {
-        "tags_updated_at": "2026-06-15T16:13:28+00:00",
-        "updated_at": "2026-06-15T16:13:28+00:00"
-      }
+      "url": "http://res.cloudinary.com/dqw5qfpe2/video/upload/v1781540895/Sielaff_Store/SiLine%20SiOne%20M%20Softdrop%20-%20Einfach%20Mehrweg.mp4",
+      "secure_url": "https://res.cloudinary.com/dqw5qfpe2/video/upload/v1781540895/Sielaff_Store/SiLine%20SiOne%20M%20Softdrop%20-%20Einfach%20Mehrweg.mp4",
+      "kiosk_folder": "Sielaff_Store"
     },
     {
-      "asset_id": "e242988e29428b802ff1faf7a225a431",
-      "public_id": "Sielaff/Willkommen Sielaff AT",
+      "asset_id": "f79eb7c58ca7737f6ff1d6ea9c5e2634",
+      "public_id": "Sielaff_Live/Willkommen Sielaff AT",
       "format": "png",
-      "version": 1781539749,
+      "version": 1781540925,
       "resource_type": "image",
       "type": "upload",
-      "created_at": "2026-06-15T16:09:09Z",
+      "created_at": "2026-06-15T16:28:45Z",
       "bytes": 1602651,
       "width": 1672,
       "height": 941,
-      "asset_folder": "Sielaff",
+      "asset_folder": "Sielaff_Live",
       "display_name": "Willkommen Sielaff AT",
-      "url": "http://res.cloudinary.com/dqw5qfpe2/image/upload/v1781539749/Sielaff/Willkommen%20Sielaff%20AT.png",
-      "secure_url": "https://res.cloudinary.com/dqw5qfpe2/image/upload/v1781539749/Sielaff/Willkommen%20Sielaff%20AT.png",
-      "tags": [
-        "kiosk"
-      ]
+      "url": "http://res.cloudinary.com/dqw5qfpe2/image/upload/v1781540925/Sielaff_Live/Willkommen%20Sielaff%20AT.png",
+      "secure_url": "https://res.cloudinary.com/dqw5qfpe2/image/upload/v1781540925/Sielaff_Live/Willkommen%20Sielaff%20AT.png",
+      "kiosk_folder": "Sielaff_Live"
+    },
+    {
+      "asset_id": "fa92339c1a1d8bb3ab7f29e68f89c566",
+      "public_id": "Sielaff_Store/SIELAFF   Maxibar   Deutsch English Français",
+      "format": "mp4",
+      "version": 1781540887,
+      "resource_type": "video",
+      "type": "upload",
+      "created_at": "2026-06-15T16:28:07Z",
+      "bytes": 18723480,
+      "width": 1920,
+      "height": 1080,
+      "asset_folder": "Sielaff_Store",
+      "display_name": "SIELAFF   Maxibar   Deutsch English Français",
+      "url": "http://res.cloudinary.com/dqw5qfpe2/video/upload/v1781540887/Sielaff_Store/SIELAFF%20%20%20Maxibar%20%20%20Deutsch%20English%20Fran%C3%A7ais.mp4",
+      "secure_url": "https://res.cloudinary.com/dqw5qfpe2/video/upload/v1781540887/Sielaff_Store/SIELAFF%20%20%20Maxibar%20%20%20Deutsch%20English%20Fran%C3%A7ais.mp4",
+      "kiosk_folder": "Sielaff_Store"
     }
   ],
-  "updated": "2026-06-15T16:13:50Z"
+  "updated": "2026-06-15T16:37:17Z"
 }
