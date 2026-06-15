@@ -665,10 +665,17 @@ async function cleanupDevices() {
   if (!toDelete.length) { toast('Nichts zum Aufräumen.'); return; }
   if (!confirm(`${toDelete.length} Gerät(e) löschen (unbekannte IDs + älter als 24h)?`)) return;
   toDelete.forEach(id => { delete hb[id]; delete config.devices[id]; });
-  await saveHeartbeats(hb);
-  saveConfig(true);
-  loadDisplays();
-  toast(`${toDelete.length} Gerät(e) entfernt ✓`);
+  try {
+    const r = await fetch(`https://api.github.com/gists/${GIST_ID}`, {
+      method: 'PATCH',
+      headers: { Authorization: `token ${GIST_TOK}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ files: { 'heartbeat.json': { content: JSON.stringify(hb, null, 2) } } })
+    });
+    if (!r.ok) throw new Error('Gist ' + r.status);
+    await saveConfig(true);
+    toast(`${toDelete.length} Gerät(e) entfernt ✓`);
+    setTimeout(loadDisplays, 1500);
+  } catch(e) { toast('Fehler beim Speichern: ' + (e.message || e), 'err'); }
 }
 
 async function loadDisplays() {
