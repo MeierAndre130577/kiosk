@@ -239,7 +239,7 @@ document.querySelectorAll('.tab').forEach(btn => {
     btn.classList.add('active');
     document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
     if (btn.dataset.tab === 'displays') loadDisplays();
-    if (btn.dataset.tab === 'medien')   loadAllMedia();
+    if (btn.dataset.tab === 'medien')   { if (!allMedia.length) loadAllMedia(); else renderMedia(allMedia); }
     if (btn.dataset.tab === 'config')   renderConfig();
     if (btn.dataset.tab === 'creds')    loadCreds();
   });
