@@ -140,11 +140,11 @@
 <!-- MEDIEN -->
 <section id="tab-medien">
   <div class="media-toolbar">
-    <input type="text" id="media-tag-inp" value="kiosk" placeholder="Tag" style="max-width:140px">
-    <button class="btn sec" onclick="loadMedia()">↻ Laden</button>
-    <button class="btn pri" onclick="openUpload()">+ Hochladen</button>
+    <button class="btn pri" onclick="openMLWidget()">📁 Alle Dateien verwalten</button>
+    <button class="btn sec" onclick="loadMedia()">↻ Kiosk-Liste</button>
   </div>
-  <div id="media-grid" class="media-grid"><div class="empty">Tag eingeben und Laden klicken.</div></div>
+  <div class="stitle" style="margin-top:16px">Aktive Kiosk-Inhalte (Tag: kiosk)</div>
+  <div id="media-grid" class="media-grid"><div class="empty">Auf "Kiosk-Liste" klicken.</div></div>
 </section>
 
 <!-- CONFIG -->
@@ -449,8 +449,48 @@ async function deleteMedia(publicId, resourceType) {
   toast('Gelöscht'); loadMedia();
 }
 
+let _mlWidget = null;
+function openMLWidget() {
+  if (!cloud() || !ckey()) { toast('Cloudinary-Zugangsdaten fehlen.', 'err'); return; }
+  const doOpen = () => {
+    if (!_mlWidget) {
+      _mlWidget = cloudinary.createMediaLibrary(
+        { cloud_name: cloud(), api_key: ckey(), multiple: true, max_files: 50 },
+        { insertHandler(data) {
+            if (!data.assets || !data.assets.length) return;
+            if (!confirm(`"kiosk"-Tag zu ${data.assets.length} Datei(en) hinzufügen?`)) return;
+            Promise.all(data.assets.map(a =>
+              cldTagOp(a.public_id, a.resource_type || 'image', 'kiosk', 'add')
+            )).then(() => { toast('Tag hinzugefügt ✓'); loadMedia(); });
+        }}
+      );
+    }
+    _mlWidget.show();
+  };
+  if (window.cloudinary && cloudinary.createMediaLibrary) { doOpen(); return; }
+  const s = document.createElement('script');
+  s.src = 'https://media-library.cloudinary.com/global/all.js';
+  s.onload = doOpen;
+  document.head.appendChild(s);
+}
+
+let _upWidget = null;
 function openUpload() {
-  window.open('https://cloudinary.com/console/media_library', '_blank');
+  if (!cloud() || !ckey()) { toast('Cloudinary-Zugangsdaten fehlen.', 'err'); return; }
+  const doOpen = () => {
+    _upWidget = cloudinary.createUploadWidget(
+      { cloudName: cloud(), uploadPreset: 'ml_default', tags: ['kiosk'], sources: ['local','camera','url'], multiple: true },
+      (err, res) => {
+        if (!err && res && res.event === 'success') { toast('Hochgeladen ✓'); loadMedia(); }
+      }
+    );
+    _upWidget.open();
+  };
+  if (window.cloudinary && cloudinary.createUploadWidget) { doOpen(); return; }
+  const s = document.createElement('script');
+  s.src = 'https://upload-widget.cloudinary.com/global/all.js';
+  s.onload = doOpen;
+  document.head.appendChild(s);
 }
 
 // ── CONFIG ─────────────────────────────────────────────────
