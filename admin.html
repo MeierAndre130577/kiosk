@@ -290,11 +290,14 @@ async function uploadFiles(files) {
     status.textContent = `${done + 1} / ${files.length}: ${file.name}`;
     fill.style.width = (done / files.length * 100) + '%';
     const ts = Math.round(Date.now() / 1000);
-    const sig = await cldSign({ tags: 'kiosk', timestamp: ts });
+    const publicId = 'Sielaff/' + file.name.replace(/\.[^.]+$/, '');
+    const sig = await cldSign({ asset_folder: 'Sielaff', public_id: publicId, tags: 'kiosk', timestamp: ts });
     const form = new FormData();
     form.append('file', file);
     form.append('api_key', ckey());
     form.append('timestamp', ts);
+    form.append('public_id', publicId);
+    form.append('asset_folder', 'Sielaff');
     form.append('tags', 'kiosk');
     form.append('signature', sig);
     try {
