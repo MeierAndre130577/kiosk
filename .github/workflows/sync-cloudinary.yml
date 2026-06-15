@@ -19,17 +19,22 @@ jobs:
           CLD_SECRET: ${{ secrets.CLOUDINARY_SECRET }}
         run: |
           IMG=$(curl -sf -u "${CLD_KEY}:${CLD_SECRET}" \
-            "https://api.cloudinary.com/v1_1/dqw5qfpe2/resources/image?max_results=500" | \
-            jq '[.resources[] | select(.asset_folder == "Sielaff") | . + {resource_type: "image"}]' || echo '[]')
+            "https://api.cloudinary.com/v1_1/dqw5qfpe2/resources/by_asset_folder?asset_folder=Sielaff&resource_type=image&max_results=500")
           VID=$(curl -sf -u "${CLD_KEY}:${CLD_SECRET}" \
-            "https://api.cloudinary.com/v1_1/dqw5qfpe2/resources/video?max_results=500" | \
-            jq '[.resources[] | select(.asset_folder == "Sielaff") | . + {resource_type: "video"}]' || echo '[]')
+            "https://api.cloudinary.com/v1_1/dqw5qfpe2/resources/by_asset_folder?asset_folder=Sielaff&resource_type=video&max_results=500")
+
+          IMG_RESOURCES=$(echo "$IMG" | jq '[.resources[] | . + {resource_type: "image"}]' 2>/dev/null || echo '[]')
+          VID_RESOURCES=$(echo "$VID" | jq '[.resources[] | . + {resource_type: "video"}]' 2>/dev/null || echo '[]')
+
           jq -n \
-            --argjson img "$IMG" \
-            --argjson vid "$VID" \
+            --argjson img "$IMG_RESOURCES" \
+            --argjson vid "$VID_RESOURCES" \
             --arg ts "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
             '{resources: ($img + $vid), updated: $ts}' \
             > cloudinary-cache.json
+
+          echo "Images: $(echo "$IMG_RESOURCES" | jq length)"
+          echo "Videos: $(echo "$VID_RESOURCES" | jq length)"
 
       - name: Commit cache
         run: |
