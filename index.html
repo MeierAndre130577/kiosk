@@ -754,7 +754,9 @@ function expandSites(list) {
         promises.push(fetchJSON(url).then(function(data) {
           var res = data.resources || [];
           for (var r = 0; r < res.length; r++) {
-            result.push({ type: kind, url: 'https://res.cloudinary.com/' + cn + '/' + kind + '/upload/' + res[r].public_id + '.' + res[r].format, duration: dur });
+            var transform = kind === 'video' ? 'f_mp4,vc_h264/' : '';
+            var ext = kind === 'video' ? 'mp4' : res[r].format;
+            result.push({ type: kind, url: 'https://res.cloudinary.com/' + cn + '/' + kind + '/upload/' + transform + res[r].public_id + '.' + ext, duration: dur });
           }
         }).catch(function() {}));
       });
