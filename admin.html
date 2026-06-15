@@ -401,12 +401,12 @@ async function moveToFolder(publicId, resourceType, targetFolder) {
     });
     if (r.status === 204) {
       toast(`Verschoben ✓ — warte auf Sync…`);
-      const currentUpdated = (await fetch(cacheUrl()).then(r => r.json()).catch(() => ({}))).updated || '';
       let tries = 0;
       const poll = setInterval(async () => {
         tries++;
         const d = await fetch(cacheUrl()).then(r => r.json()).catch(() => ({}));
-        if (d.updated && d.updated !== currentUpdated) {
+        const arrived = (d.resources || []).find(r => r.public_id === newPublicId && r.kiosk_folder === targetFolder);
+        if (arrived) {
           clearInterval(poll);
           allMedia = []; loadAllMedia();
           toast(`Verschoben nach ${targetFolder === 'Sielaff_Live' ? '▶ Live' : '📦 Store'} ✓`);
