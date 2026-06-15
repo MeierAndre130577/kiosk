@@ -255,15 +255,14 @@ async function loadGHFile(path) {
 
 // ── Cloudinary API ─────────────────────────────────────────
 async function cldList(tag) {
-  const r = await fetch(`https://api.cloudinary.com/v1_1/${cloud()}/resources/by_tag/${tag}?max_results=100&resource_type=image`, {
-    headers: { Authorization: cauth() }
-  });
-  const d = await r.json();
-  const r2 = await fetch(`https://api.cloudinary.com/v1_1/${cloud()}/resources/by_tag/${tag}?max_results=100&resource_type=video`, {
-    headers: { Authorization: cauth() }
-  });
-  const d2 = await r2.json();
-  return [...(d.resources || []), ...(d2.resources || [])];
+  const [imgData, vidData] = await Promise.all([
+    fetch(`https://res.cloudinary.com/${cloud()}/image/list/${tag}.json`).then(r => r.json()).catch(() => ({})),
+    fetch(`https://res.cloudinary.com/${cloud()}/video/list/${tag}.json`).then(r => r.json()).catch(() => ({}))
+  ]);
+  return [
+    ...(imgData.resources || []).map(r => ({ ...r, resource_type: 'image' })),
+    ...(vidData.resources || []).map(r => ({ ...r, resource_type: 'video' }))
+  ];
 }
 async function cldTagOp(publicId, resourceType, tag, cmd) {
   const r = await fetch(`https://api.cloudinary.com/v1_1/${cloud()}/tags`, {
