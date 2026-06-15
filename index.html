@@ -864,10 +864,11 @@ document.getElementById('b-save').addEventListener('click', () => {
 });
 
 document.getElementById('b-cancel').addEventListener('click', () => {
-  if (running && sites.length > 0) {
+  if (running && activeSites.length > 0) {
     remScreen('s-set');
     addScreen('s-kiosk');
-  } else if (sites.filter(s => isValidUrl(s.url)).length > 0) {
+    showSite(curIdx);
+  } else if (sites.length > 0) {
     startKiosk();
   } else {
     showOnly('s-start');
