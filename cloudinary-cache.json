@@ -78,7 +78,7 @@
     },
     {
       "asset_id": "eeeeedf837db3985e608f1168d64f845",
-      "public_id": "Sielaff_Live/SiLine SiOne M Softdrop - Einfach Mehrweg",
+      "public_id": "Sielaff_Store/SiLine SiOne M Softdrop - Einfach Mehrweg",
       "format": "mp4",
       "version": 1781540895,
       "resource_type": "video",
@@ -89,17 +89,17 @@
       "height": 1080,
       "asset_folder": "Sielaff_Live",
       "display_name": "SiLine SiOne M Softdrop - Einfach Mehrweg",
-      "url": "http://res.cloudinary.com/dqw5qfpe2/video/upload/v1781540895/Sielaff_Live/SiLine%20SiOne%20M%20Softdrop%20-%20Einfach%20Mehrweg.mp4",
-      "secure_url": "https://res.cloudinary.com/dqw5qfpe2/video/upload/v1781540895/Sielaff_Live/SiLine%20SiOne%20M%20Softdrop%20-%20Einfach%20Mehrweg.mp4",
+      "url": "http://res.cloudinary.com/dqw5qfpe2/video/upload/v1781540895/Sielaff_Store/SiLine%20SiOne%20M%20Softdrop%20-%20Einfach%20Mehrweg.mp4",
+      "secure_url": "https://res.cloudinary.com/dqw5qfpe2/video/upload/v1781540895/Sielaff_Store/SiLine%20SiOne%20M%20Softdrop%20-%20Einfach%20Mehrweg.mp4",
       "last_updated": {
-        "public_id_updated_at": "2026-06-15T19:24:18+00:00",
-        "updated_at": "2026-06-15T19:24:18+00:00"
+        "public_id_updated_at": "2026-06-15T19:29:09+00:00",
+        "updated_at": "2026-06-15T19:29:09+00:00"
       },
-      "kiosk_folder": "Sielaff_Live"
+      "kiosk_folder": "Sielaff_Store"
     },
     {
       "asset_id": "f79eb7c58ca7737f6ff1d6ea9c5e2634",
-      "public_id": "Sielaff_Live/Willkommen Sielaff AT",
+      "public_id": "Sielaff_Store/Willkommen Sielaff AT",
       "format": "png",
       "version": 1781540925,
       "resource_type": "image",
@@ -108,15 +108,15 @@
       "bytes": 1602651,
       "width": 1672,
       "height": 941,
-      "asset_folder": "Sielaff_Live",
+      "asset_folder": "Sielaff_Store",
       "display_name": "Willkommen Sielaff AT",
-      "url": "http://res.cloudinary.com/dqw5qfpe2/image/upload/v1781540925/Sielaff_Live/Willkommen%20Sielaff%20AT.png",
-      "secure_url": "https://res.cloudinary.com/dqw5qfpe2/image/upload/v1781540925/Sielaff_Live/Willkommen%20Sielaff%20AT.png",
+      "url": "http://res.cloudinary.com/dqw5qfpe2/image/upload/v1781540925/Sielaff_Store/Willkommen%20Sielaff%20AT.png",
+      "secure_url": "https://res.cloudinary.com/dqw5qfpe2/image/upload/v1781540925/Sielaff_Store/Willkommen%20Sielaff%20AT.png",
       "last_updated": {
-        "public_id_updated_at": "2026-06-15T18:46:25+00:00",
-        "updated_at": "2026-06-15T18:46:25+00:00"
+        "public_id_updated_at": "2026-06-15T19:29:09+00:00",
+        "updated_at": "2026-06-15T19:29:09+00:00"
       },
-      "kiosk_folder": "Sielaff_Live"
+      "kiosk_folder": "Sielaff_Store"
     },
     {
       "asset_id": "fa92339c1a1d8bb3ab7f29e68f89c566",
@@ -140,5 +140,5 @@
       "kiosk_folder": "Sielaff_Store"
     }
   ],
-  "updated": "2026-06-15T19:24:19Z"
+  "updated": "2026-06-15T19:29:10Z"
 }
