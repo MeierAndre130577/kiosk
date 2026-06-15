@@ -889,7 +889,7 @@ document.getElementById('b-add').addEventListener('click', () => {
     const last = ul.lastElementChild;
     if (last) {
       last.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      last.querySelector('.inp')?.focus();
+      const inp = last.querySelector('.inp'); if (inp) inp.focus();
     }
   }, 50);
 });
