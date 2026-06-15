@@ -140,7 +140,7 @@
 <!-- MEDIEN -->
 <section id="tab-medien">
   <div class="media-toolbar">
-    <input type="text" id="media-tag-inp" placeholder="Tag filtern (leer = alle)" style="max-width:200px">
+    <input type="text" id="media-tag-inp" value="kiosk" placeholder="Tag" style="max-width:140px">
     <button class="btn sec" onclick="loadMedia()">↻ Laden</button>
     <button class="btn pri" onclick="openUpload()">+ Hochladen</button>
   </div>
@@ -394,7 +394,7 @@ async function removeDevice(id) {
 
 // ── MEDIEN ─────────────────────────────────────────────────
 async function loadMedia() {
-  const tag = document.getElementById('media-tag-inp').value.trim();
+  const tag = document.getElementById('media-tag-inp').value.trim() || 'kiosk';
   document.getElementById('media-grid').innerHTML = '<div class="empty"><div class="spin"></div></div>';
   try {
     const items = await cldList(tag);
