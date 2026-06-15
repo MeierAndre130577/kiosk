@@ -377,10 +377,21 @@ function showSite(idx) {
 
   if (s.type === 'video') {
     loading.classList.remove('show');
-    video.muted = true; video.src = s.url;
+    video.muted = true; video.loop = false; video.src = s.url;
     video.classList.add('show'); video.load();
     var vp = video.play(); if (vp && vp['catch']) vp['catch'](function(){});
-    startVideoProgress(); video.onended = nextSite;
+    var minDur = (s.duration || 30) * 1000;
+    var vidStart = Date.now();
+    startVideoProgress();
+    video.onended = function() {
+      var elapsed = Date.now() - vidStart;
+      if (elapsed < minDur) {
+        video.currentTime = 0;
+        video.play();
+      } else {
+        nextSite();
+      }
+    };
 
   } else if (s.type === 'image') {
     loading.classList.add('show');
