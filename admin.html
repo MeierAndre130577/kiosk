@@ -381,7 +381,7 @@ async function moveToFolder(publicId, resourceType, targetFolder) {
     if (item) { item.public_id = newPublicId; item.kiosk_folder = targetFolder; }
     toast(`Verschoben nach ${targetFolder === 'Sielaff_Live' ? '▶ Live' : '📦 Store'} ✓`);
     renderMedia(allMedia);
-  } catch(e) { toast('Fehler beim Verschieben', 'err'); }
+  } catch(e) { toast('Fehler: ' + (e.message || e), 'err'); console.error('moveToFolder', e); }
 }
 
 // ── Cloudinary: Löschen (Upload API destroy) ───────────────
