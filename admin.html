@@ -272,7 +272,9 @@ async function sha1(message) {
   return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
 }
 async function cldSign(params) {
-  const str = Object.keys(params).sort().map(k => `${k}=${params[k]}`).join('&');
+  const str = Object.keys(params).sort()
+    .filter(k => params[k] !== '' && params[k] != null)
+    .map(k => `${k}=${params[k]}`).join('&');
   return sha1(str + csec());
 }
 
@@ -312,11 +314,16 @@ async function uploadFiles(files) {
 async function cldSetTags(publicId, resourceType, tags) {
   const ts = Math.round(Date.now() / 1000);
   const tagsStr = tags.join(',');
-  const sig = await cldSign({ public_id: publicId, tags: tagsStr, timestamp: ts, type: 'upload' });
+  const signParams = { public_id: publicId, timestamp: ts };
+  if (tagsStr) signParams.tags = tagsStr;
+  const sig = await cldSign(signParams);
   const form = new FormData();
-  form.append('public_id', publicId); form.append('tags', tagsStr);
-  form.append('timestamp', ts); form.append('type', 'upload');
-  form.append('api_key', ckey()); form.append('signature', sig);
+  form.append('public_id', publicId);
+  if (tagsStr) form.append('tags', tagsStr);
+  form.append('timestamp', ts);
+  form.append('type', 'upload');
+  form.append('api_key', ckey());
+  form.append('signature', sig);
   const r = await fetch(`https://api.cloudinary.com/v1_1/${cloud()}/${resourceType}/explicit`, { method: 'POST', body: form });
   return r.json();
 }
