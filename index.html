@@ -790,9 +790,39 @@ function startKiosk() {
   });
 }
 
+var loadedVersion = '';
+
+function fetchText(url) {
+  return new Promise(function(resolve, reject) {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', url);
+    xhr.onload = function() {
+      if (xhr.status >= 200 && xhr.status < 300) { resolve(xhr.responseText); }
+      else { reject(new Error(xhr.status)); }
+    };
+    xhr.onerror = function() { reject(new Error('Network')); };
+    xhr.send();
+  });
+}
+
+function versionUrl() {
+  var base = location.href.split('?')[0];
+  if (base.charAt(base.length - 1) !== '/') base += '/';
+  return base + 'version.txt';
+}
+
+fetchText(versionUrl()).then(function(t) { loadedVersion = t.trim(); }).catch(function() {});
+
+function checkVersion() {
+  fetchText(versionUrl()).then(function(t) {
+    if (loadedVersion && t.trim() !== loadedVersion) { location.reload(); }
+  }).catch(function() {});
+}
+
 function nextSite() {
   var nextIdx = (curIdx + 1) % activeSites.length;
   if (nextIdx === 0) {
+    checkVersion();
     expandSites(sites).then(function(fresh) {
       if (fresh.length > 0) activeSites = fresh;
       showSite(0);
