@@ -19,10 +19,10 @@ jobs:
           CLD_SECRET: ${{ secrets.CLOUDINARY_SECRET }}
         run: |
           IMG=$(curl -sf -u "${CLD_KEY}:${CLD_SECRET}" \
-            "https://api.cloudinary.com/v1_1/dqw5qfpe2/resources/image?max_results=500" | \
+            "https://api.cloudinary.com/v1_1/dqw5qfpe2/resources/image?prefix=Sielaff&type=upload&max_results=500" | \
             jq '[.resources[] | . + {resource_type: "image"}]' || echo '[]')
           VID=$(curl -sf -u "${CLD_KEY}:${CLD_SECRET}" \
-            "https://api.cloudinary.com/v1_1/dqw5qfpe2/resources/video?max_results=500" | \
+            "https://api.cloudinary.com/v1_1/dqw5qfpe2/resources/video?prefix=Sielaff&type=upload&max_results=500" | \
             jq '[.resources[] | . + {resource_type: "video"}]' || echo '[]')
           jq -n \
             --argjson img "$IMG" \
