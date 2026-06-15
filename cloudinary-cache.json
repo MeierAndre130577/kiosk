@@ -1,4 +1,66 @@
 {
-  "resources": [],
-  "updated": "2026-06-15T16:07:18Z"
+  "resources": [
+    {
+      "asset_id": "266557df297ad0b22aaf07c6454ca9c5",
+      "public_id": "Sielaff/Klappenautomat",
+      "format": "png",
+      "version": 1781539748,
+      "resource_type": "image",
+      "type": "upload",
+      "created_at": "2026-06-15T16:09:08Z",
+      "bytes": 1764553,
+      "width": 1672,
+      "height": 941,
+      "asset_folder": "Sielaff",
+      "display_name": "Klappenautomat",
+      "url": "http://res.cloudinary.com/dqw5qfpe2/image/upload/v1781539748/Sielaff/Klappenautomat.png",
+      "secure_url": "https://res.cloudinary.com/dqw5qfpe2/image/upload/v1781539748/Sielaff/Klappenautomat.png",
+      "tags": [],
+      "last_updated": {
+        "tags_updated_at": "2026-06-15T16:09:56+00:00",
+        "updated_at": "2026-06-15T16:09:56+00:00"
+      }
+    },
+    {
+      "asset_id": "dc6f15edd968a2cb76aff1b1961b7685",
+      "public_id": "Sielaff/SiLine SiOne M Softdrop - Einfach Mehrweg",
+      "format": "mp4",
+      "version": 1781539745,
+      "resource_type": "video",
+      "type": "upload",
+      "created_at": "2026-06-15T16:09:05Z",
+      "bytes": 18029582,
+      "width": 1800,
+      "height": 1080,
+      "asset_folder": "Sielaff",
+      "display_name": "SiLine SiOne M Softdrop - Einfach Mehrweg",
+      "url": "http://res.cloudinary.com/dqw5qfpe2/video/upload/v1781539745/Sielaff/SiLine%20SiOne%20M%20Softdrop%20-%20Einfach%20Mehrweg.mp4",
+      "secure_url": "https://res.cloudinary.com/dqw5qfpe2/video/upload/v1781539745/Sielaff/SiLine%20SiOne%20M%20Softdrop%20-%20Einfach%20Mehrweg.mp4",
+      "tags": [],
+      "last_updated": {
+        "tags_updated_at": "2026-06-15T16:10:01+00:00",
+        "updated_at": "2026-06-15T16:10:01+00:00"
+      }
+    },
+    {
+      "asset_id": "e242988e29428b802ff1faf7a225a431",
+      "public_id": "Sielaff/Willkommen Sielaff AT",
+      "format": "png",
+      "version": 1781539749,
+      "resource_type": "image",
+      "type": "upload",
+      "created_at": "2026-06-15T16:09:09Z",
+      "bytes": 1602651,
+      "width": 1672,
+      "height": 941,
+      "asset_folder": "Sielaff",
+      "display_name": "Willkommen Sielaff AT",
+      "url": "http://res.cloudinary.com/dqw5qfpe2/image/upload/v1781539749/Sielaff/Willkommen%20Sielaff%20AT.png",
+      "secure_url": "https://res.cloudinary.com/dqw5qfpe2/image/upload/v1781539749/Sielaff/Willkommen%20Sielaff%20AT.png",
+      "tags": [
+        "kiosk"
+      ]
+    }
+  ],
+  "updated": "2026-06-15T16:10:58Z"
 }
