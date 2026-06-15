@@ -18,18 +18,17 @@ jobs:
           CLD_KEY: ${{ secrets.CLOUDINARY_KEY }}
           CLD_SECRET: ${{ secrets.CLOUDINARY_SECRET }}
         run: |
-          fetch() {
-            local PREFIX=$1 RTYPE=$2 FOLDER=$3
-            curl -sf -u "${CLD_KEY}:${CLD_SECRET}" \
-              "https://api.cloudinary.com/v1_1/dqw5qfpe2/resources/${RTYPE}?prefix=${PREFIX}&type=upload&max_results=500" | \
-              jq --arg rt "$RTYPE" --arg f "$FOLDER" \
-                '[.resources[] | . + {resource_type: $rt, kiosk_folder: $f}]' 2>/dev/null || echo '[]'
-          }
+          BASE="https://api.cloudinary.com/v1_1/dqw5qfpe2"
+          AUTH="${CLD_KEY}:${CLD_SECRET}"
 
-          LIVE_IMG=$(fetch "Sielaff_Live" "image" "Sielaff_Live")
-          LIVE_VID=$(fetch "Sielaff_Live" "video" "Sielaff_Live")
-          STORE_IMG=$(fetch "Sielaff_Store" "image" "Sielaff_Store")
-          STORE_VID=$(fetch "Sielaff_Store" "video" "Sielaff_Store")
+          LIVE_IMG=$(curl -sf -u "$AUTH" "$BASE/resources/image?prefix=Sielaff_Live&type=upload&max_results=500" | \
+            jq '[.resources[] | . + {resource_type: "image", kiosk_folder: "Sielaff_Live"}]' || echo '[]')
+          LIVE_VID=$(curl -sf -u "$AUTH" "$BASE/resources/video?prefix=Sielaff_Live&type=upload&max_results=500" | \
+            jq '[.resources[] | . + {resource_type: "video", kiosk_folder: "Sielaff_Live"}]' || echo '[]')
+          STORE_IMG=$(curl -sf -u "$AUTH" "$BASE/resources/image?prefix=Sielaff_Store&type=upload&max_results=500" | \
+            jq '[.resources[] | . + {resource_type: "image", kiosk_folder: "Sielaff_Store"}]' || echo '[]')
+          STORE_VID=$(curl -sf -u "$AUTH" "$BASE/resources/video?prefix=Sielaff_Store&type=upload&max_results=500" | \
+            jq '[.resources[] | . + {resource_type: "video", kiosk_folder: "Sielaff_Store"}]' || echo '[]')
 
           RESOURCES=$(jq -n \
             --argjson a "$LIVE_IMG" --argjson b "$LIVE_VID" \
@@ -39,10 +38,9 @@ jobs:
           jq -n \
             --argjson res "$RESOURCES" \
             --arg ts "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
-            '{resources: $res, updated: $ts}' \
-            > cloudinary-cache.json
+            '{resources: $res, updated: $ts}' > cloudinary-cache.json
 
-          echo "Live: $(echo "$LIVE_IMG" | jq length) Bilder, $(echo "$LIVE_VID" | jq length) Videos"
+          echo "Live:  $(echo "$LIVE_IMG" | jq length) Bilder, $(echo "$LIVE_VID" | jq length) Videos"
           echo "Store: $(echo "$STORE_IMG" | jq length) Bilder, $(echo "$STORE_VID" | jq length) Videos"
 
       - name: Commit cache
