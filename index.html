@@ -348,6 +348,7 @@ function startKiosk() {
       return;
     }
     running = true; curIdx = 0; goFull(); grabWake(); showSite(0);
+    sendHeartbeat();
   });
 }
 
