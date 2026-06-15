@@ -346,8 +346,9 @@
   <img id="site-image" alt="">
   <div id="video-error">
     <div class="ve-ico">⚠️</div>
-    <p>Video kann nicht geladen werden.</p>
-    <small>Weiter zum nächsten Inhalt…</small>
+    <p id="ve-msg">Video kann nicht geladen werden.</p>
+    <small id="ve-detail"></small>
+    <small id="ve-url" style="font-size:10px;color:#444;word-break:break-all;max-width:300px"></small>
   </div>
   <div id="frame-loading"><div class="spinner"></div></div>
   <div class="zone" id="z-tl"></div>
@@ -851,7 +852,31 @@ frame.addEventListener('load', function() { loading.classList.remove('show'); })
 img.addEventListener('load',   function() { loading.classList.remove('show'); });
 img.addEventListener('error',  function() { loading.classList.remove('show'); });
 video.addEventListener('error', function() {
-  video.classList.remove('show'); videoError.classList.add('show');
+  video.classList.remove('show');
+  var msg = 'Video kann nicht geladen werden.';
+  var detail = 'Weiter zum nächsten Inhalt…';
+  var err = video.error;
+  if (err) {
+    if (err.code === 2) {
+      msg = 'Netzwerkfehler.';
+      detail = 'Das Video konnte nicht heruntergeladen werden. WLAN-Verbindung prüfen.';
+    } else if (err.code === 3) {
+      msg = 'Format nicht unterstützt.';
+      detail = 'Dieses Gerät kann das Videoformat nicht abspielen (Code 3 – Decode Error).';
+    } else if (err.code === 4) {
+      msg = 'Quelle nicht verfügbar.';
+      detail = 'Die Video-URL ist nicht erreichbar oder das Format wird abgelehnt (Code 4).';
+    } else if (err.code === 1) {
+      msg = 'Wiedergabe abgebrochen.';
+      detail = 'Das Laden wurde unterbrochen (Code 1).';
+    } else {
+      detail = 'Unbekannter Fehler (Code ' + err.code + '). ' + (err.message || '');
+    }
+  }
+  document.getElementById('ve-msg').textContent    = msg;
+  document.getElementById('ve-detail').textContent = detail;
+  document.getElementById('ve-url').textContent    = video.src || '';
+  videoError.classList.add('show');
   if (running) setTimeout(nextSite, 5000);
 });
 
