@@ -282,29 +282,30 @@ function resolveWebUrl(url) {
   return url;
 }
 
-/* ── Cloudinary expandieren ────────────────────────────── */
+/* ── Cloudinary expandieren (via cloudinary-cache.json) ── */
 function expandSites(list) {
   var result = [];
   var promises = [];
   for (var i = 0; i < list.length; i++) {
     var s = list[i];
-    if (s.type === 'cloudinary' && s.cloudName && s.tag) {
+    if (s.type === 'cloudinary' && s.cloudName) {
       (function(cn, tag, dur) {
-        ['video','image'].forEach(function(kind) {
-          var url = 'https://res.cloudinary.com/' + cn + '/' + kind + '/list/' + tag + '.json';
-          promises.push(fetchJSON(url).then(function(data) {
-            var res = data.resources || [];
-            for (var r = 0; r < res.length; r++) {
-              var transform = kind === 'video' ? 'f_mp4,vc_h264/' : '';
-              var ext = kind === 'video' ? 'mp4' : res[r].format;
-              result.push({
-                type: kind,
-                url: 'https://res.cloudinary.com/' + cn + '/' + kind + '/upload/' + transform + res[r].public_id + '.' + ext,
-                duration: dur
-              });
-            }
-          }).catch(function() {}));
-        });
+        var cacheUrl = baseUrl() + 'cloudinary-cache.json?t=' + Date.now();
+        promises.push(fetchJSON(cacheUrl).then(function(data) {
+          var res = data.resources || [];
+          for (var r = 0; r < res.length; r++) {
+            var item = res[r];
+            if (tag && item.tags && item.tags.indexOf(tag) === -1) continue;
+            var kind = item.resource_type === 'video' ? 'video' : 'image';
+            var transform = kind === 'video' ? 'f_mp4,vc_h264/' : '';
+            var ext = kind === 'video' ? 'mp4' : (item.format || 'jpg');
+            result.push({
+              type: kind,
+              url: 'https://res.cloudinary.com/' + cn + '/' + kind + '/upload/' + transform + item.public_id + '.' + ext,
+              duration: dur
+            });
+          }
+        }).catch(function() {}));
       })(s.cloudName, s.tag, s.duration || 30);
     } else {
       result.push(s);
