@@ -152,11 +152,15 @@
 
   <!-- Liste -->
   <div class="media-toolbar">
-    <div class="stitle" style="margin:0;flex:1">Alle Dateien</div>
+    <div style="flex:1">
+      <div class="stitle" style="margin:0">Alle Dateien</div>
+      <div id="cache-age" style="font-size:11px;color:var(--dim);margin-top:2px"></div>
+    </div>
     <input type="text" id="media-filter" placeholder="Suchen…" style="max-width:160px;width:auto" oninput="filterMedia(this.value)">
     <button class="btn sec sml" onclick="loadAllMedia()">↻ Laden</button>
+    <button class="btn sec sml" onclick="triggerSync()" title="GitHub Action starten und neu laden">⟳ Sync</button>
   </div>
-  <div id="media-grid" class="media-grid"><div class="empty">Auf ↻ Laden klicken um alle Dateien anzuzeigen.</div></div>
+  <div id="media-grid" class="media-grid"><div class="empty">Auf ↻ Laden klicken.</div></div>
 </section>
 
 <!-- CONFIG -->
@@ -332,27 +336,32 @@ async function cldDestroy(publicId, resourceType) {
 // ── Cloudinary: Alle Dateien laden ────────────────────────
 let allMedia = [];
 
+function cacheUrl() {
+  return location.href.replace(/admin\.html.*$/, '') + 'cloudinary-cache.json?t=' + Date.now();
+}
+
 async function loadAllMedia() {
   document.getElementById('media-grid').innerHTML = '<div class="empty"><div class="spin"></div><br>Lade…</div>';
   allMedia = [];
 
-  // Versuch 1: Admin API (alle Dateien)
+  // Cache-Datei vom GitHub Pages lesen (wird vom GitHub Action befüllt)
   try {
-    const [imgData, vidData] = await Promise.all([
-      fetch(`https://api.cloudinary.com/v1_1/${cloud()}/resources/image?max_results=100`, { headers: { Authorization: cauth() } }).then(r => r.json()),
-      fetch(`https://api.cloudinary.com/v1_1/${cloud()}/resources/video?max_results=100`, { headers: { Authorization: cauth() } }).then(r => r.json())
-    ]);
-    if (!imgData.error && !vidData.error) {
-      allMedia = [
-        ...(imgData.resources || []).map(r => ({ ...r, resource_type: 'image' })),
-        ...(vidData.resources || []).map(r => ({ ...r, resource_type: 'video' }))
-      ];
-      renderMedia(allMedia);
-      return;
+    const r = await fetch(cacheUrl());
+    if (r.ok) {
+      const d = await r.json();
+      allMedia = d.resources || [];
+      const ageEl = document.getElementById('cache-age');
+      if (d.updated) {
+        const mins = Math.round((Date.now() - new Date(d.updated)) / 60000);
+        ageEl.textContent = `Zuletzt synchronisiert: ${mins < 1 ? 'gerade eben' : `vor ${mins} Min.`}`;
+      } else {
+        ageEl.textContent = 'Noch nicht synchronisiert → ⟳ Sync klicken';
+      }
+      if (allMedia.length > 0) { renderMedia(allMedia); return; }
     }
   } catch(e) {}
 
-  // Versuch 2: Öffentlicher Tag-Endpunkt (nur kiosk-getaggte)
+  // Fallback: öffentlicher Tag-Endpunkt
   try {
     const [imgData, vidData] = await Promise.all([
       fetch(`https://res.cloudinary.com/${cloud()}/image/list/kiosk.json`).then(r => r.json()).catch(() => ({})),
@@ -363,13 +372,24 @@ async function loadAllMedia() {
       ...(vidData.resources || []).map(r => ({ ...r, resource_type: 'video', tags: ['kiosk'] }))
     ];
     if (allMedia.length > 0) {
-      toast('Hinweis: Nur kiosk-getaggte Dateien sichtbar (CORS)', 'err');
-      renderMedia(allMedia);
-      return;
+      document.getElementById('cache-age').textContent = 'Nur kiosk-getaggte sichtbar — ⟳ Sync klicken für alle';
+      renderMedia(allMedia); return;
     }
   } catch(e) {}
 
-  document.getElementById('media-grid').innerHTML = '<div class="empty">Keine Dateien gefunden.<br><small>Zugangsdaten prüfen (🔑 Tab)</small></div>';
+  document.getElementById('media-grid').innerHTML = '<div class="empty">Keine Dateien. ⟳ Sync klicken und dann ↻ Laden.</div>';
+}
+
+async function triggerSync() {
+  toast('Synchronisierung gestartet…');
+  try {
+    await fetch(`https://api.github.com/repos/${REPO}/actions/workflows/sync-cloudinary.yml/dispatches`, {
+      method: 'POST',
+      headers: { Authorization: `token ${gh()}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ref: 'main' })
+    });
+    setTimeout(() => { loadAllMedia(); toast('Sync abgeschlossen — Liste aktualisiert ✓'); }, 35000);
+  } catch(e) { toast('Sync fehlgeschlagen', 'err'); }
 }
 
 function filterMedia(q) {

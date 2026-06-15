@@ -1,0 +1,39 @@
+name: Sync Cloudinary
+
+on:
+  schedule:
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch Cloudinary resources
+        env:
+          CLD_KEY: ${{ secrets.CLOUDINARY_KEY }}
+          CLD_SECRET: ${{ secrets.CLOUDINARY_SECRET }}
+        run: |
+          IMG=$(curl -sf -u "${CLD_KEY}:${CLD_SECRET}" \
+            "https://api.cloudinary.com/v1_1/dqw5qfpe2/resources/image?max_results=500" | \
+            jq '[.resources[] | . + {resource_type: "image"}]' || echo '[]')
+          VID=$(curl -sf -u "${CLD_KEY}:${CLD_SECRET}" \
+            "https://api.cloudinary.com/v1_1/dqw5qfpe2/resources/video?max_results=500" | \
+            jq '[.resources[] | . + {resource_type: "video"}]' || echo '[]')
+          jq -n \
+            --argjson img "$IMG" \
+            --argjson vid "$VID" \
+            --arg ts "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+            '{resources: ($img + $vid), updated: $ts}' \
+            > cloudinary-cache.json
+
+      - name: Commit cache
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git add cloudinary-cache.json
+          git diff --staged --quiet || (git commit -m 'chore: sync cloudinary cache' && git push)
