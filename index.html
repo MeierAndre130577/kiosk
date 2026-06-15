@@ -277,17 +277,42 @@
   }
   .ibox strong { color: var(--accent); }
 
-  .wrow {
-    display: -webkit-flex; display: flex; -webkit-align-items: center; align-items: center;
-    padding: 12px 14px; border-radius: 8px;
-    border: 1px solid var(--border); background: var(--surface2); font-size: 13px;
-  }
-  .wrow > * + * { margin-left: 10px; }
   .wdot {
     width: 10px; height: 10px; border-radius: 50%;
     background: var(--text-dim); flex-shrink: 0; transition: background .3s;
   }
   .wdot.on { background: var(--success); box-shadow: 0 0 8px var(--success); }
+
+  /* ── Settings card (Wiedergabe) ── */
+  .scard {
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); overflow: hidden;
+  }
+  .scard-row {
+    display: -webkit-flex; display: flex; -webkit-align-items: center; align-items: center;
+    -webkit-justify-content: space-between; justify-content: space-between;
+    padding: 12px 14px; border-bottom: 1px solid var(--border);
+  }
+  .scard-row--last { border-bottom: none; }
+  .scard-label { font-size: 13px; color: var(--text); }
+  .scard-sub   { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
+
+  /* ── Accordion ── */
+  .acc-wrap { border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; }
+  .acc-item + .acc-item { border-top: 1px solid var(--border); }
+  .acc-hdr {
+    width: 100%; background: var(--surface); border: none; color: var(--text);
+    padding: 13px 14px; font-size: 13px; font-weight: 600; cursor: pointer; text-align: left;
+    display: -webkit-flex; display: flex; -webkit-align-items: center; align-items: center;
+    -webkit-justify-content: space-between; justify-content: space-between;
+    -webkit-tap-highlight-color: transparent; touch-action: manipulation; min-height: 48px;
+  }
+  .acc-hdr:active { background: var(--surface2); }
+  .acc-chevron { font-size: 16px; color: var(--text-dim); transition: transform .2s; }
+  .acc-chevron.open { transform: rotate(180deg); }
+  .acc-body { background: var(--surface2); padding: 12px 14px; }
+  .acc-row { font-size: 13px; color: var(--text-dim); line-height: 1.6; }
+  .acc-row + .acc-row { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
+  .acc-row strong { color: var(--text); }
 </style>
 </head>
 <body>
@@ -356,37 +381,53 @@
     <button class="addbtn" id="b-add" type="button">＋ Inhalt hinzufügen</button>
     <button class="btn sec" id="b-persist" type="button" style="width:100%;margin-top:10px;min-height:48px;">💾 Speichern</button>
 
-    <div class="stitle">Bildschirm wach halten</div>
-    <div class="wrow"><div class="wdot" id="wdot"></div><span id="wtxt">–</span></div>
-    <div class="ibox" style="margin-top:10px">
-      <strong>Wake Lock</strong> verhindert automatisches Abdunkeln des Bildschirms.<br><br>
-      Empfohlen für Fire Tablet: Einstellungen → Display → <strong>Ruhemodus: Nie</strong>.
-    </div>
-
-    <div class="stitle">Inhalts-Typen</div>
-    <div class="ibox">
-      <strong>🌐 Website</strong> — Webseite im iframe. YouTube/Vimeo-Links werden automatisch zu Embed-URLs mit Autoplay umgewandelt.<br><br>
-      <strong>🎬 Video</strong> — direkte .mp4-URL (z.B. von Cloudinary, eigenem Server).<br><br>
-      <strong>☁️ Ordner</strong> — alle Videos eines Cloudinary-Tags automatisch abspielen.<br>
-      Voraussetzung: In Cloudinary unter <strong>Settings → Security → Resource list</strong> deaktivieren, dann allen Videos denselben Tag vergeben.
-    </div>
-
-    <div class="stitle">Anzeige-Modus</div>
-    <div class="ibox">
-      <div class="type-toggle" style="margin-bottom:10px">
-        <button class="ttbtn" id="fit-cover" type="button" onclick="setFit('cover')">⬛ Vollbild</button>
-        <button class="ttbtn" id="fit-contain" type="button" onclick="setFit('contain')">🔲 Alles sichtbar</button>
+    <div class="stitle">Wiedergabe</div>
+    <div class="scard">
+      <div class="scard-row">
+        <div class="scard-label">Anzeige-Modus</div>
+        <div class="type-toggle">
+          <button class="ttbtn" id="fit-cover"   type="button" onclick="setFit('cover')"   style="padding:7px 11px;font-size:12px">⬛ Vollbild</button>
+          <button class="ttbtn" id="fit-contain" type="button" onclick="setFit('contain')" style="padding:7px 11px;font-size:12px">🔲 Alles sichtbar</button>
+        </div>
       </div>
-      <span id="fit-desc" style="font-size:13px;color:var(--text-dim)"></span>
+      <div class="scard-row scard-row--last">
+        <div>
+          <div class="scard-label">Bildschirm wach halten</div>
+          <div class="scard-sub" id="wtxt">–</div>
+        </div>
+        <div class="wdot" id="wdot"></div>
+      </div>
     </div>
 
-    <div class="stitle">Gerät &amp; Auflösung</div>
-    <button class="btn sec" id="b-detect" type="button" onclick="detectDevice()" style="width:100%;min-height:48px;touch-action:manipulation">📐 Gerät analysieren</button>
-    <div class="ibox" id="device-info" style="display:none;margin-top:10px"></div>
-
-    <div class="stitle">Entsperren im Kiosk-Modus</div>
-    <div class="ibox">
-      <strong>Obere linke oder rechte Ecke 3 Sekunden gedrückt halten</strong> → PIN <strong>0</strong> eingeben.
+    <div class="stitle">Info &amp; Hilfe</div>
+    <div class="acc-wrap">
+      <div class="acc-item">
+        <button class="acc-hdr" type="button" onclick="toggleAcc(this)">
+          <span>📋 Inhalts-Typen</span><span class="acc-chevron">▾</span>
+        </button>
+        <div class="acc-body" style="display:none">
+          <div class="acc-row"><strong>🌐 Website</strong> — Webseite im iframe. YouTube/Vimeo-Links werden automatisch zu Embed-URLs mit Autoplay umgewandelt.</div>
+          <div class="acc-row"><strong>🎬 Video</strong> — direkte .mp4-URL (z.B. von Cloudinary, eigenem Server).</div>
+          <div class="acc-row"><strong>☁️ Ordner</strong> — alle Medien eines Cloudinary-Tags automatisch abspielen. In Cloudinary: Settings → Security → Resource list deaktivieren, dann Tag vergeben.</div>
+        </div>
+      </div>
+      <div class="acc-item">
+        <button class="acc-hdr" type="button" onclick="toggleAcc(this)">
+          <span>🔒 Entsperren</span><span class="acc-chevron">▾</span>
+        </button>
+        <div class="acc-body" style="display:none">
+          <div class="acc-row">Obere linke oder rechte Ecke <strong>3 Sekunden gedrückt halten</strong> → PIN <strong>0</strong> eingeben.</div>
+        </div>
+      </div>
+      <div class="acc-item">
+        <button class="acc-hdr" type="button" onclick="toggleAcc(this)">
+          <span>📐 Gerät &amp; Auflösung</span><span class="acc-chevron">▾</span>
+        </button>
+        <div class="acc-body" style="display:none">
+          <button class="btn sec" type="button" onclick="detectDevice()" style="width:100%;min-height:48px;touch-action:manipulation;margin-bottom:10px">📐 Gerät analysieren</button>
+          <div id="device-info"></div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -805,12 +846,22 @@ function setFit(mode) {
   img.style.objectFit   = mode;
   var cover   = document.getElementById('fit-cover');
   var contain = document.getElementById('fit-contain');
-  var desc    = document.getElementById('fit-desc');
   if (cover)   { if (mode==='cover')   cover.classList.add('active');   else cover.classList.remove('active'); }
   if (contain) { if (mode==='contain') contain.classList.add('active'); else contain.classList.remove('active'); }
-  if (desc) desc.textContent = mode === 'cover'
-    ? 'Vollbild – Bildschirm wird vollständig gefüllt, Ränder ggf. abgeschnitten.'
-    : 'Alles sichtbar – komplettes Bild/Video, schwarze Balken möglich.';
+}
+
+function toggleAcc(btn) {
+  var body    = btn.nextSibling;
+  while (body && body.nodeType !== 1) body = body.nextSibling;
+  var chevron = btn.querySelector('.acc-chevron');
+  if (!body) return;
+  if (body.style.display === 'none') {
+    body.style.display = '';
+    if (chevron) chevron.classList.add('open');
+  } else {
+    body.style.display = 'none';
+    if (chevron) chevron.classList.remove('open');
+  }
 }
 
 function detectDevice() {
@@ -823,7 +874,6 @@ function detectDevice() {
   if (longSide<=1280){recL=1280;recS=720;} else if(longSide<=1920){recL=1920;recS=1080;} else if(longSide<=2560){recL=2560;recS=1440;} else{recL=3840;recS=2160;}
   var recStr = landscape ? (recL+' x '+recS) : (recS+' x '+recL);
   var box = document.getElementById('device-info');
-  box.style.display = '';
   box.innerHTML = '<strong>Bildschirm:</strong> '+sw+' x '+sh+' px<br><strong>Pixel-Dichte:</strong> '+dpr+'x &rarr; Effektiv: <strong>'+ew+' x '+eh+' px</strong><br><strong>Ausrichtung:</strong> '+(landscape?'Querformat':'Hochformat')+' ('+ratioStr+')<br><br>Empfohlene Cloudinary-Auflösung:<br><span style="font-size:17px;font-weight:700;color:var(--accent)">'+recStr+'</span>';
 }
 
