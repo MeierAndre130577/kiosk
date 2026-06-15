@@ -32,8 +32,8 @@
 
   /* ── Screens ── */
   .screen {
-    position: fixed; inset: 0;
-    display: flex; flex-direction: column;
+    position: fixed; top: 0; right: 0; bottom: 0; left: 0;
+    display: -webkit-flex; display: flex; -webkit-flex-direction: column; flex-direction: column;
     visibility: hidden; pointer-events: none;
   }
   .screen.show { visibility: visible; pointer-events: auto; }
@@ -41,24 +41,27 @@
   /* ── START ── */
   #s-start {
     background: var(--bg); z-index: 80;
-    align-items: center; justify-content: center; gap: 20px;
+    -webkit-align-items: center; align-items: center;
+    -webkit-justify-content: center; justify-content: center;
   }
+  #s-start > * + * { margin-top: 20px; }
   #s-start .ico { font-size: 56px; }
   #s-start h2 { font-size: 20px; font-weight: 600; }
   #s-start p { font-size: 14px; color: var(--text-dim); text-align: center; max-width: 260px; }
-  #s-start .btn-row { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+  #s-start .btn-row { display: -webkit-flex; display: flex; -webkit-flex-wrap: wrap; flex-wrap: wrap; -webkit-justify-content: center; justify-content: center; }
+  #s-start .btn-row > * + * { margin-left: 10px; }
 
   /* ── KIOSK ── */
   #s-kiosk { background: #000; z-index: 2; }
 
   #site-frame {
-    position: absolute; inset: 0;
+    position: absolute; top: 0; left: 0;
     width: 100%; height: 100%; border: none; background: #000;
   }
   #site-frame.hidden { display: none; }
 
   #site-video {
-    position: absolute; inset: 0;
+    position: absolute; top: 0; left: 0;
     width: 100%; height: 100%;
     object-fit: cover; background: #000;
     display: none;
@@ -66,7 +69,7 @@
   #site-video.show { display: block; }
 
   #site-image {
-    position: absolute; inset: 0;
+    position: absolute; top: 0; left: 0;
     width: 100%; height: 100%;
     object-fit: contain; background: #000;
     display: none;
@@ -75,8 +78,8 @@
 
   /* Loading spinner */
   #frame-loading {
-    position: absolute; inset: 0; background: #000; z-index: 4;
-    display: flex; align-items: center; justify-content: center;
+    position: absolute; top: 0; right: 0; bottom: 0; left: 0; background: #000; z-index: 4;
+    display: -webkit-flex; display: flex; -webkit-align-items: center; align-items: center; -webkit-justify-content: center; justify-content: center;
     opacity: 0; pointer-events: none; transition: opacity .3s;
   }
   #frame-loading.show { opacity: 1; }
@@ -122,11 +125,12 @@
 
   /* Video-Fehleranzeige */
   #video-error {
-    position: absolute; inset: 0; background: #111; z-index: 4;
-    display: none; flex-direction: column;
-    align-items: center; justify-content: center;
-    gap: 12px; color: #888; text-align: center; padding: 24px;
+    position: absolute; top: 0; right: 0; bottom: 0; left: 0; background: #111; z-index: 4;
+    display: none; -webkit-flex-direction: column; flex-direction: column;
+    -webkit-align-items: center; align-items: center; -webkit-justify-content: center; justify-content: center;
+    color: #888; text-align: center; padding: 24px;
   }
+  #video-error > * + * { margin-top: 12px; }
   #video-error.show { display: flex; }
   #video-error .ve-ico { font-size: 40px; }
   #video-error p { font-size: 14px; line-height: 1.6; max-width: 320px; }
@@ -146,7 +150,8 @@
   .l-ico { font-size: 40px; margin-bottom: 12px; }
   .l-title { font-size: 18px; font-weight: 600; margin-bottom: 4px; }
   .l-sub { font-size: 13px; color: var(--text-dim); margin-bottom: 20px; }
-  .dots { display: flex; justify-content: center; gap: 14px; margin-bottom: 20px; }
+  .dots { display: -webkit-flex; display: flex; -webkit-justify-content: center; justify-content: center; margin-bottom: 20px; }
+  .dots > * + * { margin-left: 14px; }
   .dot {
     width: 14px; height: 14px; border-radius: 50%;
     border: 2px solid var(--border); background: transparent; transition: all .15s;
@@ -174,11 +179,12 @@
   #s-set { background: var(--bg); z-index: 60; }
   .sh {
     background: var(--surface); border-bottom: 1px solid var(--border);
-    padding: 12px 16px; display: flex; align-items: center;
-    justify-content: space-between; flex-shrink: 0; gap: 8px;
+    padding: 12px 16px; display: -webkit-flex; display: flex; -webkit-align-items: center; align-items: center;
+    -webkit-justify-content: space-between; justify-content: space-between; -webkit-flex-shrink: 0; flex-shrink: 0;
   }
   .sh h1 { font-size: 16px; font-weight: 600; }
-  .sh-btns { display: flex; gap: 8px; }
+  .sh-btns { display: -webkit-flex; display: flex; }
+  .sh-btns > * + * { margin-left: 8px; }
   .sb { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 16px; }
 
   .btn {
@@ -199,20 +205,24 @@
   }
   .stitle:first-child { margin-top: 0; }
 
-  .ulist { display: flex; flex-direction: column; gap: 10px; }
+  .ulist { display: -webkit-flex; display: flex; -webkit-flex-direction: column; flex-direction: column; }
+  .ulist > * + * { margin-top: 10px; }
   .ucard {
     background: var(--surface); border: 1px solid var(--border);
     border-radius: var(--r); padding: 12px;
-    display: flex; gap: 10px; align-items: flex-start;
+    display: -webkit-flex; display: flex; -webkit-align-items: flex-start; align-items: flex-start;
   }
+  .ucard > * + * { margin-left: 10px; }
   .unum {
     width: 28px; height: 28px; border-radius: 50%;
     background: var(--surface2); border: 1px solid var(--border);
     display: flex; align-items: center; justify-content: center;
     font-size: 12px; color: var(--text-dim); flex-shrink: 0; margin-top: 8px;
   }
-  .ufields { flex: 1; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
-  .urow { display: flex; gap: 8px; align-items: center; }
+  .ufields { -webkit-flex: 1; flex: 1; display: -webkit-flex; display: flex; -webkit-flex-direction: column; flex-direction: column; min-width: 0; }
+  .ufields > * + * { margin-top: 8px; }
+  .urow { display: -webkit-flex; display: flex; -webkit-align-items: center; align-items: center; }
+  .urow > * + * { margin-left: 8px; }
 
   /* Typ-Umschalter Website / Video */
   .type-toggle {
@@ -220,12 +230,13 @@
     border: 1px solid var(--border);
   }
   .ttbtn {
-    flex: 1; padding: 9px 4px; font-size: 12px; font-weight: 600; cursor: pointer;
+    -webkit-flex: 1; flex: 1; padding: 9px 4px; font-size: 12px; font-weight: 600; cursor: pointer;
     background: var(--surface2); color: var(--text-dim); border: none;
-    display: flex; align-items: center; justify-content: center; gap: 5px;
+    display: -webkit-flex; display: flex; -webkit-align-items: center; align-items: center; -webkit-justify-content: center; justify-content: center;
     -webkit-tap-highlight-color: transparent; transition: background .15s, color .15s;
     touch-action: manipulation;
   }
+  .ttbtn > * + * { margin-left: 5px; }
   .ttbtn + .ttbtn { border-left: 1px solid var(--border); }
   .ttbtn.active { background: var(--accent); color: #000; }
 
@@ -252,11 +263,12 @@
     background: var(--surface); border: 2px dashed var(--border);
     color: var(--text-dim); border-radius: var(--r);
     padding: 14px; width: 100%; font-size: 15px; cursor: pointer;
-    margin-top: 10px; display: flex; align-items: center;
-    justify-content: center; gap: 8px; min-height: 52px;
+    margin-top: 10px; display: -webkit-flex; display: flex; -webkit-align-items: center; align-items: center;
+    -webkit-justify-content: center; justify-content: center; min-height: 52px;
     -webkit-tap-highlight-color: transparent;
     touch-action: manipulation;
   }
+  .addbtn > * + * { margin-left: 8px; }
   .addbtn:active { border-color: var(--accent); color: var(--accent); }
 
   .ibox {
@@ -267,10 +279,11 @@
   .ibox strong { color: var(--accent); }
 
   .wrow {
-    display: flex; align-items: center; gap: 10px;
+    display: -webkit-flex; display: flex; -webkit-align-items: center; align-items: center;
     padding: 12px 14px; border-radius: 8px;
     border: 1px solid var(--border); background: var(--surface2); font-size: 13px;
   }
+  .wrow > * + * { margin-left: 10px; }
   .wdot {
     width: 10px; height: 10px; border-radius: 50%;
     background: var(--text-dim); flex-shrink: 0; transition: background .3s;
