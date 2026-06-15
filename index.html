@@ -617,11 +617,11 @@ function renderList() {
           <button class="ttbtn${t==='cloudinary'?' active':''}" type="button" data-i="${i}" data-type="cloudinary">☁️ Ordner</button>
         </div>
         ${fields}
-        <div class="urow">
+        ${t === 'video' ? '' : `<div class="urow">
           <input class="inp dur-f" type="number" inputmode="numeric"
             min="${MIN_DUR}" max="3600" value="${s.duration||30}" data-i="${i}" data-f="dur">
-          <span class="dlbl">Sek. pro Video</span>
-        </div>
+          <span class="dlbl">${t === 'cloudinary' ? 'Sek. pro Bild' : 'Sek. anzeigen'}</span>
+        </div>`}
       </div>
       <button class="dbtn" type="button" data-del="${i}" aria-label="Löschen">✕</button>`;
     ul.appendChild(c);
@@ -741,37 +741,50 @@ async function startKiosk() {
 function showSite(idx) {
   curIdx = idx;
   const s = activeSites[idx];
+  const next = () => showSite((curIdx + 1) % activeSites.length);
 
-  // Reset alle Inhalts-Elemente
+  // Reset
+  clearTimeout(rotTimer);
+  cancelAnimationFrame(rafId);
+  video.onended = null;
   video.pause(); video.removeAttribute('src'); video.classList.remove('show');
+  video.loop = false;
   img.classList.remove('show'); img.src = '';
   videoError.classList.remove('show');
   frame.classList.add('hidden');
 
+  counter.textContent = activeSites.length > 1 ? `${idx + 1} / ${activeSites.length}` : '';
+
   if (s.type === 'video') {
     loading.classList.remove('show');
-    video.muted = true; video.loop = true; video.src = s.url;
+    video.muted = true;
+    video.src = s.url;
     video.classList.add('show');
-    video.load(); video.play().catch(() => {});
+    video.load();
+    video.play().catch(() => {});
+    // Fortschritt anhand echter Video-Position
+    startVideoProgress();
+    // Weiter wenn Video endet
+    video.onended = next;
   } else if (s.type === 'image') {
     loading.classList.add('show');
     img.src = s.url;
     img.classList.add('show');
+    startProgress(s.duration);
+    rotTimer = setTimeout(next, s.duration * 1000);
   } else {
     frame.classList.remove('hidden');
     loading.classList.add('show');
     frame.src = resolveWebUrl(s.url);
+    startProgress(s.duration);
+    rotTimer = setTimeout(next, s.duration * 1000);
   }
-
-  counter.textContent = activeSites.length > 1 ? `${idx + 1} / ${activeSites.length}` : '';
-  startProgress(s.duration);
-  clearTimeout(rotTimer);
-  rotTimer = setTimeout(() => showSite((curIdx + 1) % activeSites.length), s.duration * 1000);
 }
 
 function stopRotation() {
   clearTimeout(rotTimer);
   cancelAnimationFrame(rafId);
+  video.onended = null;
   video.pause();
   video.removeAttribute('src');
   video.classList.remove('show');
@@ -792,6 +805,19 @@ function startProgress(durationSec) {
     if (pct < 100) rafId = requestAnimationFrame(tick);
   }
   requestAnimationFrame(tick);
+}
+
+function startVideoProgress() {
+  cancelAnimationFrame(rafId);
+  progBar.style.transition = 'none';
+  progBar.style.width = '0%';
+  function tick() {
+    if (video.duration && video.duration > 0) {
+      progBar.style.width = (video.currentTime / video.duration * 100) + '%';
+    }
+    rafId = requestAnimationFrame(tick);
+  }
+  rafId = requestAnimationFrame(tick);
 }
 
 frame.addEventListener('load', () => loading.classList.remove('show'));
