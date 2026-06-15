@@ -15,6 +15,9 @@
       "display_name": "e191f6a1-f379-4527-b3a4-e46a181abe0e_ad5jwd",
       "url": "http://res.cloudinary.com/dqw5qfpe2/image/upload/v1781520685/e191f6a1-f379-4527-b3a4-e46a181abe0e_ad5jwd.png",
       "secure_url": "https://res.cloudinary.com/dqw5qfpe2/image/upload/v1781520685/e191f6a1-f379-4527-b3a4-e46a181abe0e_ad5jwd.png",
+      "tags": [
+        "kiosk"
+      ],
       "last_updated": {
         "tags_updated_at": "2026-06-15T14:57:06+00:00",
         "updated_at": "2026-06-15T14:57:06+00:00"
@@ -35,6 +38,9 @@
       "display_name": "71ca7160-6fb2-456e-b352-a5b8cb22c83b_dzpad9",
       "url": "http://res.cloudinary.com/dqw5qfpe2/image/upload/v1781515416/71ca7160-6fb2-456e-b352-a5b8cb22c83b_dzpad9.png",
       "secure_url": "https://res.cloudinary.com/dqw5qfpe2/image/upload/v1781515416/71ca7160-6fb2-456e-b352-a5b8cb22c83b_dzpad9.png",
+      "tags": [
+        "kiosk"
+      ],
       "last_updated": {
         "tags_updated_at": "2026-06-15T09:24:09+00:00",
         "updated_at": "2026-06-15T09:24:09+00:00"
@@ -55,6 +61,7 @@
       "display_name": "SIELAFF_SiLine_Combi_DV_Deutsch_English_Français_bxz1ga",
       "url": "http://res.cloudinary.com/dqw5qfpe2/video/upload/v1781418954/SIELAFF_SiLine_Combi_DV_Deutsch_English_Fran%C3%A7ais_bxz1ga.mp4",
       "secure_url": "https://res.cloudinary.com/dqw5qfpe2/video/upload/v1781418954/SIELAFF_SiLine_Combi_DV_Deutsch_English_Fran%C3%A7ais_bxz1ga.mp4",
+      "tags": [],
       "last_updated": {
         "tags_updated_at": "2026-06-15T12:50:13+00:00",
         "updated_at": "2026-06-15T12:50:13+00:00"
@@ -75,6 +82,7 @@
       "display_name": "SIELAFF_Maxibar_Deutsch_English_Français_ycqkxw",
       "url": "http://res.cloudinary.com/dqw5qfpe2/video/upload/v1781418932/SIELAFF_Maxibar_Deutsch_English_Fran%C3%A7ais_ycqkxw.mp4",
       "secure_url": "https://res.cloudinary.com/dqw5qfpe2/video/upload/v1781418932/SIELAFF_Maxibar_Deutsch_English_Fran%C3%A7ais_ycqkxw.mp4",
+      "tags": [],
       "last_updated": {
         "tags_updated_at": "2026-06-15T12:50:19+00:00",
         "updated_at": "2026-06-15T12:50:19+00:00"
@@ -95,6 +103,9 @@
       "display_name": "SIELAFF_SiLine_jzaob3",
       "url": "http://res.cloudinary.com/dqw5qfpe2/video/upload/v1781418930/SIELAFF_SiLine_jzaob3.mp4",
       "secure_url": "https://res.cloudinary.com/dqw5qfpe2/video/upload/v1781418930/SIELAFF_SiLine_jzaob3.mp4",
+      "tags": [
+        "kiosk"
+      ],
       "last_updated": {
         "tags_updated_at": "2026-06-15T11:06:27+00:00",
         "updated_at": "2026-06-15T11:06:27+00:00"
@@ -115,11 +126,12 @@
       "display_name": "Logo_rphsx0",
       "url": "http://res.cloudinary.com/dqw5qfpe2/video/upload/v1781418921/Logo_rphsx0.mp4",
       "secure_url": "https://res.cloudinary.com/dqw5qfpe2/video/upload/v1781418921/Logo_rphsx0.mp4",
+      "tags": [],
       "last_updated": {
         "tags_updated_at": "2026-06-15T10:15:36+00:00",
         "updated_at": "2026-06-15T10:15:36+00:00"
       }
     }
   ],
-  "updated": "2026-06-15T15:15:23Z"
+  "updated": "2026-06-15T15:16:49Z"
 }
