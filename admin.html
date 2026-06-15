@@ -762,9 +762,12 @@ function clearDeviceConfig(id) {
 }
 async function identifyDevice(id) {
   try {
-    const content = JSON.stringify({ identify: id, ts: new Date().toISOString() }, null, 2);
-    const f = await ghGet('commands.json').catch(() => null);
-    await ghPut('commands.json', content, f ? f.sha : undefined, 'identify device');
+    const r = await fetch(`https://api.github.com/gists/${GIST_ID}`, {
+      method: 'PATCH',
+      headers: { Authorization: `token ${GIST_TOK}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ files: { 'command.json': { content: JSON.stringify({ identify: id, ts: new Date().toISOString() }) } } })
+    });
+    if (!r.ok) throw new Error('Gist ' + r.status);
     toast('📍 Signal gesendet — Display leuchtet in ~15 Sek. auf');
   } catch(e) { toast('Fehler: ' + (e.message || e), 'err'); }
 }

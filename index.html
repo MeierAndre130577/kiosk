@@ -402,15 +402,21 @@ function showIdentifyOverlay() {
 }
 
 function checkCommands() {
-  fetchJSON(commandsUrl()).then(function(cmd) {
-    if (!cmd || cmd.identify !== DEVICE_ID) return;
-    var ts = cmd.ts ? new Date(cmd.ts).getTime() : 0;
-    if (Date.now() - ts > 2 * 60 * 1000) return;
-    var seen = '';
-    try { seen = localStorage.getItem('kiosk_identify_seen') || ''; } catch(e) {}
-    if (seen === cmd.ts) return;
-    try { localStorage.setItem('kiosk_identify_seen', cmd.ts); } catch(e) {}
-    showIdentifyOverlay();
+  fetch('https://api.github.com/gists/' + GIST_ID, {
+    headers: { 'Authorization': 'token ' + GIST_TOKEN }
+  }).then(function(r) { return r.json(); }).then(function(d) {
+    try {
+      var f = d.files && d.files['command.json'];
+      if (!f) return;
+      var cmd = JSON.parse(f.content);
+      if (!cmd || cmd.identify !== DEVICE_ID) return;
+      var ts = cmd.ts ? new Date(cmd.ts).getTime() : 0;
+      if (Date.now() - ts > 2 * 60 * 1000) return;
+      var seen = ''; try { seen = localStorage.getItem('kiosk_identify_seen') || ''; } catch(e) {}
+      if (seen === cmd.ts) return;
+      try { localStorage.setItem('kiosk_identify_seen', cmd.ts); } catch(e) {}
+      showIdentifyOverlay();
+    } catch(e) {}
   }).catch(function() {});
 }
 
