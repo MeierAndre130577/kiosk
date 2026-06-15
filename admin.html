@@ -687,17 +687,29 @@ async function loadDisplays() {
       document.getElementById('devices-grid').innerHTML = '<div class="empty">Noch kein Display gemeldet.<br>Starte einen Kiosk mit dem ?autostart Link.</div>';
       return;
     }
+    // Fingerprint-Duplikate erkennen
+    const fpMap = {};
+    ids.forEach(id => {
+      const d = hb[id];
+      const fp = [d.gpu || '', d.screen || '', d.timezone || ''].join('|');
+      if (fp !== '||') { if (!fpMap[fp]) fpMap[fp] = []; fpMap[fp].push(id); }
+    });
+
     document.getElementById('devices-grid').innerHTML = ids.map(id => {
       const d = hb[id];
       const mins = Math.floor((Date.now() - new Date(d.lastSeen)) / 60000);
       const dotClass = mins < 10 ? 'dot-green' : mins < 60 ? 'dot-yellow' : 'dot-red';
       const ago = mins < 1 ? 'gerade eben' : mins < 60 ? `vor ${mins} Min.` : `vor ${Math.floor(mins/60)} Std.`;
       const devCfg = config.devices[id];
+      const fp = [d.gpu || '', d.screen || '', d.timezone || ''].join('|');
+      const twins = fp !== '||' && fpMap[fp] && fpMap[fp].length > 1 ? fpMap[fp].filter(x => x !== id) : [];
+      const dupBadge = twins.length ? `<div style="margin:6px 0 2px;padding:4px 8px;background:#7c3a00;border-radius:4px;font-size:11px;color:#ffb347">⚠️ Gleiche Hardware wie ${twins.length} anderen Eintrag — wahrscheinlich 2 Browser auf 1 Gerät</div>` : '';
       return `<div class="device-card">
         <div class="device-head">
           <div class="dot ${dotClass}"></div>
           <div class="device-name">${d.name || d.autoName || 'Unbenannt'}</div>
         </div>
+        ${dupBadge}
         <div class="device-meta">
           <strong>Zuletzt gesehen:</strong> ${ago}<br>
           <strong>Playlist:</strong> ${d.playlistUpdated ? new Date(d.playlistUpdated).toLocaleString('de-AT') : '–'}<br>
