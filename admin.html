@@ -235,6 +235,8 @@
     </div>
   </div>
   <button class="btn pri" onclick="saveCreds()">💾 Zugangsdaten speichern</button>
+  <button class="btn sec" onclick="copySetupLink()" style="margin-top:8px">🔗 Setup-Link kopieren</button>
+  <div style="font-size:11px;color:var(--dim);margin-top:6px">Link auf neuem Gerät öffnen → Zugangsdaten werden automatisch eingerichtet</div>
 </section>
 
 </main>
@@ -927,8 +929,29 @@ function saveCreds() {
   toast(`Zugangsdaten gespeichert ✓ (Key: …${ckey().slice(-4)})`);
 }
 
+// ── SETUP-LINK ─────────────────────────────────────────────
+function applySetupHash() {
+  const hash = location.hash.slice(1);
+  if (!hash.startsWith('setup=')) return false;
+  const parts = hash.slice(6).split(':');
+  if (parts.length < 3) return false;
+  const [token, key, secret] = parts;
+  if (token) localStorage.setItem('gh_token', token);
+  if (key)   localStorage.setItem('cld_key', key);
+  if (secret) localStorage.setItem('cld_secret', secret);
+  history.replaceState(null, '', location.pathname);
+  toast('Zugangsdaten eingerichtet ✓');
+  return true;
+}
+function copySetupLink() {
+  const link = `${location.origin}${location.pathname}#setup=${gh()}:${ckey()}:${csec()}`;
+  navigator.clipboard.writeText(link).then(() => toast('Setup-Link kopiert ✓ — auf neuem Gerät öffnen'))
+    .catch(() => { prompt('Setup-Link (kopieren):', link); });
+}
+
 // ── INIT ───────────────────────────────────────────────────
 (async () => {
+  applySetupHash();
   if (!gh()) {
     document.querySelectorAll('.tab').forEach(b => { if (b.dataset.tab === 'creds') b.click(); });
     toast('Bitte Zugangsdaten eingeben.', 'err');
