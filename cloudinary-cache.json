@@ -40,7 +40,7 @@
     },
     {
       "asset_id": "843c1283af9c13934105ecd884053163",
-      "public_id": "Sielaff_Store/SIELAFF    SiLine Combi DV   Deutsch English Français",
+      "public_id": "Sielaff_Store/SIELAFF    SiLine Combi DV   Deutsch English FranÃ§ais",
       "format": "mp4",
       "version": 1781540877,
       "resource_type": "video",
@@ -50,14 +50,14 @@
       "width": 1920,
       "height": 1080,
       "asset_folder": "Sielaff_Store",
-      "display_name": "SIELAFF    SiLine Combi DV   Deutsch English Français",
+      "display_name": "SIELAFF    SiLine Combi DV   Deutsch English FranÃ§ais",
       "url": "http://res.cloudinary.com/dqw5qfpe2/video/upload/v1781540877/Sielaff_Store/SIELAFF%20%20%20%20SiLine%20Combi%20DV%20%20%20Deutsch%20English%20Fran%C3%A7ais.mp4",
       "secure_url": "https://res.cloudinary.com/dqw5qfpe2/video/upload/v1781540877/Sielaff_Store/SIELAFF%20%20%20%20SiLine%20Combi%20DV%20%20%20Deutsch%20English%20Fran%C3%A7ais.mp4",
       "kiosk_folder": "Sielaff_Store"
     },
     {
       "asset_id": "a1f82e79957b85edfc109945e7b88702",
-      "public_id": "Sielaff_Store/SIELAFF   SiLine®",
+      "public_id": "Sielaff_Store/SIELAFF   SiLineÂ®",
       "format": "mp4",
       "version": 1781540832,
       "resource_type": "video",
@@ -67,7 +67,7 @@
       "width": 1920,
       "height": 1080,
       "asset_folder": "Sielaff_Store",
-      "display_name": "SIELAFF   SiLine®",
+      "display_name": "SIELAFF   SiLineÂ®",
       "url": "http://res.cloudinary.com/dqw5qfpe2/video/upload/v1781540832/Sielaff_Store/SIELAFF%20%20%20SiLine%C2%AE.mp4",
       "secure_url": "https://res.cloudinary.com/dqw5qfpe2/video/upload/v1781540832/Sielaff_Store/SIELAFF%20%20%20SiLine%C2%AE.mp4",
       "last_updated": {
@@ -141,7 +141,7 @@
     },
     {
       "asset_id": "fa92339c1a1d8bb3ab7f29e68f89c566",
-      "public_id": "Sielaff_Store/SIELAFF   Maxibar   Deutsch English Français",
+      "public_id": "Sielaff_Store/SIELAFF   Maxibar   Deutsch English FranÃ§ais",
       "format": "mp4",
       "version": 1781540887,
       "resource_type": "video",
@@ -151,7 +151,7 @@
       "width": 1920,
       "height": 1080,
       "asset_folder": "Sielaff_Store",
-      "display_name": "SIELAFF   Maxibar   Deutsch English Français",
+      "display_name": "SIELAFF   Maxibar   Deutsch English FranÃ§ais",
       "url": "http://res.cloudinary.com/dqw5qfpe2/video/upload/v1781540887/Sielaff_Store/SIELAFF%20%20%20Maxibar%20%20%20Deutsch%20English%20Fran%C3%A7ais.mp4",
       "secure_url": "https://res.cloudinary.com/dqw5qfpe2/video/upload/v1781540887/Sielaff_Store/SIELAFF%20%20%20Maxibar%20%20%20Deutsch%20English%20Fran%C3%A7ais.mp4",
       "last_updated": {
@@ -159,7 +159,34 @@
         "updated_at": "2026-06-15T17:28:37+00:00"
       },
       "kiosk_folder": "Sielaff_Store"
+    },
+    {
+      "public_id": "Sielaff_Live/1000065631",
+      "secure_url": "https://res.cloudinary.com/dqw5qfpe2/image/upload/v1781649057/Sielaff_Live/1000065631.jpg",
+      "resource_type": "image",
+      "format": "jpg",
+      "bytes": 3378158,
+      "asset_id": "9f746aec548697eacd6318280d33e6f5",
+      "kiosk_folder": "Sielaff_Live"
+    },
+    {
+      "public_id": "Sielaff_Live/1000065630",
+      "secure_url": "https://res.cloudinary.com/dqw5qfpe2/image/upload/v1781649060/Sielaff_Live/1000065630.jpg",
+      "resource_type": "image",
+      "format": "jpg",
+      "bytes": 3521150,
+      "asset_id": "e4dcecd41be53c5b77c9eeaaba05a8b0",
+      "kiosk_folder": "Sielaff_Live"
+    },
+    {
+      "public_id": "Sielaff_Live/1000065628",
+      "secure_url": "https://res.cloudinary.com/dqw5qfpe2/image/upload/v1781649063/Sielaff_Live/1000065628.jpg",
+      "resource_type": "image",
+      "format": "jpg",
+      "bytes": 3391130,
+      "asset_id": "5faa0751194850e8f5ec058da3890190",
+      "kiosk_folder": "Sielaff_Live"
     }
   ],
-  "updated": "2026-06-16T16:14:46Z"
+  "updated": "2026-06-16T22:31:05.139Z"
 }
