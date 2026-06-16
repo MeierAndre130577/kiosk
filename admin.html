@@ -346,9 +346,17 @@ async function uploadFiles(files) {
     } catch(e) { toast('Fehler: ' + e.message, 'err'); }
   }
   fill.style.width = '100%';
-  status.textContent = `${done} von ${files.length} hochgeladen.`;
-  setTimeout(() => { bar.style.display = 'none'; status.style.display = 'none'; fill.style.width = '0%'; }, 2000);
-  if (done > 0) { toast(`${done} Datei(en) nach ${uploadDest} hochgeladen ✓`); renderMedia(allMedia); }
+  const failed = files.length - done;
+  if (failed > 0) status.textContent = `${done} hochgeladen, ${failed} fehlgeschlagen.`;
+  else status.textContent = `${done} von ${files.length} hochgeladen ✓`;
+  setTimeout(() => { bar.style.display = 'none'; status.style.display = 'none'; fill.style.width = '0%'; }, 3000);
+  if (done > 0) {
+    toast(`${done} Datei(en) hochgeladen ✓ — Cache wird aktualisiert…`);
+    renderMedia(allMedia);
+    triggerSync();
+  } else {
+    toast(`Upload fehlgeschlagen — Zugangsdaten oder Dateiformat prüfen`, 'err');
+  }
 }
 
 // ── Drag & Drop Setup ──────────────────────────────────────
