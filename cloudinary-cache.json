@@ -22,23 +22,6 @@
       "kiosk_folder": "Sielaff_Store"
     },
     {
-      "asset_id": "6b010d9bf3ff9ce8760bf457800b4045",
-      "public_id": "Sielaff_Live/maxibar_professional_cut_draft",
-      "format": "mp4",
-      "version": 1781583154,
-      "resource_type": "video",
-      "type": "upload",
-      "created_at": "2026-06-16T04:12:34Z",
-      "bytes": 32247530,
-      "width": 1920,
-      "height": 1080,
-      "asset_folder": "Sielaff_Live",
-      "display_name": "maxibar_professional_cut_draft",
-      "url": "http://res.cloudinary.com/dqw5qfpe2/video/upload/v1781583154/Sielaff_Live/maxibar_professional_cut_draft.mp4",
-      "secure_url": "https://res.cloudinary.com/dqw5qfpe2/video/upload/v1781583154/Sielaff_Live/maxibar_professional_cut_draft.mp4",
-      "kiosk_folder": "Sielaff_Live"
-    },
-    {
       "asset_id": "843c1283af9c13934105ecd884053163",
       "public_id": "Sielaff_Store/SIELAFF    SiLine Combi DV   Deutsch English Français",
       "format": "mp4",
@@ -161,5 +144,5 @@
       "kiosk_folder": "Sielaff_Store"
     }
   ],
-  "updated": "2026-06-16T04:20:45Z"
+  "updated": "2026-06-16T04:30:54Z"
 }
