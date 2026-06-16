@@ -324,6 +324,7 @@ async function uploadFiles(files) {
   const status = document.getElementById('upload-status');
   bar.style.display = ''; status.style.display = '';
   let done = 0;
+  const newResources = [];
   for (const file of files) {
     status.textContent = `${done + 1} / ${files.length}: ${file.name}`;
     fill.style.width = (done / files.length * 100) + '%';
@@ -341,7 +342,8 @@ async function uploadFiles(files) {
       const r = await fetch(`https://api.cloudinary.com/v1_1/${cloud()}/auto/upload`, { method: 'POST', body: form });
       const d = await r.json();
       if (d.error) throw new Error(d.error.message);
-      allMedia.push({ public_id: d.public_id, resource_type: d.resource_type, format: d.format, bytes: d.bytes, kiosk_folder: uploadDest });
+      newResources.push({ public_id: d.public_id, secure_url: d.secure_url, resource_type: d.resource_type, format: d.format, bytes: d.bytes, asset_id: d.asset_id || d.public_id, kiosk_folder: uploadDest });
+      allMedia.push(newResources[newResources.length - 1]);
       done++;
     } catch(e) { toast('Fehler: ' + e.message, 'err'); }
   }
@@ -351,11 +353,20 @@ async function uploadFiles(files) {
   else status.textContent = `${done} von ${files.length} hochgeladen ✓`;
   setTimeout(() => { bar.style.display = 'none'; status.style.display = 'none'; fill.style.width = '0%'; }, 3000);
   if (done > 0) {
-    toast(`${done} Datei(en) hochgeladen ✓ — Cache wird aktualisiert…`);
     renderMedia(allMedia);
-    triggerSync();
+    toast(`${done} Datei(en) hochgeladen ✓ — Cache wird gespeichert…`);
+    try {
+      const cf = await ghGet('cloudinary-cache.json');
+      const cache = JSON.parse(atob(cf.content.replace(/\n/g, '')));
+      cache.resources = (cache.resources || []).filter(r => !newResources.find(n => n.public_id === r.public_id));
+      cache.resources.push(...newResources);
+      cache.updated = new Date().toISOString();
+      await ghPut('cloudinary-cache.json', JSON.stringify(cache, null, 2), cf.sha, 'Upload: ' + newResources.map(r => r.public_id).join(', '));
+      lastCacheTs = cache.updated;
+      toast(`${done} Datei(en) hochgeladen ✓`);
+    } catch(e) { toast('Cache-Update fehlgeschlagen — ⟳ Sync klicken', 'err'); }
   } else {
-    toast(`Upload fehlgeschlagen — Zugangsdaten oder Dateiformat prüfen`, 'err');
+    toast('Upload fehlgeschlagen — Zugangsdaten oder Dateiformat prüfen', 'err');
   }
 }
 
