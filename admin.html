@@ -936,12 +936,19 @@ function applySetupHash() {
   const parts = hash.slice(6).split(':');
   if (parts.length < 3) return false;
   const [token, key, secret] = parts;
-  if (token) localStorage.setItem('gh_token', token);
-  if (key)   localStorage.setItem('cld_key', key);
-  if (secret) localStorage.setItem('cld_secret', secret);
-  history.replaceState(null, '', location.pathname);
-  toast('Zugangsdaten eingerichtet ✓');
-  return true;
+  try {
+    if (token)  localStorage.setItem('gh_token',  token);
+    if (key)    localStorage.setItem('cld_key',   key);
+    if (secret) localStorage.setItem('cld_secret', secret);
+    // Verify write worked
+    if (token && localStorage.getItem('gh_token') !== token) throw new Error('Verify failed');
+    history.replaceState(null, '', location.pathname);
+    toast('Zugangsdaten eingerichtet ✓');
+    return true;
+  } catch(e) {
+    toast('Fehler: localStorage blockiert — kein privater Modus verwenden!', 'err');
+    return false;
+  }
 }
 function copySetupLink() {
   const link = `${location.origin}${location.pathname}#setup=${gh()}:${ckey()}:${csec()}`;
