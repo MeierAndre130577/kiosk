@@ -415,7 +415,7 @@ async function moveToFolder(publicId, resourceType, targetFolder) {
           toast(`Verschoben nach ${targetFolder === 'Sielaff_Live' ? '▶ Live' : '📦 Store'} ✓`);
         } else if (tries >= 36) {
           clearInterval(poll);
-          toast('Sync dauert länger — bitte ↻ Laden klicken', 'err');
+          toast('Sync dauert länger — bitte ⟳ Sync nochmal klicken', 'err');
         }
       }, 5000);
     } else {
@@ -491,7 +491,7 @@ async function loadAllMedia() {
     }
   } catch(e) {}
 
-  document.getElementById('media-grid').innerHTML = '<div class="empty">Keine Dateien. ⟳ Sync klicken und dann ↻ Laden.</div>';
+  document.getElementById('media-grid').innerHTML = '<div class="empty">Keine Dateien. ⟳ Sync klicken.</div>';
 }
 
 async function triggerSync() {
@@ -608,7 +608,7 @@ async function deleteFile(publicId, resourceType) {
           toast('Gelöscht ✓');
         } else if (tries >= 36) {
           clearInterval(poll);
-          toast('Sync dauert länger — bitte ↻ Laden klicken', 'err');
+          toast('Sync dauert länger — bitte ⟳ Sync nochmal klicken', 'err');
         }
       }, 5000);
     } else {
