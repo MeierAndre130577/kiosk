@@ -454,6 +454,28 @@ function cacheUrl() {
   return location.href.replace(/admin\.html.*$/, '') + 'cloudinary-cache.json?t=' + Date.now();
 }
 
+var lastCacheTs = '';
+
+function updateCacheAge(updated) {
+  const ageEl = document.getElementById('cache-age');
+  if (!ageEl) return;
+  if (!updated) { ageEl.textContent = 'Noch nicht synchronisiert → ⟳ Sync klicken'; return; }
+  const mins = Math.round((Date.now() - new Date(updated)) / 60000);
+  ageEl.textContent = `Zuletzt synchronisiert: ${mins < 1 ? 'gerade eben' : `vor ${mins} Min.`} · Auto-Refresh aktiv`;
+}
+
+async function checkCacheUpdate() {
+  try {
+    const d = await fetch(cacheUrl()).then(r => r.json()).catch(() => ({}));
+    if (!d.updated || d.updated === lastCacheTs) return;
+    lastCacheTs = d.updated;
+    allMedia = [];
+    loadAllMedia();
+    if (document.getElementById('tab-displays').classList.contains('active')) loadDisplays();
+  } catch(e) {}
+}
+setInterval(checkCacheUpdate, 30000);
+
 async function loadAllMedia() {
   document.getElementById('media-grid').innerHTML = '<div class="empty"><div class="spin"></div><br>Lade…</div>';
   allMedia = [];
@@ -464,13 +486,8 @@ async function loadAllMedia() {
     if (r.ok) {
       const d = await r.json();
       allMedia = d.resources || [];
-      const ageEl = document.getElementById('cache-age');
-      if (d.updated) {
-        const mins = Math.round((Date.now() - new Date(d.updated)) / 60000);
-        ageEl.textContent = `Zuletzt synchronisiert: ${mins < 1 ? 'gerade eben' : `vor ${mins} Min.`}`;
-      } else {
-        ageEl.textContent = 'Noch nicht synchronisiert → ⟳ Sync klicken';
-      }
+      if (d.updated) lastCacheTs = d.updated;
+      updateCacheAge(d.updated);
       if (allMedia.length > 0) { renderMedia(allMedia); return; }
     }
   } catch(e) {}
