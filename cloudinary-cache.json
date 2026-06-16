@@ -2,7 +2,7 @@
   "resources": [
     {
       "asset_id": "47e62e69b12be57e7802f11fd175eab1",
-      "public_id": "Sielaff_Live/Klappenautomat",
+      "public_id": "Sielaff_Store/Klappenautomat",
       "format": "png",
       "version": 1781548619,
       "resource_type": "image",
@@ -11,10 +11,31 @@
       "bytes": 1764553,
       "width": 1672,
       "height": 941,
-      "asset_folder": "Sielaff_Live",
+      "asset_folder": "Sielaff_Store",
       "display_name": "Klappenautomat",
-      "url": "http://res.cloudinary.com/dqw5qfpe2/image/upload/v1781548619/Sielaff_Live/Klappenautomat.png",
-      "secure_url": "https://res.cloudinary.com/dqw5qfpe2/image/upload/v1781548619/Sielaff_Live/Klappenautomat.png",
+      "url": "http://res.cloudinary.com/dqw5qfpe2/image/upload/v1781548619/Sielaff_Store/Klappenautomat.png",
+      "secure_url": "https://res.cloudinary.com/dqw5qfpe2/image/upload/v1781548619/Sielaff_Store/Klappenautomat.png",
+      "last_updated": {
+        "public_id_updated_at": "2026-06-16T04:12:31+00:00",
+        "updated_at": "2026-06-16T04:12:31+00:00"
+      },
+      "kiosk_folder": "Sielaff_Store"
+    },
+    {
+      "asset_id": "6b010d9bf3ff9ce8760bf457800b4045",
+      "public_id": "Sielaff_Live/maxibar_professional_cut_draft",
+      "format": "mp4",
+      "version": 1781583154,
+      "resource_type": "video",
+      "type": "upload",
+      "created_at": "2026-06-16T04:12:34Z",
+      "bytes": 32247530,
+      "width": 1920,
+      "height": 1080,
+      "asset_folder": "Sielaff_Live",
+      "display_name": "maxibar_professional_cut_draft",
+      "url": "http://res.cloudinary.com/dqw5qfpe2/video/upload/v1781583154/Sielaff_Live/maxibar_professional_cut_draft.mp4",
+      "secure_url": "https://res.cloudinary.com/dqw5qfpe2/video/upload/v1781583154/Sielaff_Live/maxibar_professional_cut_draft.mp4",
       "kiosk_folder": "Sielaff_Live"
     },
     {
@@ -66,7 +87,7 @@
       "bytes": 470894,
       "width": 480,
       "height": 800,
-      "asset_folder": "Sielaff_Live",
+      "asset_folder": "Sielaff_Store",
       "display_name": "Logo",
       "url": "http://res.cloudinary.com/dqw5qfpe2/video/upload/v1781540848/Sielaff_Store/Logo.mp4",
       "secure_url": "https://res.cloudinary.com/dqw5qfpe2/video/upload/v1781540848/Sielaff_Store/Logo.mp4",
@@ -140,5 +161,5 @@
       "kiosk_folder": "Sielaff_Store"
     }
   ],
-  "updated": "2026-06-16T04:12:31Z"
+  "updated": "2026-06-16T04:20:45Z"
 }
