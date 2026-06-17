@@ -1,0 +1,11 @@
+{
+  "name": "Kiosk Admin",
+  "short_name": "Kiosk Admin",
+  "display": "standalone",
+  "start_url": "/kiosk/admin.html",
+  "background_color": "#0f1117",
+  "theme_color": "#0f1117",
+  "icons": [
+    { "src": "icon.jpg", "sizes": "512x512", "type": "image/jpeg" }
+  ]
+}
