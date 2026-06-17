@@ -119,6 +119,15 @@
   .media-meta { font-size: 10px; color: var(--dim); }
   .media-hint { font-size: 9px; color: var(--dim); margin-top: 3px; opacity: .6; }
 
+  #ctx-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:200; align-items:flex-end; justify-content:center; }
+  #ctx-overlay.show { display:flex; }
+  #ctx-menu { background:var(--surface); border-radius:16px 16px 0 0; width:100%; max-width:480px; padding:12px 0 24px; }
+  #ctx-title { font-size:12px; color:var(--dim); text-align:center; padding:8px 16px 12px; border-bottom:1px solid var(--border); margin-bottom:8px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .ctx-btn { display:block; width:100%; text-align:left; padding:14px 20px; font-size:15px; background:none; border:none; color:var(--text); cursor:pointer; }
+  .ctx-btn:active { background:var(--surface2); }
+  .ctx-btn.danger { color:var(--danger); }
+  .ctx-btn.cancel { color:var(--dim); border-top:1px solid var(--border); margin-top:8px; }
+
   /* ── Config ── */
   .site-item { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 12px; margin-bottom: 8px; }
   .site-head { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
@@ -246,6 +255,14 @@
 
 </main>
 <div id="toast"></div>
+
+<div id="ctx-overlay" onclick="hideCtxMenu()">
+  <div id="ctx-menu" onclick="event.stopPropagation()">
+    <div id="ctx-title"></div>
+    <div id="ctx-actions"></div>
+    <button class="ctx-btn cancel" onclick="hideCtxMenu()">✕ Abbrechen</button>
+  </div>
+</div>
 
 <script>
 const REPO     = localStorage.getItem('gh_repo') || 'MeierAndre130577/kiosk';
@@ -565,10 +582,30 @@ async function triggerSync() {
 }
 
 let mediaFilter = '';
-function filterMedia(q) {
-  mediaFilter = q;
-  renderMedia(allMedia);
+function filterMedia(q) { mediaFilter = q; renderMedia(allMedia); }
+
+// ── Langdruck-Kontextmenü ───────────────────────────────────
+let ctxTimer = null;
+function showCtxMenu(pid, rt, folder) {
+  const filename = pid.split('/').pop();
+  const otherFolder = folder === 'Sielaff_Live' ? 'Sielaff_Store' : 'Sielaff_Live';
+  const otherLabel  = folder === 'Sielaff_Live' ? '📦 In Store verschieben' : '▶ In Live verschieben';
+  document.getElementById('ctx-title').textContent = filename;
+  document.getElementById('ctx-actions').innerHTML =
+    `<button class="ctx-btn" onclick="hideCtxMenu();moveToFolder('${pid.replace(/'/g,"\\'")}','${rt}','${otherFolder}')">${otherLabel}</button>` +
+    `<button class="ctx-btn danger" onclick="hideCtxMenu();deleteFile('${pid.replace(/'/g,"\\'")}','${rt}')">🗑️ Löschen</button>`;
+  document.getElementById('ctx-overlay').classList.add('show');
 }
+function hideCtxMenu() {
+  document.getElementById('ctx-overlay').classList.remove('show');
+}
+function startLongPress(e, pid, rt, folder) {
+  ctxTimer = setTimeout(() => {
+    if (e.cancelable) e.preventDefault();
+    showCtxMenu(pid, rt, folder);
+  }, 500);
+}
+function cancelLongPress() { clearTimeout(ctxTimer); }
 
 function renderMedia(items) {
   const q = mediaFilter.toLowerCase();
@@ -593,7 +630,10 @@ function renderMedia(items) {
     const dragData = JSON.stringify({pid: item.public_id, rt: item.resource_type, folder}).replace(/"/g, '&quot;');
     return `<div class="media-card${folder === 'Sielaff_Live' ? ' is-live' : ''}"
       draggable="true"
-      ondragstart="event.dataTransfer.setData('text',JSON.stringify({pid:'${pid}',rt:'${rt}',folder:'${folder}'}))">
+      ondragstart="event.dataTransfer.setData('text',JSON.stringify({pid:'${pid}',rt:'${rt}',folder:'${folder}'}))"
+      ontouchstart="startLongPress(event,'${pid}','${rt}','${folder}')"
+      ontouchend="cancelLongPress()"
+      ontouchmove="cancelLongPress()">
       <img class="media-thumb" src="${thumb}" alt=""
         onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
       <div class="media-thumb-fb">${isVideo ? '▶' : '🖼'}</div>
