@@ -22,23 +22,6 @@
       "kiosk_folder": "Sielaff_Store"
     },
     {
-      "asset_id": "5faa0751194850e8f5ec058da3890190",
-      "public_id": "Sielaff_Live/1000065628",
-      "format": "jpg",
-      "version": 1781649063,
-      "resource_type": "image",
-      "type": "upload",
-      "created_at": "2026-06-16T22:31:03Z",
-      "bytes": 3391130,
-      "width": 4000,
-      "height": 3000,
-      "asset_folder": "Sielaff_Live",
-      "display_name": "1000065628",
-      "url": "http://res.cloudinary.com/dqw5qfpe2/image/upload/v1781649063/Sielaff_Live/1000065628.jpg",
-      "secure_url": "https://res.cloudinary.com/dqw5qfpe2/image/upload/v1781649063/Sielaff_Live/1000065628.jpg",
-      "kiosk_folder": "Sielaff_Live"
-    },
-    {
       "asset_id": "7bd836c633889ddd58a0f9c50823ad50",
       "public_id": "Sielaff_Live/maxibar_professional_cut_v4_motion",
       "format": "mp4",
@@ -195,5 +178,5 @@
       "kiosk_folder": "Sielaff_Live"
     }
   ],
-  "updated": "2026-06-17T12:51:18Z"
+  "updated": "2026-06-17T12:59:02Z"
 }
