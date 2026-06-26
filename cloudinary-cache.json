@@ -19,7 +19,7 @@
     },
     {
       "asset_id": "7bd836c633889ddd58a0f9c50823ad50",
-      "public_id": "Sielaff_Live/maxibar_professional_cut_v4_motion",
+      "public_id": "Sielaff_Store/maxibar_professional_cut_v4_motion",
       "format": "mp4",
       "version": 1781586101,
       "resource_type": "video",
@@ -28,11 +28,15 @@
       "bytes": 4517795,
       "width": 960,
       "height": 540,
-      "asset_folder": "Sielaff_Live",
+      "asset_folder": "Sielaff_Store",
       "display_name": "maxibar_professional_cut_v4_motion",
-      "url": "http://res.cloudinary.com/dqw5qfpe2/video/upload/v1781586101/Sielaff_Live/maxibar_professional_cut_v4_motion.mp4",
-      "secure_url": "https://res.cloudinary.com/dqw5qfpe2/video/upload/v1781586101/Sielaff_Live/maxibar_professional_cut_v4_motion.mp4",
-      "kiosk_folder": "Sielaff_Live"
+      "url": "http://res.cloudinary.com/dqw5qfpe2/video/upload/v1781586101/Sielaff_Store/maxibar_professional_cut_v4_motion.mp4",
+      "secure_url": "https://res.cloudinary.com/dqw5qfpe2/video/upload/v1781586101/Sielaff_Store/maxibar_professional_cut_v4_motion.mp4",
+      "last_updated": {
+        "public_id_updated_at": "2026-06-26T20:47:57+00:00",
+        "updated_at": "2026-06-26T20:47:57+00:00"
+      },
+      "kiosk_folder": "Sielaff_Store"
     },
     {
       "asset_id": "843c1283af9c13934105ecd884053163",
@@ -157,5 +161,5 @@
       "kiosk_folder": "Sielaff_Live"
     }
   ],
-  "updated": "2026-06-26T17:21:18Z"
+  "updated": "2026-06-26T20:47:59Z"
 }
