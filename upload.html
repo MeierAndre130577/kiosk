@@ -31,14 +31,24 @@
     padding: 10px 14px; font-size: 12px; font-weight: 700; text-align: center;
   }
 
-  #no-creds {
-    display: none; background: var(--surface); border: 1px solid rgba(239,68,68,.4);
-    border-radius: var(--r); padding: 24px 20px; text-align: center;
+  /* Checking / blocked states */
+  .state-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 16px; padding: 48px 20px; text-align: center;
+    display: none; flex-direction: column; align-items: center; gap: 14px;
   }
-  #no-creds .nc-icon { font-size: 36px; margin-bottom: 10px; }
-  #no-creds .nc-text { font-size: 13px; color: var(--dim); margin-bottom: 14px; line-height: 1.6; }
-  #no-creds a { color: var(--accent); text-decoration: none; font-size: 13px; font-weight: 600; }
+  .state-card.blocked { border-color: rgba(239,68,68,.3); }
+  .state-icon { font-size: 48px; }
+  .state-title { font-size: 18px; font-weight: 700; }
+  .state-sub { font-size: 13px; color: var(--dim); line-height: 1.6; }
+  .spin-ring {
+    width: 48px; height: 48px; border-radius: 50%;
+    border: 4px solid var(--surface2); border-top-color: var(--accent);
+    animation: spin .8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
 
+  /* Pick button */
   #pick-btn {
     display: none; flex-direction: column; align-items: center; justify-content: center;
     background: var(--surface); border: 2px dashed var(--border); border-radius: 16px;
@@ -51,26 +61,22 @@
   #pick-btn .label { font-size: 19px; font-weight: 700; }
   #pick-btn .sub { font-size: 13px; color: var(--dim); }
 
+  /* Progress */
   #progress-section {
     display: none; background: var(--surface); border: 1px solid var(--border);
-    border-radius: 16px; padding: 32px 20px; text-align: center; gap: 16px;
-    flex-direction: column; align-items: center;
+    border-radius: 16px; padding: 32px 20px; text-align: center;
+    flex-direction: column; align-items: center; gap: 16px;
   }
-  .spin-wrap { position: relative; width: 72px; height: 72px; margin: 0 auto; }
-  .spin-ring {
-    width: 72px; height: 72px; border-radius: 50%;
-    border: 5px solid var(--surface2); border-top-color: var(--accent);
-    animation: spin .8s linear infinite; position: absolute; top: 0; left: 0;
-  }
-  .spin-emoji { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); font-size: 26px; line-height: 1; }
-  @keyframes spin { to { transform: rotate(360deg); } }
+  .spin-wrap { position: relative; width: 72px; height: 72px; }
+  .spin-wrap .spin-ring { width: 72px; height: 72px; border-width: 5px; }
+  .spin-emoji { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); font-size: 26px; }
   .prog-label { font-size: 18px; font-weight: 700; }
-  .prog-sub { font-size: 13px; color: var(--dim); }
   .prog-file { font-size: 13px; color: var(--dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
   .prog-bar { background: var(--surface2); border-radius: 8px; height: 10px; overflow: hidden; width: 100%; }
   .prog-fill { height: 100%; background: var(--accent); border-radius: 8px; transition: width .4s; width: 0%; }
   .prog-count { font-size: 12px; color: var(--dim); }
 
+  /* Results */
   #results { display: none; flex-direction: column; gap: 8px; }
   .result-item { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 12px 14px; display: flex; align-items: center; gap: 12px; }
   .result-item.ok  { border-color: rgba(34,197,94,.4); }
@@ -83,7 +89,7 @@
   #upload-again {
     display: none; width: 100%; padding: 18px; border-radius: var(--r);
     font-size: 16px; font-weight: 700; background: var(--accent); color: #000;
-    border: none; cursor: pointer; margin-top: 4px;
+    border: none; cursor: pointer;
   }
   #upload-again:active { opacity: .8; }
 
@@ -91,33 +97,11 @@
     position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
     background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
     padding: 12px 20px; font-size: 13px; opacity: 0; transition: opacity .3s;
-    z-index: 999; pointer-events: none; white-space: nowrap; max-width: 90vw;
-    text-align: center;
+    z-index: 999; pointer-events: none; white-space: nowrap; max-width: 90vw; text-align: center;
   }
   #toast.show { opacity: 1; }
   #toast.ok  { border-color: var(--success); color: var(--success); }
   #toast.err { border-color: var(--danger);  color: var(--danger); }
-
-  #checking {
-    display: none; background: var(--surface); border: 1px solid var(--border);
-    border-radius: 16px; padding: 40px 20px; text-align: center;
-    flex-direction: column; align-items: center; gap: 14px;
-  }
-  #checking .chk-ring {
-    width: 48px; height: 48px; border-radius: 50%;
-    border: 4px solid var(--surface2); border-top-color: var(--accent);
-    animation: spin .8s linear infinite;
-  }
-  #checking .chk-text { font-size: 14px; color: var(--dim); }
-
-  #no-access {
-    display: none; background: var(--surface); border: 1px solid rgba(239,68,68,.3);
-    border-radius: 16px; padding: 40px 20px; text-align: center;
-    flex-direction: column; align-items: center; gap: 12px;
-  }
-  #no-access .na-icon { font-size: 48px; }
-  #no-access .na-title { font-size: 18px; font-weight: 700; }
-  #no-access .na-sub { font-size: 13px; color: var(--dim); line-height: 1.6; }
 </style>
 </head>
 <body>
@@ -131,21 +115,15 @@
 
   <div class="store-badge">📦 Dateien landen im Store — Admin entscheidet ob sie Live gehen</div>
 
-  <div id="checking">
-    <div class="chk-ring"></div>
-    <div class="chk-text">Prüfe Zugang…</div>
+  <div id="checking" class="state-card">
+    <div class="spin-ring"></div>
+    <div class="state-sub">Prüfe Zugang…</div>
   </div>
 
-  <div id="no-creds">
-    <div class="nc-icon">🔑</div>
-    <div class="nc-text">Zugangsdaten fehlen.<br>Bitte Setup-Link vom Admin öffnen oder<br>direkt im Admin einrichten.</div>
-    <a href="admin.html">→ Zum Admin</a>
-  </div>
-
-  <div id="no-access">
-    <div class="na-icon">🔒</div>
-    <div class="na-title" id="no-access-title">Upload gesperrt</div>
-    <div class="na-sub" id="no-access-sub">Bitte nachfragen.</div>
+  <div id="no-access" class="state-card blocked">
+    <div class="state-icon">🔒</div>
+    <div class="state-title" id="no-access-title">Kein Zugang</div>
+    <div class="state-sub" id="no-access-sub"></div>
   </div>
 
   <button id="pick-btn" onclick="pickFiles()">
@@ -170,81 +148,45 @@
   <button id="upload-again" onclick="resetUpload()">+ Weitere hochladen</button>
 
 </div>
-
 <div id="toast"></div>
 
 <script>
-const REPO     = localStorage.getItem('gh_repo') || 'MeierAndre130577/kiosk';
+const REPO     = 'MeierAndre130577/kiosk';
 const FOLDER   = 'Sielaff_Store';
 const GIST_ID  = 'dddeed1b06e92a5fabd4d49304b3acb2';
 const GIST_TOK = ['ghp_drGUxR6ckQoymYRSdSy', 'Lf4eqWNorcq2vXPFA'].join('');
 
-const gh   = () => localStorage.getItem('gh_token')   || '';
-const cloud = () => localStorage.getItem('cld_cloud') || 'dqw5qfpe2';
-const ckey  = () => localStorage.getItem('cld_key')   || '';
-const csec  = () => localStorage.getItem('cld_secret')|| '';
+// Credentials come from Gist after code validation
+var _cldCloud = '', _cldKey = '', _cldSecret = '';
+const gh    = () => localStorage.getItem('gh_token') || '';
 
 function toast(msg, type) {
   var t = document.getElementById('toast');
-  t.textContent = msg;
-  t.className = 'show ' + (type || 'ok');
+  t.textContent = msg; t.className = 'show ' + (type || 'ok');
   setTimeout(function() { t.className = ''; }, 3500);
 }
 
-// ── Setup-Link ─────────────────────────────────────────────
-function applySetupHash() {
-  var hash = location.hash.slice(1);
-  if (!hash) return false;
-
-  // Format: #t=TOKEN&setup=GHTOKEN:KEY:SECRET
-  var params = {};
-  hash.split('&').forEach(function(part) {
-    var idx = part.indexOf('=');
-    if (idx > 0) params[part.slice(0, idx)] = part.slice(idx + 1);
-  });
-
-  var changed = false;
-  try {
-    if (params.t) {
-      localStorage.setItem('upload_access_token', params.t);
-      changed = true;
-    }
-    if (params.setup) {
-      var parts = params.setup.split(':');
-      if (parts.length >= 3) {
-        var ghTok = parts[0], key = parts[1], secret = parts.slice(2).join(':');
-        if (ghTok)  localStorage.setItem('gh_token',   ghTok);
-        if (key)    localStorage.setItem('cld_key',    key);
-        if (secret) localStorage.setItem('cld_secret', secret);
-        changed = true;
-      }
-    }
-  } catch(e) {
-    toast('Fehler: localStorage blockiert — kein privater Modus!', 'err');
-    return false;
-  }
-
-  if (changed) {
-    history.replaceState(null, '', location.pathname);
-    toast('Zugangsdaten eingerichtet ✓');
-  }
-  return changed;
+function showBlocked(title, sub) {
+  document.getElementById('checking').style.display    = 'none';
+  document.getElementById('no-access-title').textContent = title;
+  document.getElementById('no-access-sub').textContent   = sub;
+  document.getElementById('no-access').style.display   = 'flex';
 }
 
-// ── SHA-1 / Signing ────────────────────────────────────────
-async function sha1(message) {
-  var buf  = new TextEncoder().encode(message);
+// ── SHA-1 signing ──────────────────────────────────────────
+async function sha1(msg) {
+  var buf = new TextEncoder().encode(msg);
   var hash = await crypto.subtle.digest('SHA-1', buf);
-  return Array.from(new Uint8Array(hash)).map(function(b) { return b.toString(16).padStart(2, '0'); }).join('');
+  return Array.from(new Uint8Array(hash)).map(function(b) { return b.toString(16).padStart(2,'0'); }).join('');
 }
 async function cldSign(params) {
   var str = Object.keys(params).sort()
     .filter(function(k) { return params[k] !== '' && params[k] != null; })
     .map(function(k) { return k + '=' + params[k]; }).join('&');
-  return sha1(str + csec());
+  return sha1(str + _cldSecret);
 }
 
-// ── GitHub API ─────────────────────────────────────────────
+// ── GitHub API (cache update) ──────────────────────────────
 async function ghGet(path) {
   var r = await fetch('https://api.github.com/repos/' + REPO + '/contents/' + path, {
     headers: { Authorization: 'token ' + gh() }
@@ -261,9 +203,7 @@ async function ghPut(path, content, sha, msg) {
 }
 
 // ── UI ─────────────────────────────────────────────────────
-function pickFiles() {
-  document.getElementById('file-input').click();
-}
+function pickFiles() { document.getElementById('file-input').click(); }
 
 function resetUpload() {
   document.getElementById('progress-section').style.display = 'none';
@@ -277,10 +217,6 @@ function resetUpload() {
 // ── Upload ─────────────────────────────────────────────────
 async function uploadFiles(files) {
   if (!files.length) return;
-  if (!ckey() || !csec()) {
-    toast('Zugangsdaten fehlen — bitte Setup-Link öffnen', 'err');
-    return;
-  }
 
   var progSection = document.getElementById('progress-section');
   var progLabel   = document.getElementById('prog-label');
@@ -291,11 +227,10 @@ async function uploadFiles(files) {
 
   document.getElementById('pick-btn').style.display = 'none';
   progSection.style.display = 'flex';
-  results.style.display     = 'none';
-  results.innerHTML         = '';
+  results.style.display = 'none';
+  results.innerHTML = '';
 
-  var newResources = [];
-  var done = 0;
+  var newResources = [], done = 0;
 
   for (var i = 0; i < files.length; i++) {
     var file = files[i];
@@ -305,18 +240,18 @@ async function uploadFiles(files) {
     progFill.style.width  = (i / files.length * 100) + '%';
 
     try {
-      var ts       = Math.round(Date.now() / 1000);
+      var ts = Math.round(Date.now() / 1000);
       var publicId = file.name.replace(/\.[^.]+$/, '');
-      var sig      = await cldSign({ folder: FOLDER, public_id: publicId, timestamp: ts });
-      var form     = new FormData();
+      var sig = await cldSign({ folder: FOLDER, public_id: publicId, timestamp: ts });
+      var form = new FormData();
       form.append('file', file);
-      form.append('api_key', ckey());
+      form.append('api_key', _cldKey);
       form.append('timestamp', ts);
       form.append('public_id', publicId);
       form.append('folder', FOLDER);
       form.append('signature', sig);
 
-      var r = await fetch('https://api.cloudinary.com/v1_1/' + cloud() + '/auto/upload', { method: 'POST', body: form });
+      var r = await fetch('https://api.cloudinary.com/v1_1/' + _cldCloud + '/auto/upload', { method: 'POST', body: form });
       var d = await r.json();
       if (d.error) throw new Error(d.error.message);
 
@@ -328,7 +263,7 @@ async function uploadFiles(files) {
       });
       done++;
 
-      var kb   = Math.round((d.bytes || 0) / 1024);
+      var kb = Math.round((d.bytes || 0) / 1024);
       var size = kb > 1024 ? (kb / 1024).toFixed(1) + ' MB' : kb + ' KB';
       results.innerHTML += '<div class="result-item ok"><div class="result-icon">' +
         (d.resource_type === 'video' ? '🎬' : '🖼️') +
@@ -342,12 +277,11 @@ async function uploadFiles(files) {
   }
 
   progFill.style.width = '100%';
-  if (done > 0) {
+  if (done > 0 && gh()) {
     progLabel.textContent = 'Cache wird gespeichert…';
-    progFile.textContent  = '';
-    progCount.textContent = '';
+    progFile.textContent = ''; progCount.textContent = '';
     try {
-      var cf    = await ghGet('cloudinary-cache.json');
+      var cf = await ghGet('cloudinary-cache.json');
       var cache = JSON.parse(atob(cf.content.replace(/\n/g, '')));
       cache.resources = (cache.resources || []).filter(function(res) {
         return !newResources.find(function(n) { return n.public_id === res.public_id; });
@@ -356,12 +290,11 @@ async function uploadFiles(files) {
       cache.updated = new Date().toISOString();
       await ghPut('cloudinary-cache.json', JSON.stringify(cache, null, 2), cf.sha,
         'Upload: ' + newResources.map(function(r) { return r.public_id; }).join(', '));
-    } catch(e) { /* Cache-Fehler ignorieren, Result zeigt es */ }
+    } catch(e) {}
   }
 
-  // Spinner ausblenden, Ergebnisse zeigen
   progSection.style.display = 'none';
-  results.style.display     = 'flex';
+  results.style.display = 'flex';
   document.getElementById('upload-again').style.display = '';
   document.getElementById('file-input').value = '';
 }
@@ -372,50 +305,51 @@ document.getElementById('file-input').addEventListener('change', function(e) {
 
 // ── Init ───────────────────────────────────────────────────
 (async function() {
-  applySetupHash();
-
-  if (!ckey() || !csec()) {
-    document.getElementById('no-creds').style.display = 'flex';
-    return;
+  // Code aus URL-Hash lesen und speichern
+  var code = location.hash.slice(1).trim();
+  if (code) {
+    try { localStorage.setItem('upload_code', code); } catch(e) {}
+    history.replaceState(null, '', location.pathname);
+  } else {
+    try { code = localStorage.getItem('upload_code') || ''; } catch(e) {}
   }
 
   document.getElementById('checking').style.display = 'flex';
-  var title = 'Upload gesperrt', sub = 'Bitte Admin kontaktieren.', allowed = false;
+
   try {
     var r = await fetch('https://api.github.com/gists/' + GIST_ID, {
       headers: { Authorization: 'token ' + GIST_TOK }
     });
     var data = await r.json();
     var f = data.files && data.files['upload-access.json'];
-    if (!f) {
-      title = 'Noch nicht eingerichtet';
-      sub   = 'Admin muss Upload-Zugang einmalig aktivieren.';
-    } else {
-      var access = JSON.parse(f.content);
-      var storedToken = '';
-      try { storedToken = localStorage.getItem('upload_access_token') || ''; } catch(e) {}
-      if (!access.enabled) {
-        title = 'Upload gesperrt';
-        sub   = 'Der Admin hat den Zugang deaktiviert.';
-      } else if (!storedToken || access.token !== storedToken) {
-        title = 'Link nicht mehr gültig';
-        sub   = 'Bitte den Admin um einen neuen Upload-Link bitten.';
-      } else {
-        allowed = true;
-      }
-    }
-  } catch(e) {
-    title = 'Verbindungsfehler';
-    sub   = 'Bitte Internetverbindung prüfen und Seite neu laden.';
-  }
-  document.getElementById('checking').style.display = 'none';
 
-  if (allowed) {
+    if (!f) {
+      showBlocked('Noch nicht eingerichtet', 'Admin muss Upload-Zugang zuerst aktivieren.');
+      return;
+    }
+
+    var access = JSON.parse(f.content);
+
+    if (!access.enabled) {
+      showBlocked('Upload gesperrt', 'Der Admin hat den Zugang deaktiviert.');
+      return;
+    }
+
+    if (!code || access.code !== code) {
+      showBlocked('Link nicht mehr gültig', 'Bitte den Admin um einen neuen Upload-Link bitten.');
+      return;
+    }
+
+    // Alles OK — Zugangsdaten aus Gist laden
+    _cldCloud  = access.cld_cloud  || 'dqw5qfpe2';
+    _cldKey    = access.cld_key    || '';
+    _cldSecret = access.cld_secret || '';
+
+    document.getElementById('checking').style.display = 'none';
     document.getElementById('pick-btn').style.display = 'flex';
-  } else {
-    document.getElementById('no-access-title').textContent = title;
-    document.getElementById('no-access-sub').textContent   = sub;
-    document.getElementById('no-access').style.display     = 'flex';
+
+  } catch(e) {
+    showBlocked('Verbindungsfehler', 'Bitte Internetverbindung prüfen und Seite neu laden.');
   }
 })();
 </script>
