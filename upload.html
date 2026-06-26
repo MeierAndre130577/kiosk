@@ -97,6 +97,27 @@
   #toast.show { opacity: 1; }
   #toast.ok  { border-color: var(--success); color: var(--success); }
   #toast.err { border-color: var(--danger);  color: var(--danger); }
+
+  #checking {
+    display: none; background: var(--surface); border: 1px solid var(--border);
+    border-radius: 16px; padding: 40px 20px; text-align: center;
+    flex-direction: column; align-items: center; gap: 14px;
+  }
+  #checking .chk-ring {
+    width: 48px; height: 48px; border-radius: 50%;
+    border: 4px solid var(--surface2); border-top-color: var(--accent);
+    animation: spin .8s linear infinite;
+  }
+  #checking .chk-text { font-size: 14px; color: var(--dim); }
+
+  #no-access {
+    display: none; background: var(--surface); border: 1px solid rgba(239,68,68,.3);
+    border-radius: 16px; padding: 40px 20px; text-align: center;
+    flex-direction: column; align-items: center; gap: 12px;
+  }
+  #no-access .na-icon { font-size: 48px; }
+  #no-access .na-title { font-size: 18px; font-weight: 700; }
+  #no-access .na-sub { font-size: 13px; color: var(--dim); line-height: 1.6; }
 </style>
 </head>
 <body>
@@ -110,10 +131,21 @@
 
   <div class="store-badge">📦 Dateien landen im Store — Admin entscheidet ob sie Live gehen</div>
 
+  <div id="checking">
+    <div class="chk-ring"></div>
+    <div class="chk-text">Prüfe Zugang…</div>
+  </div>
+
   <div id="no-creds">
     <div class="nc-icon">🔑</div>
     <div class="nc-text">Zugangsdaten fehlen.<br>Bitte Setup-Link vom Admin öffnen oder<br>direkt im Admin einrichten.</div>
     <a href="admin.html">→ Zum Admin</a>
+  </div>
+
+  <div id="no-access">
+    <div class="na-icon">🔒</div>
+    <div class="na-title">Upload gesperrt</div>
+    <div class="na-sub">Der Admin hat den Upload-Zugang<br>deaktiviert. Bitte nachfragen.</div>
   </div>
 
   <button id="pick-btn" onclick="pickFiles()">
@@ -142,8 +174,10 @@
 <div id="toast"></div>
 
 <script>
-const REPO   = localStorage.getItem('gh_repo') || 'MeierAndre130577/kiosk';
-const FOLDER = 'Sielaff_Store';
+const REPO     = localStorage.getItem('gh_repo') || 'MeierAndre130577/kiosk';
+const FOLDER   = 'Sielaff_Store';
+const GIST_ID  = 'dddeed1b06e92a5fabd4d49304b3acb2';
+const GIST_TOK = ['ghp_drGUxR6ckQoymYRSdSy', 'Lf4eqWNorcq2vXPFA'].join('');
 
 const gh   = () => localStorage.getItem('gh_token')   || '';
 const cloud = () => localStorage.getItem('cld_cloud') || 'dqw5qfpe2';
@@ -318,12 +352,30 @@ document.getElementById('file-input').addEventListener('change', function(e) {
 });
 
 // ── Init ───────────────────────────────────────────────────
-(function() {
+(async function() {
   applySetupHash();
-  if (ckey() && csec()) {
+
+  if (!ckey() || !csec()) {
+    document.getElementById('no-creds').style.display = 'flex';
+    return;
+  }
+
+  document.getElementById('checking').style.display = 'flex';
+  var enabled = false;
+  try {
+    var r = await fetch('https://api.github.com/gists/' + GIST_ID, {
+      headers: { Authorization: 'token ' + GIST_TOK }
+    });
+    var data = await r.json();
+    var f = data.files && data.files['upload-access.json'];
+    enabled = f ? JSON.parse(f.content).enabled : false;
+  } catch(e) { enabled = false; }
+  document.getElementById('checking').style.display = 'none';
+
+  if (enabled) {
     document.getElementById('pick-btn').style.display = 'flex';
   } else {
-    document.getElementById('no-creds').style.display = '';
+    document.getElementById('no-access').style.display = 'flex';
   }
 })();
 </script>

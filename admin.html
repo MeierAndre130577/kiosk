@@ -229,6 +229,21 @@
 
 <!-- ZUGANGSDATEN -->
 <section id="tab-creds">
+  <div class="card" style="margin-bottom:16px">
+    <div class="card-head">
+      <div class="card-title">📤 Upload-Zugang</div>
+      <div id="upload-access-dot" class="dot dot-red"></div>
+    </div>
+    <div style="font-size:12px;color:var(--dim);margin-bottom:14px">Steuert ob Handy-Nutzer auf der Upload-Seite Fotos hochladen können.</div>
+    <button id="upload-toggle-btn" onclick="toggleUploadAccess()"
+      style="width:100%;padding:16px;border-radius:10px;font-size:15px;font-weight:700;border:2px solid var(--border);background:var(--surface2);color:var(--dim);cursor:pointer;transition:all .2s">
+      Lade…
+    </button>
+    <div style="margin-top:10px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+      <button class="btn sec sml" onclick="copyUploadLink()">🔗 Upload-Link kopieren</button>
+      <span style="font-size:11px;color:var(--dim)">Link einmalig teilen — ob Upload klappt entscheidet nur der Toggle</span>
+    </div>
+  </div>
   <div class="card">
     <div class="card-head"><div class="card-title">GitHub</div></div>
     <div class="field">
@@ -249,11 +264,8 @@
     </div>
   </div>
   <button class="btn pri" onclick="saveCreds()">💾 Zugangsdaten speichern</button>
-  <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
-    <button class="btn sec" onclick="copySetupLink()">🔗 Admin-Setup-Link</button>
-    <button class="btn sec" onclick="copyUploadLink()">📤 Upload-Link fürs Handy</button>
-  </div>
-  <div style="font-size:11px;color:var(--dim);margin-top:6px">Admin-Link: richtet Admin auf neuem Gerät ein · Upload-Link: zum Teilen mit Handy-Nutzern</div>
+  <button class="btn sec" onclick="copySetupLink()" style="margin-top:8px">🔗 Admin-Setup-Link kopieren</button>
+  <div style="font-size:11px;color:var(--dim);margin-top:6px">Öffnet Admin auf neuem Gerät und richtet Zugangsdaten automatisch ein.</div>
 </section>
 
 </main>
@@ -298,7 +310,7 @@ document.querySelectorAll('.tab').forEach(btn => {
     if (btn.dataset.tab === 'displays') loadDisplays();
     if (btn.dataset.tab === 'medien')   { if (!allMedia.length) loadAllMedia(); else renderMedia(allMedia); }
     if (btn.dataset.tab === 'config')   renderConfig();
-    if (btn.dataset.tab === 'creds')    loadCreds();
+    if (btn.dataset.tab === 'creds')    { loadCreds(); loadUploadAccess(); }
   });
 });
 
@@ -1007,6 +1019,62 @@ function copyUploadLink() {
   const link = `${location.origin}${location.pathname.replace('admin.html', 'upload.html')}#setup=${gh()}:${ckey()}:${csec()}`;
   navigator.clipboard.writeText(link).then(() => toast('Upload-Link kopiert ✓ — auf Handy öffnen'))
     .catch(() => { prompt('Upload-Link (kopieren):', link); });
+}
+
+// ── UPLOAD-ZUGANG TOGGLE ───────────────────────────────────
+let uploadEnabled = null;
+
+async function loadUploadAccess() {
+  const btn = document.getElementById('upload-toggle-btn');
+  const dot = document.getElementById('upload-access-dot');
+  if (btn) btn.textContent = 'Lade…';
+  try {
+    const r = await fetch(`https://api.github.com/gists/${GIST_ID}`, {
+      headers: { Authorization: `token ${GIST_TOK}` }
+    });
+    const d = await r.json();
+    const f = d.files && d.files['upload-access.json'];
+    uploadEnabled = f ? JSON.parse(f.content).enabled : false;
+  } catch(e) { uploadEnabled = false; }
+  renderUploadToggle();
+}
+
+function renderUploadToggle() {
+  const btn = document.getElementById('upload-toggle-btn');
+  const dot = document.getElementById('upload-access-dot');
+  if (!btn) return;
+  if (uploadEnabled) {
+    btn.textContent = '✅  Upload aktiv — Nutzer können hochladen';
+    btn.style.background = 'rgba(34,197,94,.15)';
+    btn.style.color      = 'var(--success)';
+    btn.style.borderColor = 'rgba(34,197,94,.4)';
+    if (dot) dot.className = 'dot dot-green';
+  } else {
+    btn.textContent = '🔒  Upload gesperrt — Tippen zum Aktivieren';
+    btn.style.background  = 'var(--surface2)';
+    btn.style.color       = 'var(--dim)';
+    btn.style.borderColor = 'var(--border)';
+    if (dot) dot.className = 'dot dot-red';
+  }
+}
+
+async function toggleUploadAccess() {
+  const prev = uploadEnabled;
+  uploadEnabled = !uploadEnabled;
+  renderUploadToggle();
+  try {
+    const r = await fetch(`https://api.github.com/gists/${GIST_ID}`, {
+      method: 'PATCH',
+      headers: { Authorization: `token ${GIST_TOK}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ files: { 'upload-access.json': { content: JSON.stringify({ enabled: uploadEnabled }) } } })
+    });
+    if (!r.ok) throw new Error('Gist ' + r.status);
+    toast(uploadEnabled ? '✅ Upload-Zugang aktiviert' : '🔒 Upload-Zugang gesperrt');
+  } catch(e) {
+    uploadEnabled = prev;
+    renderUploadToggle();
+    toast('Fehler: ' + (e.message || e), 'err');
+  }
 }
 
 // ── INIT ───────────────────────────────────────────────────
