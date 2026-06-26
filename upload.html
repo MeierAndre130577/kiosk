@@ -194,22 +194,41 @@ function toast(msg, type) {
 // ── Setup-Link ─────────────────────────────────────────────
 function applySetupHash() {
   var hash = location.hash.slice(1);
-  if (hash.indexOf('setup=') !== 0) return false;
-  var parts = hash.slice(6).split(':');
-  if (parts.length < 3) return false;
-  var token = parts[0], key = parts[1], secret = parts.slice(2).join(':');
+  if (!hash) return false;
+
+  // Format: #t=TOKEN&setup=GHTOKEN:KEY:SECRET
+  var params = {};
+  hash.split('&').forEach(function(part) {
+    var idx = part.indexOf('=');
+    if (idx > 0) params[part.slice(0, idx)] = part.slice(idx + 1);
+  });
+
+  var changed = false;
   try {
-    if (token)  localStorage.setItem('gh_token',   token);
-    if (key)    localStorage.setItem('cld_key',    key);
-    if (secret) localStorage.setItem('cld_secret', secret);
-    if (token && localStorage.getItem('gh_token') !== token) throw new Error('verify');
-    history.replaceState(null, '', location.pathname);
-    toast('Zugangsdaten eingerichtet ✓');
-    return true;
+    if (params.t) {
+      localStorage.setItem('upload_access_token', params.t);
+      changed = true;
+    }
+    if (params.setup) {
+      var parts = params.setup.split(':');
+      if (parts.length >= 3) {
+        var ghTok = parts[0], key = parts[1], secret = parts.slice(2).join(':');
+        if (ghTok)  localStorage.setItem('gh_token',   ghTok);
+        if (key)    localStorage.setItem('cld_key',    key);
+        if (secret) localStorage.setItem('cld_secret', secret);
+        changed = true;
+      }
+    }
   } catch(e) {
     toast('Fehler: localStorage blockiert — kein privater Modus!', 'err');
     return false;
   }
+
+  if (changed) {
+    history.replaceState(null, '', location.pathname);
+    toast('Zugangsdaten eingerichtet ✓');
+  }
+  return changed;
 }
 
 // ── SHA-1 / Signing ────────────────────────────────────────
@@ -361,18 +380,23 @@ document.getElementById('file-input').addEventListener('change', function(e) {
   }
 
   document.getElementById('checking').style.display = 'flex';
-  var enabled = false;
+  var allowed = false;
   try {
     var r = await fetch('https://api.github.com/gists/' + GIST_ID, {
       headers: { Authorization: 'token ' + GIST_TOK }
     });
     var data = await r.json();
     var f = data.files && data.files['upload-access.json'];
-    enabled = f ? JSON.parse(f.content).enabled : false;
-  } catch(e) { enabled = false; }
+    if (f) {
+      var access = JSON.parse(f.content);
+      var storedToken = '';
+      try { storedToken = localStorage.getItem('upload_access_token') || ''; } catch(e) {}
+      allowed = access.enabled === true && access.token && access.token === storedToken;
+    }
+  } catch(e) { allowed = false; }
   document.getElementById('checking').style.display = 'none';
 
-  if (enabled) {
+  if (allowed) {
     document.getElementById('pick-btn').style.display = 'flex';
   } else {
     document.getElementById('no-access').style.display = 'flex';

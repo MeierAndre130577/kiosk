@@ -1015,18 +1015,19 @@ function copySetupLink() {
   navigator.clipboard.writeText(link).then(() => toast('Admin-Setup-Link kopiert ✓'))
     .catch(() => { prompt('Admin-Setup-Link (kopieren):', link); });
 }
-function copyUploadLink() {
-  const link = `${location.origin}${location.pathname.replace('admin.html', 'upload.html')}#setup=${gh()}:${ckey()}:${csec()}`;
-  navigator.clipboard.writeText(link).then(() => toast('Upload-Link kopiert ✓ — auf Handy öffnen'))
-    .catch(() => { prompt('Upload-Link (kopieren):', link); });
-}
+function copyUploadLink() { generateUploadLink(); }
 
 // ── UPLOAD-ZUGANG TOGGLE ───────────────────────────────────
 let uploadEnabled = null;
+let uploadToken   = '';
+
+function generateAccessToken() {
+  return Array.from(crypto.getRandomValues(new Uint8Array(16)))
+    .map(b => b.toString(16).padStart(2, '0')).join('');
+}
 
 async function loadUploadAccess() {
   const btn = document.getElementById('upload-toggle-btn');
-  const dot = document.getElementById('upload-access-dot');
   if (btn) btn.textContent = 'Lade…';
   try {
     const r = await fetch(`https://api.github.com/gists/${GIST_ID}`, {
@@ -1034,8 +1035,12 @@ async function loadUploadAccess() {
     });
     const d = await r.json();
     const f = d.files && d.files['upload-access.json'];
-    uploadEnabled = f ? JSON.parse(f.content).enabled : false;
-  } catch(e) { uploadEnabled = false; }
+    if (f) {
+      const data = JSON.parse(f.content);
+      uploadEnabled = data.enabled || false;
+      uploadToken   = data.token   || '';
+    } else { uploadEnabled = false; uploadToken = ''; }
+  } catch(e) { uploadEnabled = false; uploadToken = ''; }
   renderUploadToggle();
 }
 
@@ -1044,13 +1049,13 @@ function renderUploadToggle() {
   const dot = document.getElementById('upload-access-dot');
   if (!btn) return;
   if (uploadEnabled) {
-    btn.textContent = '✅  Upload aktiv — Nutzer können hochladen';
-    btn.style.background = 'rgba(34,197,94,.15)';
-    btn.style.color      = 'var(--success)';
+    btn.textContent      = '✅  Upload aktiv — Tippen zum Sperren';
+    btn.style.background  = 'rgba(34,197,94,.15)';
+    btn.style.color       = 'var(--success)';
     btn.style.borderColor = 'rgba(34,197,94,.4)';
     if (dot) dot.className = 'dot dot-green';
   } else {
-    btn.textContent = '🔒  Upload gesperrt — Tippen zum Aktivieren';
+    btn.textContent      = '🔒  Upload gesperrt — Tippen zum Aktivieren';
     btn.style.background  = 'var(--surface2)';
     btn.style.color       = 'var(--dim)';
     btn.style.borderColor = 'var(--border)';
@@ -1059,22 +1064,42 @@ function renderUploadToggle() {
 }
 
 async function toggleUploadAccess() {
-  const prev = uploadEnabled;
-  uploadEnabled = !uploadEnabled;
-  renderUploadToggle();
+  if (uploadEnabled) {
+    // Sperren — Token bleibt, enabled = false
+    const prev = uploadEnabled;
+    uploadEnabled = false; renderUploadToggle();
+    try {
+      const r = await fetch(`https://api.github.com/gists/${GIST_ID}`, {
+        method: 'PATCH',
+        headers: { Authorization: `token ${GIST_TOK}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ files: { 'upload-access.json': { content: JSON.stringify({ enabled: false, token: uploadToken }) } } })
+      });
+      if (!r.ok) throw new Error('Gist ' + r.status);
+      toast('🔒 Upload gesperrt — Link ungültig');
+    } catch(e) { uploadEnabled = prev; renderUploadToggle(); toast('Fehler: ' + (e.message || e), 'err'); }
+  } else {
+    // Aktivieren → automatisch neuen Link generieren
+    await generateUploadLink();
+  }
+}
+
+async function generateUploadLink() {
+  const token = generateAccessToken();
   try {
     const r = await fetch(`https://api.github.com/gists/${GIST_ID}`, {
       method: 'PATCH',
       headers: { Authorization: `token ${GIST_TOK}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ files: { 'upload-access.json': { content: JSON.stringify({ enabled: uploadEnabled }) } } })
+      body: JSON.stringify({ files: { 'upload-access.json': { content: JSON.stringify({ enabled: true, token }) } } })
     });
     if (!r.ok) throw new Error('Gist ' + r.status);
-    toast(uploadEnabled ? '✅ Upload-Zugang aktiviert' : '🔒 Upload-Zugang gesperrt');
-  } catch(e) {
-    uploadEnabled = prev;
+    uploadEnabled = true; uploadToken = token;
     renderUploadToggle();
-    toast('Fehler: ' + (e.message || e), 'err');
-  }
+    const base = location.origin + location.pathname.replace('admin.html', 'upload.html');
+    const link = `${base}#t=${token}&setup=${gh()}:${ckey()}:${csec()}`;
+    navigator.clipboard.writeText(link)
+      .then(() => toast('✅ Neuer Link kopiert — alter Link ist ungültig'))
+      .catch(() => { prompt('Upload-Link (kopieren):', link); });
+  } catch(e) { toast('Fehler: ' + (e.message || e), 'err'); }
 }
 
 // ── INIT ───────────────────────────────────────────────────
