@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Kiosk Upload">
+<link rel="manifest" href="upload-manifest.json">
+<link rel="apple-touch-icon" href="icon.jpg">
+<title>Kiosk Upload</title>
+<style>
+  :root {
+    --bg: #0d0d14; --surface: #16161f; --surface2: #1e1e2a;
+    --border: #2a2a3d; --accent: #00c8ff; --danger: #ef4444;
+    --success: #22c55e; --warning: #f59e0b;
+    --text: #f0f0f8; --dim: #6b6b88; --r: 12px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { min-height: 100vh; background: var(--bg); color: var(--text); font-family: system-ui, -apple-system, sans-serif; }
+
+  header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 16px 20px; }
+  header h1 { font-size: 17px; font-weight: 700; }
+  .header-sub { font-size: 11px; color: var(--dim); margin-top: 2px; }
+
+  .content { padding: 24px 20px; display: flex; flex-direction: column; gap: 16px; max-width: 500px; margin: 0 auto; }
+
+  .store-badge {
+    background: rgba(245,158,11,.15); color: var(--warning);
+    border: 1px solid rgba(245,158,11,.3); border-radius: var(--r);
+    padding: 10px 14px; font-size: 12px; font-weight: 700; text-align: center;
+  }
+
+  #no-creds {
+    display: none; background: var(--surface); border: 1px solid rgba(239,68,68,.4);
+    border-radius: var(--r); padding: 24px 20px; text-align: center;
+  }
+  #no-creds .nc-icon { font-size: 36px; margin-bottom: 10px; }
+  #no-creds .nc-text { font-size: 13px; color: var(--dim); margin-bottom: 14px; line-height: 1.6; }
+  #no-creds a { color: var(--accent); text-decoration: none; font-size: 13px; font-weight: 600; }
+
+  #pick-btn {
+    display: none; flex-direction: column; align-items: center; justify-content: center;
+    background: var(--surface); border: 2px dashed var(--border); border-radius: 16px;
+    padding: 52px 20px; gap: 14px; cursor: pointer; width: 100%;
+    transition: border-color .2s, background .2s; min-height: 220px;
+    color: var(--text); font-family: inherit;
+  }
+  #pick-btn:active { background: var(--surface2); border-color: var(--accent); }
+  #pick-btn .icon { font-size: 52px; }
+  #pick-btn .label { font-size: 19px; font-weight: 700; }
+  #pick-btn .sub { font-size: 13px; color: var(--dim); }
+
+  #progress-section { display: none; }
+  .prog-file { font-size: 14px; font-weight: 600; margin-bottom: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .prog-bar { background: var(--surface2); border-radius: 6px; height: 8px; overflow: hidden; }
+  .prog-fill { height: 100%; background: var(--accent); border-radius: 6px; transition: width .3s; width: 0%; }
+  .prog-status { font-size: 12px; color: var(--dim); margin-top: 8px; }
+
+  #results { display: none; flex-direction: column; gap: 8px; }
+  .result-item { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 12px 14px; display: flex; align-items: center; gap: 12px; }
+  .result-item.ok  { border-color: rgba(34,197,94,.4); }
+  .result-item.err { border-color: rgba(239,68,68,.4); }
+  .result-icon { font-size: 22px; flex-shrink: 0; }
+  .result-info { flex: 1; min-width: 0; }
+  .result-name { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .result-detail { font-size: 11px; color: var(--dim); margin-top: 2px; }
+
+  #upload-again {
+    display: none; width: 100%; padding: 18px; border-radius: var(--r);
+    font-size: 16px; font-weight: 700; background: var(--accent); color: #000;
+    border: none; cursor: pointer; margin-top: 4px;
+  }
+  #upload-again:active { opacity: .8; }
+
+  #toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+    background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+    padding: 12px 20px; font-size: 13px; opacity: 0; transition: opacity .3s;
+    z-index: 999; pointer-events: none; white-space: nowrap; max-width: 90vw;
+    text-align: center;
+  }
+  #toast.show { opacity: 1; }
+  #toast.ok  { border-color: var(--success); color: var(--success); }
+  #toast.err { border-color: var(--danger);  color: var(--danger); }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>📤 Kiosk Upload</h1>
+  <div class="header-sub">Fotos und Videos hochladen</div>
+</header>
+
+<div class="content">
+
+  <div class="store-badge">📦 Dateien landen im Store — Admin entscheidet ob sie Live gehen</div>
+
+  <div id="no-creds">
+    <div class="nc-icon">🔑</div>
+    <div class="nc-text">Zugangsdaten fehlen.<br>Bitte Setup-Link vom Admin öffnen oder<br>direkt im Admin einrichten.</div>
+    <a href="admin.html">→ Zum Admin</a>
+  </div>
+
+  <button id="pick-btn" onclick="pickFiles()">
+    <div class="icon">📷</div>
+    <div class="label">Foto / Video auswählen</div>
+    <div class="sub">Kamera, Fotos oder Dateien</div>
+  </button>
+  <input type="file" id="file-input" multiple accept="image/*,video/*" style="display:none">
+
+  <div id="progress-section">
+    <div class="prog-file" id="prog-file"></div>
+    <div class="prog-bar"><div class="prog-fill" id="prog-fill"></div></div>
+    <div class="prog-status" id="prog-status"></div>
+  </div>
+
+  <div id="results"></div>
+  <button id="upload-again" onclick="resetUpload()">+ Weitere hochladen</button>
+
+</div>
+
+<div id="toast"></div>
+
+<script>
+const REPO   = localStorage.getItem('gh_repo') || 'MeierAndre130577/kiosk';
+const FOLDER = 'Sielaff_Store';
+
+const gh   = () => localStorage.getItem('gh_token')   || '';
+const cloud = () => localStorage.getItem('cld_cloud') || 'dqw5qfpe2';
+const ckey  = () => localStorage.getItem('cld_key')   || '';
+const csec  = () => localStorage.getItem('cld_secret')|| '';
+
+function toast(msg, type) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'show ' + (type || 'ok');
+  setTimeout(function() { t.className = ''; }, 3500);
+}
+
+// ── Setup-Link ─────────────────────────────────────────────
+function applySetupHash() {
+  var hash = location.hash.slice(1);
+  if (hash.indexOf('setup=') !== 0) return false;
+  var parts = hash.slice(6).split(':');
+  if (parts.length < 3) return false;
+  var token = parts[0], key = parts[1], secret = parts.slice(2).join(':');
+  try {
+    if (token)  localStorage.setItem('gh_token',   token);
+    if (key)    localStorage.setItem('cld_key',    key);
+    if (secret) localStorage.setItem('cld_secret', secret);
+    if (token && localStorage.getItem('gh_token') !== token) throw new Error('verify');
+    history.replaceState(null, '', location.pathname);
+    toast('Zugangsdaten eingerichtet ✓');
+    return true;
+  } catch(e) {
+    toast('Fehler: localStorage blockiert — kein privater Modus!', 'err');
+    return false;
+  }
+}
+
+// ── SHA-1 / Signing ────────────────────────────────────────
+async function sha1(message) {
+  var buf  = new TextEncoder().encode(message);
+  var hash = await crypto.subtle.digest('SHA-1', buf);
+  return Array.from(new Uint8Array(hash)).map(function(b) { return b.toString(16).padStart(2, '0'); }).join('');
+}
+async function cldSign(params) {
+  var str = Object.keys(params).sort()
+    .filter(function(k) { return params[k] !== '' && params[k] != null; })
+    .map(function(k) { return k + '=' + params[k]; }).join('&');
+  return sha1(str + csec());
+}
+
+// ── GitHub API ─────────────────────────────────────────────
+async function ghGet(path) {
+  var r = await fetch('https://api.github.com/repos/' + REPO + '/contents/' + path, {
+    headers: { Authorization: 'token ' + gh() }
+  });
+  return r.json();
+}
+async function ghPut(path, content, sha, msg) {
+  var r = await fetch('https://api.github.com/repos/' + REPO + '/contents/' + path, {
+    method: 'PUT',
+    headers: { Authorization: 'token ' + gh(), 'Content-Type': 'application/json' },
+    body: JSON.stringify({ message: msg, content: btoa(unescape(encodeURIComponent(content))), sha: sha })
+  });
+  return r.json();
+}
+
+// ── UI ─────────────────────────────────────────────────────
+function pickFiles() {
+  document.getElementById('file-input').click();
+}
+
+function resetUpload() {
+  document.getElementById('progress-section').style.display = 'none';
+  document.getElementById('results').style.display          = 'none';
+  document.getElementById('results').innerHTML              = '';
+  document.getElementById('upload-again').style.display     = 'none';
+  document.getElementById('prog-fill').style.width          = '0%';
+  document.getElementById('pick-btn').style.display         = 'flex';
+}
+
+// ── Upload ─────────────────────────────────────────────────
+async function uploadFiles(files) {
+  if (!files.length) return;
+  if (!ckey() || !csec()) {
+    toast('Zugangsdaten fehlen — bitte Setup-Link öffnen', 'err');
+    return;
+  }
+
+  var progSection = document.getElementById('progress-section');
+  var progFile    = document.getElementById('prog-file');
+  var progFill    = document.getElementById('prog-fill');
+  var progStatus  = document.getElementById('prog-status');
+  var results     = document.getElementById('results');
+
+  document.getElementById('pick-btn').style.display = 'none';
+  progSection.style.display = '';
+  results.style.display     = 'flex';
+  results.innerHTML         = '';
+
+  var newResources = [];
+  var done = 0;
+
+  for (var i = 0; i < files.length; i++) {
+    var file = files[i];
+    progFile.textContent   = (i + 1) + ' / ' + files.length + ': ' + file.name;
+    progFill.style.width   = (i / files.length * 100) + '%';
+    progStatus.textContent = 'Wird hochgeladen…';
+
+    try {
+      var ts       = Math.round(Date.now() / 1000);
+      var publicId = file.name.replace(/\.[^.]+$/, '');
+      var sig      = await cldSign({ folder: FOLDER, public_id: publicId, timestamp: ts });
+      var form     = new FormData();
+      form.append('file', file);
+      form.append('api_key', ckey());
+      form.append('timestamp', ts);
+      form.append('public_id', publicId);
+      form.append('folder', FOLDER);
+      form.append('signature', sig);
+
+      var r = await fetch('https://api.cloudinary.com/v1_1/' + cloud() + '/auto/upload', { method: 'POST', body: form });
+      var d = await r.json();
+      if (d.error) throw new Error(d.error.message);
+
+      newResources.push({
+        public_id: d.public_id, secure_url: d.secure_url,
+        resource_type: d.resource_type, format: d.format,
+        bytes: d.bytes, asset_id: d.asset_id || d.public_id,
+        kiosk_folder: FOLDER
+      });
+      done++;
+
+      var kb   = Math.round((d.bytes || 0) / 1024);
+      var size = kb > 1024 ? (kb / 1024).toFixed(1) + ' MB' : kb + ' KB';
+      results.innerHTML += '<div class="result-item ok"><div class="result-icon">' +
+        (d.resource_type === 'video' ? '🎬' : '🖼️') +
+        '</div><div class="result-info"><div class="result-name">' + file.name + '</div>' +
+        '<div class="result-detail">' + size + ' · hochgeladen ✓</div></div></div>';
+    } catch(e) {
+      results.innerHTML += '<div class="result-item err"><div class="result-icon">⚠️</div>' +
+        '<div class="result-info"><div class="result-name">' + file.name + '</div>' +
+        '<div class="result-detail">' + (e.message || 'Fehler') + '</div></div></div>';
+    }
+  }
+
+  progFill.style.width = '100%';
+  if (done > 0) {
+    progStatus.textContent = 'Cache wird gespeichert…';
+    try {
+      var cf    = await ghGet('cloudinary-cache.json');
+      var cache = JSON.parse(atob(cf.content.replace(/\n/g, '')));
+      cache.resources = (cache.resources || []).filter(function(res) {
+        return !newResources.find(function(n) { return n.public_id === res.public_id; });
+      });
+      cache.resources.push.apply(cache.resources, newResources);
+      cache.updated = new Date().toISOString();
+      await ghPut('cloudinary-cache.json', JSON.stringify(cache, null, 2), cf.sha,
+        'Upload: ' + newResources.map(function(r) { return r.public_id; }).join(', '));
+      progStatus.textContent = done + ' von ' + files.length + ' hochgeladen ✓ — im Store verfügbar';
+    } catch(e) {
+      progStatus.textContent = done + ' hochgeladen — Cache-Update fehlgeschlagen (Admin: ⟳ Sync)';
+    }
+  } else {
+    progStatus.textContent = 'Upload fehlgeschlagen — Zugangsdaten oder Dateiformat prüfen';
+  }
+
+  document.getElementById('upload-again').style.display = '';
+  document.getElementById('file-input').value = '';
+}
+
+document.getElementById('file-input').addEventListener('change', function(e) {
+  if (e.target.files.length) uploadFiles(Array.from(e.target.files));
+});
+
+// ── Init ───────────────────────────────────────────────────
+(function() {
+  applySetupHash();
+  if (ckey() && csec()) {
+    document.getElementById('pick-btn').style.display = 'flex';
+  } else {
+    document.getElementById('no-creds').style.display = '';
+  }
+})();
+</script>
+</body>
+</html>

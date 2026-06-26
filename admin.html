@@ -249,8 +249,11 @@
     </div>
   </div>
   <button class="btn pri" onclick="saveCreds()">💾 Zugangsdaten speichern</button>
-  <button class="btn sec" onclick="copySetupLink()" style="margin-top:8px">🔗 Setup-Link kopieren</button>
-  <div style="font-size:11px;color:var(--dim);margin-top:6px">Link auf neuem Gerät öffnen → Zugangsdaten werden automatisch eingerichtet</div>
+  <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
+    <button class="btn sec" onclick="copySetupLink()">🔗 Admin-Setup-Link</button>
+    <button class="btn sec" onclick="copyUploadLink()">📤 Upload-Link fürs Handy</button>
+  </div>
+  <div style="font-size:11px;color:var(--dim);margin-top:6px">Admin-Link: richtet Admin auf neuem Gerät ein · Upload-Link: zum Teilen mit Handy-Nutzern</div>
 </section>
 
 </main>
@@ -997,8 +1000,13 @@ function applySetupHash() {
 }
 function copySetupLink() {
   const link = `${location.origin}${location.pathname}#setup=${gh()}:${ckey()}:${csec()}`;
-  navigator.clipboard.writeText(link).then(() => toast('Setup-Link kopiert ✓ — auf neuem Gerät öffnen'))
-    .catch(() => { prompt('Setup-Link (kopieren):', link); });
+  navigator.clipboard.writeText(link).then(() => toast('Admin-Setup-Link kopiert ✓'))
+    .catch(() => { prompt('Admin-Setup-Link (kopieren):', link); });
+}
+function copyUploadLink() {
+  const link = `${location.origin}${location.pathname.replace('admin.html', 'upload.html')}#setup=${gh()}:${ckey()}:${csec()}`;
+  navigator.clipboard.writeText(link).then(() => toast('Upload-Link kopiert ✓ — auf Handy öffnen'))
+    .catch(() => { prompt('Upload-Link (kopieren):', link); });
 }
 
 // ── INIT ───────────────────────────────────────────────────
