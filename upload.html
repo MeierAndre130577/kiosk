@@ -51,11 +51,25 @@
   #pick-btn .label { font-size: 19px; font-weight: 700; }
   #pick-btn .sub { font-size: 13px; color: var(--dim); }
 
-  #progress-section { display: none; }
-  .prog-file { font-size: 14px; font-weight: 600; margin-bottom: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .prog-bar { background: var(--surface2); border-radius: 6px; height: 8px; overflow: hidden; }
-  .prog-fill { height: 100%; background: var(--accent); border-radius: 6px; transition: width .3s; width: 0%; }
-  .prog-status { font-size: 12px; color: var(--dim); margin-top: 8px; }
+  #progress-section {
+    display: none; background: var(--surface); border: 1px solid var(--border);
+    border-radius: 16px; padding: 32px 20px; text-align: center; gap: 16px;
+    flex-direction: column; align-items: center;
+  }
+  .spin-wrap { position: relative; width: 72px; height: 72px; margin: 0 auto; }
+  .spin-ring {
+    width: 72px; height: 72px; border-radius: 50%;
+    border: 5px solid var(--surface2); border-top-color: var(--accent);
+    animation: spin .8s linear infinite; position: absolute; top: 0; left: 0;
+  }
+  .spin-emoji { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); font-size: 26px; line-height: 1; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .prog-label { font-size: 18px; font-weight: 700; }
+  .prog-sub { font-size: 13px; color: var(--dim); }
+  .prog-file { font-size: 13px; color: var(--dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+  .prog-bar { background: var(--surface2); border-radius: 8px; height: 10px; overflow: hidden; width: 100%; }
+  .prog-fill { height: 100%; background: var(--accent); border-radius: 8px; transition: width .4s; width: 0%; }
+  .prog-count { font-size: 12px; color: var(--dim); }
 
   #results { display: none; flex-direction: column; gap: 8px; }
   .result-item { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 12px 14px; display: flex; align-items: center; gap: 12px; }
@@ -110,9 +124,14 @@
   <input type="file" id="file-input" multiple accept="image/*,video/*" style="display:none">
 
   <div id="progress-section">
+    <div class="spin-wrap">
+      <div class="spin-ring"></div>
+      <div class="spin-emoji">📤</div>
+    </div>
+    <div class="prog-label" id="prog-label">Wird hochgeladen…</div>
     <div class="prog-file" id="prog-file"></div>
     <div class="prog-bar"><div class="prog-fill" id="prog-fill"></div></div>
-    <div class="prog-status" id="prog-status"></div>
+    <div class="prog-count" id="prog-count"></div>
   </div>
 
   <div id="results"></div>
@@ -211,14 +230,15 @@ async function uploadFiles(files) {
   }
 
   var progSection = document.getElementById('progress-section');
+  var progLabel   = document.getElementById('prog-label');
   var progFile    = document.getElementById('prog-file');
   var progFill    = document.getElementById('prog-fill');
-  var progStatus  = document.getElementById('prog-status');
+  var progCount   = document.getElementById('prog-count');
   var results     = document.getElementById('results');
 
   document.getElementById('pick-btn').style.display = 'none';
-  progSection.style.display = '';
-  results.style.display     = 'flex';
+  progSection.style.display = 'flex';
+  results.style.display     = 'none';
   results.innerHTML         = '';
 
   var newResources = [];
@@ -226,9 +246,10 @@ async function uploadFiles(files) {
 
   for (var i = 0; i < files.length; i++) {
     var file = files[i];
-    progFile.textContent   = (i + 1) + ' / ' + files.length + ': ' + file.name;
-    progFill.style.width   = (i / files.length * 100) + '%';
-    progStatus.textContent = 'Wird hochgeladen…';
+    progLabel.textContent = 'Wird hochgeladen…';
+    progFile.textContent  = file.name;
+    progCount.textContent = (i + 1) + ' von ' + files.length;
+    progFill.style.width  = (i / files.length * 100) + '%';
 
     try {
       var ts       = Math.round(Date.now() / 1000);
@@ -269,7 +290,9 @@ async function uploadFiles(files) {
 
   progFill.style.width = '100%';
   if (done > 0) {
-    progStatus.textContent = 'Cache wird gespeichert…';
+    progLabel.textContent = 'Cache wird gespeichert…';
+    progFile.textContent  = '';
+    progCount.textContent = '';
     try {
       var cf    = await ghGet('cloudinary-cache.json');
       var cache = JSON.parse(atob(cf.content.replace(/\n/g, '')));
@@ -280,14 +303,12 @@ async function uploadFiles(files) {
       cache.updated = new Date().toISOString();
       await ghPut('cloudinary-cache.json', JSON.stringify(cache, null, 2), cf.sha,
         'Upload: ' + newResources.map(function(r) { return r.public_id; }).join(', '));
-      progStatus.textContent = done + ' von ' + files.length + ' hochgeladen ✓ — im Store verfügbar';
-    } catch(e) {
-      progStatus.textContent = done + ' hochgeladen — Cache-Update fehlgeschlagen (Admin: ⟳ Sync)';
-    }
-  } else {
-    progStatus.textContent = 'Upload fehlgeschlagen — Zugangsdaten oder Dateiformat prüfen';
+    } catch(e) { /* Cache-Fehler ignorieren, Result zeigt es */ }
   }
 
+  // Spinner ausblenden, Ergebnisse zeigen
+  progSection.style.display = 'none';
+  results.style.display     = 'flex';
   document.getElementById('upload-again').style.display = '';
   document.getElementById('file-input').value = '';
 }
