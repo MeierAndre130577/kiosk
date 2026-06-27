@@ -305,16 +305,14 @@ document.getElementById('file-input').addEventListener('change', function(e) {
 
 // ── Init ───────────────────────────────────────────────────
 (async function() {
-  // Code aus URL-Hash lesen und speichern
   var code = location.hash.slice(1).trim();
-  if (code) {
-    try { localStorage.setItem('upload_code', code); } catch(e) {}
-    history.replaceState(null, '', location.pathname);
-  } else {
-    try { code = localStorage.getItem('upload_code') || ''; } catch(e) {}
-  }
 
   document.getElementById('checking').style.display = 'flex';
+
+  if (!code) {
+    showBlocked('Kein Upload-Link', 'Bitte den vollständigen Upload-Link öffnen.');
+    return;
+  }
 
   try {
     var r = await fetch('https://api.github.com/gists/' + GIST_ID, {
@@ -322,34 +320,22 @@ document.getElementById('file-input').addEventListener('change', function(e) {
     });
     var data = await r.json();
     var f = data.files && data.files['upload-access.json'];
-
-    if (!f) {
-      showBlocked('Noch nicht eingerichtet', 'Admin muss Upload-Zugang zuerst aktivieren.');
-      return;
-    }
-
-    var access = JSON.parse(f.content);
-
-    if (!access.enabled) {
+    if (!f || !JSON.parse(f.content).enabled) {
       showBlocked('Upload gesperrt', 'Der Admin hat den Zugang deaktiviert.');
       return;
     }
-
-    if (!code || access.code !== code) {
-      showBlocked('Link nicht mehr gültig', 'Bitte den Admin um einen neuen Upload-Link bitten.');
+    var access = JSON.parse(f.content);
+    if (access.code !== code) {
+      showBlocked('Link ungültig', 'Dieser Link ist nicht mehr aktiv.');
       return;
     }
-
-    // Alles OK — Zugangsdaten aus Gist laden
     _cldCloud  = access.cld_cloud  || 'dqw5qfpe2';
     _cldKey    = access.cld_key    || '';
     _cldSecret = access.cld_secret || '';
-
     document.getElementById('checking').style.display = 'none';
     document.getElementById('pick-btn').style.display = 'flex';
-
   } catch(e) {
-    showBlocked('Verbindungsfehler', 'Bitte Internetverbindung prüfen und Seite neu laden.');
+    showBlocked('Verbindungsfehler', 'Internetverbindung prüfen und Seite neu laden.');
   }
 })();
 </script>
