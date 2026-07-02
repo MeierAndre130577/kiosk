@@ -56,7 +56,7 @@
   .field { margin-bottom: 12px; }
   .field-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
 
-  /* ── Displays ── */
+  /* â”€â”€ Displays â”€â”€ */
   .devices-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; }
   .device-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 14px; }
   .device-head { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
@@ -69,7 +69,7 @@
   .device-meta strong { color: var(--text); }
   .device-actions { display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap; }
 
-  /* ── Medien ── */
+  /* â”€â”€ Medien â”€â”€ */
   #drop-zone {
     border: 2px dashed var(--border); border-radius: var(--r);
     padding: 24px; text-align: center; cursor: pointer; margin-bottom: 16px;
@@ -128,7 +128,7 @@
   .ctx-btn.danger { color:var(--danger); }
   .ctx-btn.cancel { color:var(--dim); border-top:1px solid var(--border); margin-top:8px; }
 
-  /* ── Config ── */
+  /* â”€â”€ Config â”€â”€ */
   .site-item { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 12px; margin-bottom: 8px; }
   .site-head { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
   .site-type { font-size: 11px; font-weight: 700; color: var(--accent); }
@@ -149,18 +149,18 @@
 <body>
 
 <header>
-  <h1>⚙️ Kiosk Admin</h1>
+  <h1>âš™ï¸ Kiosk Admin</h1>
   <div class="hbtns">
     <span id="status"></span>
-    <button class="btn pri" onclick="pushAll()">▲ Pushen &amp; Reload</button>
+    <button class="btn pri" onclick="pushAll()">â–² Pushen &amp; Reload</button>
   </div>
 </header>
 
 <nav>
-  <button class="tab active" data-tab="displays">📺 Displays</button>
-  <button class="tab" data-tab="medien">🖼 Medien</button>
-  <button class="tab" data-tab="config">⚙️ Einstellungen</button>
-  <button class="tab" data-tab="creds">🔑 Zugangsdaten</button>
+  <button class="tab active" data-tab="displays">ðŸ“º Displays</button>
+  <button class="tab" data-tab="medien">ðŸ–¼ Medien</button>
+  <button class="tab" data-tab="config">âš™ï¸ Einstellungen</button>
+  <button class="tab" data-tab="creds">ðŸ”‘ Zugangsdaten</button>
 </nav>
 
 <main>
@@ -168,14 +168,14 @@
 <!-- DISPLAYS -->
 <section id="tab-displays" class="active">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-    <div class="stitle" style="margin:0">Gemeldete Geräte</div>
+    <div class="stitle" style="margin:0">Gemeldete GerÃ¤te</div>
     <div style="display:flex;gap:8px">
-      <button class="btn sec sml" onclick="cleanupDevices()">🧹 Aufräumen</button>
-      <button class="btn sec sml" onclick="loadDisplays()">↻ Aktualisieren</button>
+      <button class="btn sec sml" onclick="cleanupDevices()">ðŸ§¹ AufrÃ¤umen</button>
+      <button class="btn sec sml" onclick="loadDisplays()">â†» Aktualisieren</button>
     </div>
   </div>
-  <div id="playlist-updated" style="font-size:11px;color:var(--dim);margin-bottom:14px">Playlist: wird geladen…</div>
-  <div id="devices-grid" class="devices-grid"><div class="empty">Lade…</div></div>
+  <div id="playlist-updated" style="font-size:11px;color:var(--dim);margin-bottom:14px">Playlist: wird geladenâ€¦</div>
+  <div id="devices-grid" class="devices-grid"><div class="empty">Ladeâ€¦</div></div>
 </section>
 
 <!-- MEDIEN -->
@@ -183,7 +183,7 @@
   <!-- Upload -->
   <div id="drop-zone">
     <input type="file" id="file-input" multiple accept="image/*,video/*" style="display:none">
-    <div class="dz-icon">📤</div>
+    <div class="dz-icon">ðŸ“¤</div>
     <div class="dz-title">Dateien hochladen</div>
     <div class="dz-sub">Klicken oder Dateien hierher ziehen</div>
     <div id="upload-bar"><div id="upload-bar-fill"></div></div>
@@ -191,64 +191,64 @@
   </div>
   <div class="upload-dest">
     <span style="color:var(--dim)">Hochladen nach:</span>
-    <button class="dest-btn active-live" id="dest-live" onclick="setDest('Sielaff_Live')">▶ Live</button>
-    <button class="dest-btn" id="dest-store" onclick="setDest('Sielaff_Store')">📦 Store</button>
+    <button class="dest-btn active-live" id="dest-live" onclick="setDest('Sielaff_Live')">â–¶ Live</button>
+    <button class="dest-btn" id="dest-store" onclick="setDest('Sielaff_Store')">ðŸ“¦ Store</button>
   </div>
 
   <!-- Liste -->
   <div class="media-toolbar">
     <div style="flex:1"><div id="cache-age" style="font-size:11px;color:var(--dim)"></div></div>
-    <input type="text" id="media-filter" placeholder="Suchen…" style="max-width:160px;width:auto" oninput="filterMedia(this.value)">
-    <button class="btn sec sml" onclick="triggerSync()" title="GitHub Action starten und neu laden">⟳ Sync</button>
+    <input type="text" id="media-filter" placeholder="Suchenâ€¦" style="max-width:160px;width:auto" oninput="filterMedia(this.value)">
+    <button class="btn sec sml" onclick="triggerSync()" title="GitHub Action starten und neu laden">âŸ³ Sync</button>
   </div>
   <div id="media-grid"><div class="empty"><div class="spin"></div></div></div>
-  <div id="trash-zone">🗑 Datei hierher ziehen zum Löschen</div>
+  <div id="trash-zone">ðŸ—‘ Datei hierher ziehen zum LÃ¶schen</div>
 </section>
 
 <!-- CONFIG -->
 <section id="tab-config">
-  <div class="stitle">Standard-Einstellungen (für alle Displays)</div>
+  <div class="stitle">Standard-Einstellungen (fÃ¼r alle Displays)</div>
   <div class="card">
     <div class="field">
       <label>Anzeige-Modus</label>
       <div class="fit-toggle">
-        <button class="fit-btn" id="fit-cover" onclick="setFitUI('cover')">⬛ Vollbild</button>
-        <button class="fit-btn" id="fit-contain" onclick="setFitUI('contain')">🔲 Alles sichtbar</button>
+        <button class="fit-btn" id="fit-cover" onclick="setFitUI('cover')">â¬› Vollbild</button>
+        <button class="fit-btn" id="fit-contain" onclick="setFitUI('contain')">ðŸ”² Alles sichtbar</button>
       </div>
     </div>
     <div class="stitle" style="margin-top:16px">Inhalte</div>
     <div id="sites-list"></div>
-    <button class="btn sec" style="width:100%;margin-top:8px" onclick="addSite()">+ Inhalt hinzufügen</button>
+    <button class="btn sec" style="width:100%;margin-top:8px" onclick="addSite()">+ Inhalt hinzufÃ¼gen</button>
     <div style="margin-top:12px">
-      <button class="btn pri" style="width:100%" onclick="saveConfig()">💾 Speichern</button>
+      <button class="btn pri" style="width:100%" onclick="saveConfig()">ðŸ’¾ Speichern</button>
     </div>
   </div>
-  <div class="stitle">Geräte-spezifische Einstellungen</div>
-  <div id="device-configs"><div class="empty" style="padding:20px">Noch keine Geräte registriert.</div></div>
+  <div class="stitle">GerÃ¤te-spezifische Einstellungen</div>
+  <div id="device-configs"><div class="empty" style="padding:20px">Noch keine GerÃ¤te registriert.</div></div>
 </section>
 
 <!-- ZUGANGSDATEN -->
 <section id="tab-creds">
   <div class="card" style="margin-bottom:16px">
     <div class="card-head">
-      <div class="card-title">📤 Upload-Zugang</div>
+      <div class="card-title">ðŸ“¤ Upload-Zugang</div>
       <div id="upload-access-dot" class="dot dot-red"></div>
     </div>
-    <div style="font-size:12px;color:var(--dim);margin-bottom:14px">Steuert ob Handy-Nutzer auf der Upload-Seite Fotos hochladen können.</div>
+    <div style="font-size:12px;color:var(--dim);margin-bottom:14px">Steuert ob Handy-Nutzer auf der Upload-Seite Fotos hochladen kÃ¶nnen.</div>
     <button id="upload-toggle-btn" onclick="toggleUploadAccess()"
       style="width:100%;padding:16px;border-radius:10px;font-size:15px;font-weight:700;border:2px solid var(--border);background:var(--surface2);color:var(--dim);cursor:pointer;transition:all .2s">
-      Lade…
+      Ladeâ€¦
     </button>
     <div style="margin-top:10px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-      <button class="btn sec sml" onclick="copyUploadLink()">🔗 Upload-Link kopieren</button>
-      <span style="font-size:11px;color:var(--dim)">Link einmalig teilen — ob Upload klappt entscheidet nur der Toggle</span>
+      <button class="btn sec sml" onclick="copyUploadLink()">ðŸ”— Upload-Link kopieren</button>
+      <span style="font-size:11px;color:var(--dim)">Link einmalig teilen â€” ob Upload klappt entscheidet nur der Toggle</span>
     </div>
   </div>
   <div class="card">
     <div class="card-head"><div class="card-title">GitHub</div></div>
     <div class="field">
       <label>Personal Access Token (repo + gist)</label>
-      <input type="password" id="cred-gh" placeholder="ghp_…">
+      <input type="password" id="cred-gh" placeholder="ghp_â€¦">
     </div>
     <div class="field">
       <label>Repository</label>
@@ -260,12 +260,12 @@
     <div class="field-row">
       <div class="field"><label>Cloud Name</label><input type="text" id="cred-cloud" placeholder="dqw5qfpe2"></div>
       <div class="field"><label>API Key</label><input type="text" id="cred-key" placeholder="154959978168384"></div>
-      <div class="field"><label>API Secret</label><input type="password" id="cred-secret" placeholder="…"></div>
+      <div class="field"><label>API Secret</label><input type="password" id="cred-secret" placeholder="â€¦"></div>
     </div>
   </div>
-  <button class="btn pri" onclick="saveCreds()">💾 Zugangsdaten speichern</button>
-  <button class="btn sec" onclick="copySetupLink()" style="margin-top:8px">🔗 Admin-Setup-Link kopieren</button>
-  <div style="font-size:11px;color:var(--dim);margin-top:6px">Öffnet Admin auf neuem Gerät und richtet Zugangsdaten automatisch ein.</div>
+  <button class="btn pri" onclick="saveCreds()">ðŸ’¾ Zugangsdaten speichern</button>
+  <button class="btn sec" onclick="copySetupLink()" style="margin-top:8px">ðŸ”— Admin-Setup-Link kopieren</button>
+  <div style="font-size:11px;color:var(--dim);margin-top:6px">Ã–ffnet Admin auf neuem GerÃ¤t und richtet Zugangsdaten automatisch ein.</div>
 </section>
 
 </main>
@@ -275,7 +275,7 @@
   <div id="ctx-menu" onclick="event.stopPropagation()">
     <div id="ctx-title"></div>
     <div id="ctx-actions"></div>
-    <button class="ctx-btn cancel" onclick="hideCtxMenu()">✕ Abbrechen</button>
+    <button class="ctx-btn cancel" onclick="hideCtxMenu()">âœ• Abbrechen</button>
   </div>
 </div>
 
@@ -292,7 +292,7 @@ const cauth = () => 'Basic ' + btoa(ckey() + ':' + csec());
 
 let config = { default: { sites: [], fit: 'contain' }, devices: {} };
 
-// ── Toast / Status ─────────────────────────────────────────
+// â”€â”€ Toast / Status â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function toast(msg, type = 'ok') {
   const t = document.getElementById('toast');
   t.textContent = msg; t.className = 'show ' + type;
@@ -300,7 +300,7 @@ function toast(msg, type = 'ok') {
 }
 function setStatus(msg) { document.getElementById('status').textContent = msg; }
 
-// ── Tabs ───────────────────────────────────────────────────
+// â”€â”€ Tabs â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 document.querySelectorAll('.tab').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
@@ -314,7 +314,7 @@ document.querySelectorAll('.tab').forEach(btn => {
   });
 });
 
-// ── GitHub API ─────────────────────────────────────────────
+// â”€â”€ GitHub API â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function ghGet(path) {
   const r = await fetch(`https://api.github.com/repos/${REPO}/contents/${path}`, {
     headers: { Authorization: `token ${gh()}` }
@@ -334,7 +334,7 @@ async function loadGHFile(path) {
   return { content: decodeURIComponent(escape(atob(d.content))), sha: d.sha };
 }
 
-// ── Cloudinary: SHA-1 Signing ──────────────────────────────
+// â”€â”€ Cloudinary: SHA-1 Signing â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function sha1(message) {
   const buf = new TextEncoder().encode(message);
   const hash = await crypto.subtle.digest('SHA-1', buf);
@@ -347,7 +347,7 @@ async function cldSign(params) {
   return sha1(str + csec());
 }
 
-// ── Upload-Ziel ────────────────────────────────────────────
+// â”€â”€ Upload-Ziel â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 let uploadDest = 'Sielaff_Live';
 function setDest(folder) {
   uploadDest = folder;
@@ -355,7 +355,7 @@ function setDest(folder) {
   document.getElementById('dest-store').className = 'dest-btn' + (folder === 'Sielaff_Store' ? ' active-store' : '');
 }
 
-// ── Cloudinary: Upload ─────────────────────────────────────
+// â”€â”€ Cloudinary: Upload â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function uploadFiles(files) {
   if (!cloud() || !ckey() || !csec()) { toast('Cloudinary-Zugangsdaten fehlen.', 'err'); return; }
   const bar = document.getElementById('upload-bar');
@@ -389,11 +389,11 @@ async function uploadFiles(files) {
   fill.style.width = '100%';
   const failed = files.length - done;
   if (failed > 0) status.textContent = `${done} hochgeladen, ${failed} fehlgeschlagen.`;
-  else status.textContent = `${done} von ${files.length} hochgeladen ✓`;
+  else status.textContent = `${done} von ${files.length} hochgeladen âœ“`;
   setTimeout(() => { bar.style.display = 'none'; status.style.display = 'none'; fill.style.width = '0%'; }, 3000);
   if (done > 0) {
     renderMedia(allMedia);
-    toast(`${done} Datei(en) hochgeladen ✓ — Cache wird gespeichert…`);
+    toast(`${done} Datei(en) hochgeladen âœ“ â€” Cache wird gespeichertâ€¦`);
     try {
       const cf = await ghGet('cloudinary-cache.json');
       const cache = JSON.parse(atob(cf.content.replace(/\n/g, '')));
@@ -402,14 +402,14 @@ async function uploadFiles(files) {
       cache.updated = new Date().toISOString();
       await ghPut('cloudinary-cache.json', JSON.stringify(cache, null, 2), cf.sha, 'Upload: ' + newResources.map(r => r.public_id).join(', '));
       lastCacheTs = cache.updated;
-      toast(`${done} Datei(en) hochgeladen ✓`);
-    } catch(e) { toast('Cache-Update fehlgeschlagen — ⟳ Sync klicken', 'err'); }
+      toast(`${done} Datei(en) hochgeladen âœ“`);
+    } catch(e) { toast('Cache-Update fehlgeschlagen â€” âŸ³ Sync klicken', 'err'); }
   } else {
-    toast('Upload fehlgeschlagen — Zugangsdaten oder Dateiformat prüfen', 'err');
+    toast('Upload fehlgeschlagen â€” Zugangsdaten oder Dateiformat prÃ¼fen', 'err');
   }
 }
 
-// ── Drag & Drop Setup ──────────────────────────────────────
+// â”€â”€ Drag & Drop Setup â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function setupDragDrop() {
   document.querySelectorAll('.folder-section[data-folder]').forEach(section => {
     const targetFolder = section.dataset.folder;
@@ -433,12 +433,12 @@ function setupDragDrop() {
     try {
       const data = JSON.parse(e.dataTransfer.getData('text'));
       const filename = data.pid.split('/').pop();
-      if (confirm(`"${filename}" wirklich löschen?`)) deleteFile(data.pid, data.rt);
+      if (confirm(`"${filename}" wirklich lÃ¶schen?`)) deleteFile(data.pid, data.rt);
     } catch(err) {}
   });
 }
 
-// ── Cloudinary: Verschieben via GitHub Action (CORS-sicher) ─
+// â”€â”€ Cloudinary: Verschieben via GitHub Action (CORS-sicher) â”€
 async function moveToFolder(publicId, resourceType, targetFolder) {
   const item = allMedia.find(i => i.public_id === publicId);
   if (!item) return;
@@ -449,7 +449,7 @@ async function moveToFolder(publicId, resourceType, targetFolder) {
   item.public_id = newPublicId;
   item.kiosk_folder = targetFolder;
   renderMedia(allMedia);
-  toast('Verschiebe…');
+  toast('Verschiebeâ€¦');
 
   try {
     const r = await fetch(`https://api.github.com/repos/${REPO}/actions/workflows/move-cloudinary.yml/dispatches`, {
@@ -461,7 +461,7 @@ async function moveToFolder(publicId, resourceType, targetFolder) {
       })
     });
     if (r.status === 204) {
-      toast(`Verschoben ✓ — warte auf Sync…`);
+      toast(`Verschoben âœ“ â€” warte auf Syncâ€¦`);
       let tries = 0;
       const poll = setInterval(async () => {
         tries++;
@@ -470,10 +470,10 @@ async function moveToFolder(publicId, resourceType, targetFolder) {
         if (arrived) {
           clearInterval(poll);
           allMedia = []; loadAllMedia();
-          toast(`Verschoben nach ${targetFolder === 'Sielaff_Live' ? '▶ Live' : '📦 Store'} ✓`);
+          toast(`Verschoben nach ${targetFolder === 'Sielaff_Live' ? 'â–¶ Live' : 'ðŸ“¦ Store'} âœ“`);
         } else if (tries >= 36) {
           clearInterval(poll);
-          toast('Sync dauert länger — bitte ⟳ Sync nochmal klicken', 'err');
+          toast('Sync dauert lÃ¤nger â€” bitte âŸ³ Sync nochmal klicken', 'err');
         }
       }, 5000);
     } else {
@@ -494,7 +494,7 @@ async function moveToFolder(publicId, resourceType, targetFolder) {
   }
 }
 
-// ── Cloudinary: Löschen (Upload API destroy) ───────────────
+// â”€â”€ Cloudinary: LÃ¶schen (Upload API destroy) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function cldDestroy(publicId, resourceType) {
   const ts = Math.round(Date.now() / 1000);
   const sig = await cldSign({ public_id: publicId, timestamp: ts });
@@ -505,11 +505,11 @@ async function cldDestroy(publicId, resourceType) {
   return r.json();
 }
 
-// ── Cloudinary: Alle Dateien laden ────────────────────────
+// â”€â”€ Cloudinary: Alle Dateien laden â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 let allMedia = [];
 
 function cacheUrl() {
-  return location.href.replace(/admin\.html.*$/, '') + 'cloudinary-cache.json?t=' + Date.now();
+  return 'https://meierandre130577.github.io/kiosk/cloudinary-cache.json?t=' + Date.now();
 }
 
 var lastCacheTs = '';
@@ -517,9 +517,9 @@ var lastCacheTs = '';
 function updateCacheAge(updated) {
   const ageEl = document.getElementById('cache-age');
   if (!ageEl) return;
-  if (!updated) { ageEl.textContent = 'Noch nicht synchronisiert → ⟳ Sync klicken'; return; }
+  if (!updated) { ageEl.textContent = 'Noch nicht synchronisiert â†’ âŸ³ Sync klicken'; return; }
   const mins = Math.round((Date.now() - new Date(updated)) / 60000);
-  ageEl.textContent = `Zuletzt synchronisiert: ${mins < 1 ? 'gerade eben' : `vor ${mins} Min.`} · Auto-Refresh aktiv`;
+  ageEl.textContent = `Zuletzt synchronisiert: ${mins < 1 ? 'gerade eben' : `vor ${mins} Min.`} Â· Auto-Refresh aktiv`;
 }
 
 async function checkCacheUpdate() {
@@ -535,10 +535,10 @@ async function checkCacheUpdate() {
 setInterval(checkCacheUpdate, 30000);
 
 async function loadAllMedia() {
-  document.getElementById('media-grid').innerHTML = '<div class="empty"><div class="spin"></div><br>Lade…</div>';
+  document.getElementById('media-grid').innerHTML = '<div class="empty"><div class="spin"></div><br>Ladeâ€¦</div>';
   allMedia = [];
 
-  // Cache-Datei vom GitHub Pages lesen (wird vom GitHub Action befüllt)
+  // Cache-Datei vom GitHub Pages lesen (wird vom GitHub Action befÃ¼llt)
   try {
     const r = await fetch(cacheUrl());
     if (r.ok) {
@@ -550,7 +550,7 @@ async function loadAllMedia() {
     }
   } catch(e) {}
 
-  // Fallback: öffentlicher Tag-Endpunkt
+  // Fallback: Ã¶ffentlicher Tag-Endpunkt
   try {
     const [imgData, vidData] = await Promise.all([
       fetch(`https://res.cloudinary.com/${cloud()}/image/list/kiosk.json`).then(r => r.json()).catch(() => ({})),
@@ -561,16 +561,16 @@ async function loadAllMedia() {
       ...(vidData.resources || []).map(r => ({ ...r, resource_type: 'video', tags: ['kiosk'] }))
     ];
     if (allMedia.length > 0) {
-      document.getElementById('cache-age').textContent = 'Nur kiosk-getaggte sichtbar — ⟳ Sync klicken für alle';
+      document.getElementById('cache-age').textContent = 'Nur kiosk-getaggte sichtbar â€” âŸ³ Sync klicken fÃ¼r alle';
       renderMedia(allMedia); return;
     }
   } catch(e) {}
 
-  document.getElementById('media-grid').innerHTML = '<div class="empty">Keine Dateien. ⟳ Sync klicken.</div>';
+  document.getElementById('media-grid').innerHTML = '<div class="empty">Keine Dateien. âŸ³ Sync klicken.</div>';
 }
 
 async function triggerSync() {
-  toast('Synchronisierung gestartet…');
+  toast('Synchronisierung gestartetâ€¦');
   try {
     const currentUpdated = (await fetch(cacheUrl()).then(r => r.json()).catch(() => ({}))).updated || '';
     await fetch(`https://api.github.com/repos/${REPO}/actions/workflows/sync-cloudinary.yml/dispatches`, {
@@ -587,10 +587,10 @@ async function triggerSync() {
         clearInterval(poll);
         allMedia = [];
         loadAllMedia();
-        toast('Sync abgeschlossen ✓');
+        toast('Sync abgeschlossen âœ“');
       } else if (tries >= 36) {
         clearInterval(poll);
-        toast('Sync dauert länger — bitte später ↻ Laden klicken', 'err');
+        toast('Sync dauert lÃ¤nger â€” bitte spÃ¤ter â†» Laden klicken', 'err');
       }
     }, 5000);
   } catch(e) { toast('Sync fehlgeschlagen', 'err'); }
@@ -599,16 +599,16 @@ async function triggerSync() {
 let mediaFilter = '';
 function filterMedia(q) { mediaFilter = q; renderMedia(allMedia); }
 
-// ── Langdruck-Kontextmenü ───────────────────────────────────
+// â”€â”€ Langdruck-KontextmenÃ¼ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 let ctxTimer = null;
 function showCtxMenu(pid, rt, folder) {
   const filename = pid.split('/').pop();
   const otherFolder = folder === 'Sielaff_Live' ? 'Sielaff_Store' : 'Sielaff_Live';
-  const otherLabel  = folder === 'Sielaff_Live' ? '📦 In Store verschieben' : '▶ In Live verschieben';
+  const otherLabel  = folder === 'Sielaff_Live' ? 'ðŸ“¦ In Store verschieben' : 'â–¶ In Live verschieben';
   document.getElementById('ctx-title').textContent = filename;
   document.getElementById('ctx-actions').innerHTML =
     `<button class="ctx-btn" onclick="hideCtxMenu();moveToFolder('${pid.replace(/'/g,"\\'")}','${rt}','${otherFolder}')">${otherLabel}</button>` +
-    `<button class="ctx-btn danger" onclick="hideCtxMenu();deleteFile('${pid.replace(/'/g,"\\'")}','${rt}')">🗑️ Löschen</button>`;
+    `<button class="ctx-btn danger" onclick="hideCtxMenu();deleteFile('${pid.replace(/'/g,"\\'")}','${rt}')">ðŸ—‘ï¸ LÃ¶schen</button>`;
   document.getElementById('ctx-overlay').classList.add('show');
 }
 function hideCtxMenu() {
@@ -651,10 +651,10 @@ function renderMedia(items) {
       ontouchmove="cancelLongPress()">
       <img class="media-thumb" src="${thumb}" alt=""
         onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-      <div class="media-thumb-fb">${isVideo ? '▶' : '🖼'}</div>
+      <div class="media-thumb-fb">${isVideo ? 'â–¶' : 'ðŸ–¼'}</div>
       <div class="media-info">
         <div class="media-name" title="${filename}">${filename}</div>
-        <div class="media-meta">${(item.format || '').toUpperCase()} · ${size}</div>
+        <div class="media-meta">${(item.format || '').toUpperCase()} Â· ${size}</div>
       </div>
     </div>`;
   }).join('');
@@ -662,15 +662,15 @@ function renderMedia(items) {
   grid.innerHTML =
     `<div class="folder-section" id="drop-live" data-folder="Sielaff_Live">
       <div class="folder-header">
-        <span class="folder-badge badge-live">▶ Live</span>
-        <span class="folder-count">${live.length} Datei(en) — wird auf Displays abgespielt</span>
+        <span class="folder-badge badge-live">â–¶ Live</span>
+        <span class="folder-count">${live.length} Datei(en) â€” wird auf Displays abgespielt</span>
       </div>
       <div class="media-grid">${live.length ? makeCards(live, 'Sielaff_Live') : '<div class="empty" style="padding:20px">Hierher ziehen um Live zu setzen.</div>'}</div>
     </div>
     <div class="folder-section" id="drop-store" data-folder="Sielaff_Store">
       <div class="folder-header">
-        <span class="folder-badge badge-store">📦 Store</span>
-        <span class="folder-count">${store.length} Datei(en) — geparkt</span>
+        <span class="folder-badge badge-store">ðŸ“¦ Store</span>
+        <span class="folder-count">${store.length} Datei(en) â€” geparkt</span>
       </div>
       <div class="media-grid">${store.length ? makeCards(store, 'Sielaff_Store') : '<div class="empty" style="padding:20px">Hierher ziehen zum Parken.</div>'}</div>
     </div>`;
@@ -682,7 +682,7 @@ async function deleteFile(publicId, resourceType) {
   // Optimistisches UI-Update sofort
   allMedia = allMedia.filter(i => i.public_id !== publicId);
   renderMedia(allMedia);
-  toast('Wird gelöscht…');
+  toast('Wird gelÃ¶schtâ€¦');
 
   try {
     const r = await fetch(`https://api.github.com/repos/${REPO}/actions/workflows/delete-cloudinary.yml/dispatches`, {
@@ -694,7 +694,7 @@ async function deleteFile(publicId, resourceType) {
       })
     });
     if (r.status === 204) {
-      toast('Gelöscht ✓ — warte auf Sync…');
+      toast('GelÃ¶scht âœ“ â€” warte auf Syncâ€¦');
       let tries = 0;
       const poll = setInterval(async () => {
         tries++;
@@ -703,10 +703,10 @@ async function deleteFile(publicId, resourceType) {
         if (!stillThere) {
           clearInterval(poll);
           allMedia = []; loadAllMedia();
-          toast('Gelöscht ✓');
+          toast('GelÃ¶scht âœ“');
         } else if (tries >= 36) {
           clearInterval(poll);
-          toast('Sync dauert länger — bitte ⟳ Sync nochmal klicken', 'err');
+          toast('Sync dauert lÃ¤nger â€” bitte âŸ³ Sync nochmal klicken', 'err');
         }
       }, 5000);
     } else {
@@ -719,7 +719,7 @@ async function deleteFile(publicId, resourceType) {
   }
 }
 
-// ── Drag & Drop Upload ─────────────────────────────────────
+// â”€â”€ Drag & Drop Upload â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const dropZone = document.getElementById('drop-zone');
 dropZone.addEventListener('click', () => document.getElementById('file-input').click());
 dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
@@ -734,7 +734,7 @@ document.getElementById('file-input').addEventListener('change', e => {
   e.target.value = '';
 });
 
-// ── Gist (Heartbeats) ──────────────────────────────────────
+// â”€â”€ Gist (Heartbeats) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function getHeartbeats() {
   const r = await fetch(`https://api.github.com/gists/${GIST_ID}`, {
     headers: { Authorization: `token ${GIST_TOK}` }
@@ -750,7 +750,7 @@ async function saveHeartbeats(hb) {
   });
 }
 
-// ── DISPLAYS ───────────────────────────────────────────────
+// â”€â”€ DISPLAYS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function cleanupDevices() {
   const hb = await getHeartbeats().catch(() => ({}));
   const cutoff = Date.now() - 24 * 60 * 60 * 1000;
@@ -760,8 +760,8 @@ async function cleanupDevices() {
     const ghost = id.startsWith('unknown-') || !d.screen || d.screen === '0x0';
     return old || ghost;
   });
-  if (!toDelete.length) { toast('Nichts zum Aufräumen.'); return; }
-  if (!confirm(`${toDelete.length} Gerät(e) löschen (unbekannte IDs + älter als 24h)?`)) return;
+  if (!toDelete.length) { toast('Nichts zum AufrÃ¤umen.'); return; }
+  if (!confirm(`${toDelete.length} GerÃ¤t(e) lÃ¶schen (unbekannte IDs + Ã¤lter als 24h)?`)) return;
   toDelete.forEach(id => { delete hb[id]; delete config.devices[id]; });
   try {
     const r = await fetch(`https://api.github.com/gists/${GIST_ID}`, {
@@ -771,7 +771,7 @@ async function cleanupDevices() {
     });
     if (!r.ok) throw new Error('Gist ' + r.status);
     await saveConfig(true);
-    toast(`${toDelete.length} Gerät(e) entfernt ✓`);
+    toast(`${toDelete.length} GerÃ¤t(e) entfernt âœ“`);
     setTimeout(loadDisplays, 1500);
   } catch(e) { toast('Fehler beim Speichern: ' + (e.message || e), 'err'); }
 }
@@ -808,7 +808,7 @@ async function loadDisplays() {
       const devCfg = config.devices[id];
       const fp = [d.gpu || '', d.screen || '', d.timezone || ''].join('|');
       const twins = fp !== '||' && fpMap[fp] && fpMap[fp].length > 1 ? fpMap[fp].filter(x => x !== id) : [];
-      const dupBadge = twins.length ? `<div style="margin:6px 0 2px;padding:4px 8px;background:#7c3a00;border-radius:4px;font-size:11px;color:#ffb347">⚠️ Gleiche Hardware wie ${twins.length} anderen Eintrag — wahrscheinlich 2 Browser auf 1 Gerät</div>` : '';
+      const dupBadge = twins.length ? `<div style="margin:6px 0 2px;padding:4px 8px;background:#7c3a00;border-radius:4px;font-size:11px;color:#ffb347">âš ï¸ Gleiche Hardware wie ${twins.length} anderen Eintrag â€” wahrscheinlich 2 Browser auf 1 GerÃ¤t</div>` : '';
       return `<div class="device-card">
         <div class="device-head">
           <div class="dot ${dotClass}"></div>
@@ -817,26 +817,26 @@ async function loadDisplays() {
         ${dupBadge}
         <div class="device-meta">
           <strong>Zuletzt gesehen:</strong> ${ago}<br>
-          <strong>Playlist:</strong> ${d.playlistUpdated ? new Date(d.playlistUpdated).toLocaleString('de-AT') : '–'}<br>
-          <strong>Browser:</strong> ${d.browser || '–'}${d.touch ? ' 👆' : ''}<br>
-          <strong>OS:</strong> ${d.os || '–'}${d.platform ? ` <span style="color:var(--dim)">(${d.platform})</span>` : ''}<br>
-          <strong>Auflösung:</strong> ${d.screen && d.screen !== '0x0' ? d.screen : '–'}<br>
-          <strong>GPU:</strong> ${d.gpu || '–'}<br>
-          <strong>Zeitzone:</strong> ${d.timezone || '–'}<br>
-          <strong>Sprache:</strong> ${d.language || '–'}<br>
-          <strong>ID:</strong> <span style="font-family:monospace;font-size:10px">${id.substring(0,8)}…</span>
+          <strong>Playlist:</strong> ${d.playlistUpdated ? new Date(d.playlistUpdated).toLocaleString('de-AT') : 'â€“'}<br>
+          <strong>Browser:</strong> ${d.browser || 'â€“'}${d.touch ? ' ðŸ‘†' : ''}<br>
+          <strong>OS:</strong> ${d.os || 'â€“'}${d.platform ? ` <span style="color:var(--dim)">(${d.platform})</span>` : ''}<br>
+          <strong>AuflÃ¶sung:</strong> ${d.screen && d.screen !== '0x0' ? d.screen : 'â€“'}<br>
+          <strong>GPU:</strong> ${d.gpu || 'â€“'}<br>
+          <strong>Zeitzone:</strong> ${d.timezone || 'â€“'}<br>
+          <strong>Sprache:</strong> ${d.language || 'â€“'}<br>
+          <strong>ID:</strong> <span style="font-family:monospace;font-size:10px">${id.substring(0,8)}â€¦</span>
         </div>
         <div class="device-actions">
-          <button class="btn sec sml" onclick="renameDevice('${id}','${(d.name||'').replace(/'/g,"\\'")}')">✏️ Umbenennen</button>
-          <button class="btn sec sml" onclick="identifyDevice('${id}')">📍 Identifizieren</button>
-          <button class="btn sec sml" onclick="toggleDeviceConfig('${id}')">⚙️ Config</button>
-          <button class="btn dan sml" onclick="removeDevice('${id}')">✕</button>
+          <button class="btn sec sml" onclick="renameDevice('${id}','${(d.name||'').replace(/'/g,"\\'")}')">âœï¸ Umbenennen</button>
+          <button class="btn sec sml" onclick="identifyDevice('${id}')">ðŸ“ Identifizieren</button>
+          <button class="btn sec sml" onclick="toggleDeviceConfig('${id}')">âš™ï¸ Config</button>
+          <button class="btn dan sml" onclick="removeDevice('${id}')">âœ•</button>
         </div>
         <div id="dcfg-${id}" style="display:none;margin-top:10px;border-top:1px solid var(--border);padding-top:10px">
-          <div style="font-size:11px;color:var(--dim);margin-bottom:6px">Abweichende Einstellungen für dieses Gerät:</div>
+          <div style="font-size:11px;color:var(--dim);margin-bottom:6px">Abweichende Einstellungen fÃ¼r dieses GerÃ¤t:</div>
           <div class="fit-toggle" style="margin-bottom:8px">
-            <button class="fit-btn ${!devCfg||devCfg.fit==='cover'?'active':''}" onclick="setDevFit('${id}','cover')">⬛ Vollbild</button>
-            <button class="fit-btn ${devCfg&&devCfg.fit==='contain'?'active':''}" onclick="setDevFit('${id}','contain')">🔲 Alles sichtbar</button>
+            <button class="fit-btn ${!devCfg||devCfg.fit==='cover'?'active':''}" onclick="setDevFit('${id}','cover')">â¬› Vollbild</button>
+            <button class="fit-btn ${devCfg&&devCfg.fit==='contain'?'active':''}" onclick="setDevFit('${id}','contain')">ðŸ”² Alles sichtbar</button>
           </div>
           <button class="btn sec sml" onclick="clearDeviceConfig('${id}')">Standard verwenden</button>
         </div>
@@ -866,7 +866,7 @@ async function identifyDevice(id) {
       body: JSON.stringify({ files: { 'command.json': { content: JSON.stringify({ identify: id, ts: new Date().toISOString() }) } } })
     });
     if (!r.ok) throw new Error('Gist ' + r.status);
-    toast('📍 Signal gesendet — Display leuchtet in ~15 Sek. auf');
+    toast('ðŸ“ Signal gesendet â€” Display leuchtet in ~15 Sek. auf');
   } catch(e) { toast('Fehler: ' + (e.message || e), 'err'); }
 }
 
@@ -874,7 +874,7 @@ async function renameDevice(id, current) {
   const name = prompt('Name:', current); if (!name) return;
   try {
     const hb = await getHeartbeats();
-    if (!hb[id]) throw new Error('Gerät nicht gefunden');
+    if (!hb[id]) throw new Error('GerÃ¤t nicht gefunden');
     hb[id].name = name;
     const r = await fetch(`https://api.github.com/gists/${GIST_ID}`, {
       method: 'PATCH',
@@ -882,12 +882,12 @@ async function renameDevice(id, current) {
       body: JSON.stringify({ files: { 'heartbeat.json': { content: JSON.stringify(hb, null, 2) } } })
     });
     if (!r.ok) throw new Error('Gist ' + r.status);
-    toast('Umbenannt ✓');
+    toast('Umbenannt âœ“');
     setTimeout(loadDisplays, 1000);
   } catch(e) { toast('Fehler: ' + (e.message || e), 'err'); }
 }
 async function removeDevice(id) {
-  if (!confirm('Gerät entfernen?')) return;
+  if (!confirm('GerÃ¤t entfernen?')) return;
   try {
     const hb = await getHeartbeats();
     delete hb[id]; delete config.devices[id];
@@ -898,12 +898,12 @@ async function removeDevice(id) {
     });
     if (!r.ok) throw new Error('Gist ' + r.status);
     await saveConfig(true);
-    toast('Gerät entfernt ✓');
+    toast('GerÃ¤t entfernt âœ“');
     loadDisplays();
   } catch(e) { toast('Fehler: ' + (e.message || e), 'err'); }
 }
 
-// ── CONFIG ─────────────────────────────────────────────────
+// â”€â”€ CONFIG â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function loadConfig() {
   try {
     const f = await loadGHFile('config.json');
@@ -922,9 +922,9 @@ function renderConfig() {
     const isCloud = s.type === 'cloudinary';
     return `<div class="site-item">
       <div class="site-head">
-        <span class="site-type">${isCloud ? '☁️ Ordner' : '🌐 Website'}</span>
+        <span class="site-type">${isCloud ? 'â˜ï¸ Ordner' : 'ðŸŒ Website'}</span>
         <div style="flex:1"></div>
-        <button class="btn dan sml" onclick="removeSite(${i})">✕</button>
+        <button class="btn dan sml" onclick="removeSite(${i})">âœ•</button>
       </div>
       ${isCloud ? `<div class="field-row">
         <div class="field"><label>Cloud Name</label><input type="text" value="${s.cloudName||''}" onchange="updateSite(${i},'cloudName',this.value)"></div>
@@ -954,25 +954,25 @@ async function saveConfig(silent = false) {
   try {
     const f = await loadGHFile('config.json');
     await ghPut('config.json', JSON.stringify(config, null, 2), f.sha, 'Admin: config update');
-    if (!silent) toast('Gespeichert ✓');
+    if (!silent) toast('Gespeichert âœ“');
   } catch(e) { if (!silent) toast('Fehler beim Speichern', 'err'); }
 }
 
-// ── PUSH ───────────────────────────────────────────────────
+// â”€â”€ PUSH â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function pushAll() {
-  setStatus('Speichere…');
+  setStatus('Speichereâ€¦');
   try {
     const cf = await loadGHFile('config.json');
     await ghPut('config.json', JSON.stringify(config, null, 2), cf.sha, 'Admin: push update');
     const vf = await loadGHFile('version.txt');
     const newV = String(parseInt(vf.content.trim()) + 1);
     await ghPut('version.txt', newV, vf.sha, 'Admin: bump version to ' + newV);
-    toast(`Gepusht! Version ${newV} — Displays laden neu.`);
+    toast(`Gepusht! Version ${newV} â€” Displays laden neu.`);
     setStatus('');
   } catch(e) { toast('Fehler beim Pushen', 'err'); setStatus(''); }
 }
 
-// ── ZUGANGSDATEN ───────────────────────────────────────────
+// â”€â”€ ZUGANGSDATEN â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function loadCreds() {
   document.getElementById('cred-gh').value     = gh();
   document.getElementById('cred-repo').value   = localStorage.getItem('gh_repo') || 'MeierAndre130577/kiosk';
@@ -986,10 +986,10 @@ function saveCreds() {
   localStorage.setItem('cld_cloud',  document.getElementById('cred-cloud').value.trim());
   localStorage.setItem('cld_key',    document.getElementById('cred-key').value.trim());
   localStorage.setItem('cld_secret', document.getElementById('cred-secret').value.trim());
-  toast(`Zugangsdaten gespeichert ✓ (Key: …${ckey().slice(-4)})`);
+  toast(`Zugangsdaten gespeichert âœ“ (Key: â€¦${ckey().slice(-4)})`);
 }
 
-// ── SETUP-LINK ─────────────────────────────────────────────
+// â”€â”€ SETUP-LINK â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function applySetupHash() {
   const hash = location.hash.slice(1);
   if (!hash.startsWith('setup=')) return false;
@@ -1003,21 +1003,21 @@ function applySetupHash() {
     // Verify write worked
     if (token && localStorage.getItem('gh_token') !== token) throw new Error('Verify failed');
     history.replaceState(null, '', location.pathname);
-    toast('Zugangsdaten eingerichtet ✓');
+    toast('Zugangsdaten eingerichtet âœ“');
     return true;
   } catch(e) {
-    toast('Fehler: localStorage blockiert — kein privater Modus verwenden!', 'err');
+    toast('Fehler: localStorage blockiert â€” kein privater Modus verwenden!', 'err');
     return false;
   }
 }
 function copySetupLink() {
   const link = `${location.origin}${location.pathname}#setup=${gh()}:${ckey()}:${csec()}`;
-  navigator.clipboard.writeText(link).then(() => toast('Admin-Setup-Link kopiert ✓'))
+  navigator.clipboard.writeText(link).then(() => toast('Admin-Setup-Link kopiert âœ“'))
     .catch(() => { prompt('Admin-Setup-Link (kopieren):', link); });
 }
 function copyUploadLink() { generateUploadLink(); }
 
-// ── UPLOAD-ZUGANG TOGGLE ───────────────────────────────────
+// â”€â”€ UPLOAD-ZUGANG TOGGLE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 let uploadEnabled = null;
 let uploadToken   = '';
 
@@ -1029,7 +1029,7 @@ function generateAccessToken() {
 
 async function loadUploadAccess() {
   const btn = document.getElementById('upload-toggle-btn');
-  if (btn) btn.textContent = 'Lade…';
+  if (btn) btn.textContent = 'Ladeâ€¦';
   try {
     const r = await fetch(`https://api.github.com/gists/${GIST_ID}`, {
       headers: { Authorization: `token ${GIST_TOK}` }
@@ -1050,13 +1050,13 @@ function renderUploadToggle() {
   const dot = document.getElementById('upload-access-dot');
   if (!btn) return;
   if (uploadEnabled) {
-    btn.textContent      = '✅  Upload aktiv — Tippen zum Sperren';
+    btn.textContent      = 'âœ…  Upload aktiv â€” Tippen zum Sperren';
     btn.style.background  = 'rgba(34,197,94,.15)';
     btn.style.color       = 'var(--success)';
     btn.style.borderColor = 'rgba(34,197,94,.4)';
     if (dot) dot.className = 'dot dot-green';
   } else {
-    btn.textContent      = '🔒  Upload gesperrt — Tippen zum Aktivieren';
+    btn.textContent      = 'ðŸ”’  Upload gesperrt â€” Tippen zum Aktivieren';
     btn.style.background  = 'var(--surface2)';
     btn.style.color       = 'var(--dim)';
     btn.style.borderColor = 'var(--border)';
@@ -1066,7 +1066,7 @@ function renderUploadToggle() {
 
 async function toggleUploadAccess() {
   if (uploadEnabled) {
-    // Sperren — Token bleibt, enabled = false
+    // Sperren â€” Token bleibt, enabled = false
     const prev = uploadEnabled;
     uploadEnabled = false; renderUploadToggle();
     try {
@@ -1076,10 +1076,10 @@ async function toggleUploadAccess() {
         body: JSON.stringify({ files: { 'upload-access.json': { content: JSON.stringify({ enabled: false, token: uploadToken }) } } })
       });
       if (!r.ok) throw new Error('Gist ' + r.status);
-      toast('🔒 Upload gesperrt — Link ungültig');
+      toast('ðŸ”’ Upload gesperrt â€” Link ungÃ¼ltig');
     } catch(e) { uploadEnabled = prev; renderUploadToggle(); toast('Fehler: ' + (e.message || e), 'err'); }
   } else {
-    // Aktivieren → automatisch neuen Link generieren
+    // Aktivieren â†’ automatisch neuen Link generieren
     await generateUploadLink();
   }
 }
@@ -1102,12 +1102,12 @@ async function generateUploadLink() {
     const base = location.origin + location.pathname.replace('admin.html', 'upload.html');
     const link = `${base}#${code}`;
     navigator.clipboard.writeText(link)
-      .then(() => toast('✅ Neuer Link kopiert — alter Link ungültig'))
+      .then(() => toast('âœ… Neuer Link kopiert â€” alter Link ungÃ¼ltig'))
       .catch(() => { prompt('Upload-Link:', link); });
   } catch(e) { toast('Fehler: ' + (e.message || e), 'err'); }
 }
 
-// ── INIT ───────────────────────────────────────────────────
+// â”€â”€ INIT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 (async () => {
   applySetupHash();
   if (!gh()) {
