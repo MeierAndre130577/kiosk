@@ -82,10 +82,10 @@
 <body>
 
 <div id="device-overlay">
-  <div class="do-label">📍 Identifizierung</div>
+  <div class="do-label">ðŸ“ Identifizierung</div>
   <div class="do-id" id="do-id"></div>
   <div class="do-name" id="do-name"></div>
-  <div class="do-hint">Ausgelöst vom Admin</div>
+  <div class="do-hint">AusgelÃ¶st vom Admin</div>
 </div>
 <div id="s-kiosk">
   <iframe id="site-frame"
@@ -95,7 +95,7 @@
   <video id="site-video" autoplay muted playsinline></video>
   <img id="site-image" alt="">
   <div id="video-error">
-    <div class="ve-ico">⚠️</div>
+    <div class="ve-ico">âš ï¸</div>
     <p id="ve-msg">Video kann nicht geladen werden.</p>
     <small id="ve-detail"></small>
     <small id="ve-url"></small>
@@ -106,7 +106,7 @@
 </div>
 
 <script>
-/* ES5 – kompatibel mit Safari 9 / iOS 9 */
+/* ES5 â€“ kompatibel mit Safari 9 / iOS 9 */
 
 var GIST_ID    = 'dddeed1b06e92a5fabd4d49304b3acb2';
 var GIST_TOKEN = ['ghp_drGUxR6ckQoymYRSdSy', 'Lf4eqWNorcq2vXPFA'].join('');
@@ -114,7 +114,7 @@ var DEFAULT_SITES = [
   { type: 'cloudinary', cloudName: 'dqw5qfpe2', tag: 'kiosk', duration: 30, url: '' }
 ];
 
-/* ── Device-ID ─────────────────────────────────────────── */
+/* â”€â”€ Device-ID â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function fingerprintId() {
   var gpu = getGPU();
   var scr = (window.screen.width || screen.width) + 'x' + (window.screen.height || screen.height);
@@ -143,7 +143,7 @@ function getDeviceId() {
 }
 var DEVICE_ID = getDeviceId();
 
-/* ── GPU Erkennung (WebGL) ──────────────────────────────── */
+/* â”€â”€ GPU Erkennung (WebGL) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function getGPU() {
   try {
     var c = document.createElement('canvas');
@@ -155,17 +155,17 @@ function getGPU() {
   } catch(e) { return ''; }
 }
 
-/* ── Auto-Name aus Hardware-Fingerprint ─────────────────── */
+/* â”€â”€ Auto-Name aus Hardware-Fingerprint â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function getAutoName(os, gpu, scr, platform) {
   var parts = [];
   if (gpu) parts.push(gpu.split('/')[0].trim());
   else if (platform && platform !== 'Win32' && platform !== 'MacIntel') parts.push(platform);
   if (scr && scr !== '0x0') parts.push(scr);
   if (!parts.length) parts.push(os || 'Unbekannt');
-  return parts.join(' · ');
+  return parts.join(' Â· ');
 }
 
-/* ── Browser / OS Erkennung ────────────────────────────── */
+/* â”€â”€ Browser / OS Erkennung â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function detectBrowser(ua) {
   if (/CriOS/.test(ua))  return 'Chrome iOS';
   if (/FxiOS/.test(ua))  return 'Firefox iOS';
@@ -190,7 +190,7 @@ function detectOS(ua) {
   return navigator.platform || 'Unknown';
 }
 
-/* ── XHR Helfer ────────────────────────────────────────── */
+/* â”€â”€ XHR Helfer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function fetchJSON(url) {
   return new Promise(function(resolve, reject) {
     var xhr = new XMLHttpRequest();
@@ -223,17 +223,15 @@ function xhrJSON(method, url, headers, body) {
   xhr.send(body ? JSON.stringify(body) : null);
 }
 
-/* ── URL Helfer ────────────────────────────────────────── */
+/* â”€â”€ URL Helfer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function baseUrl() {
-  var b = location.href.split('?')[0];
-  if (b.charAt(b.length - 1) !== '/') b += '/';
-  return b;
+  return 'https://meierandre130577.github.io/kiosk/';
 }
 function configUrl()   { return baseUrl() + 'config.json?t='   + Date.now(); }
 function versionUrl()  { return baseUrl() + 'version.txt?t='  + Date.now(); }
 function commandsUrl() { return baseUrl() + 'commands.json?t=' + Date.now(); }
 
-/* ── Heartbeat ─────────────────────────────────────────── */
+/* â”€â”€ Heartbeat â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 var loadedVersion = '';
 var playlistUpdated = '';
 
@@ -281,7 +279,7 @@ function sendHeartbeat() {
   xhr.send();
 }
 
-/* ── DOM ───────────────────────────────────────────────── */
+/* â”€â”€ DOM â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 var frame      = document.getElementById('site-frame');
 var video      = document.getElementById('site-video');
 var img        = document.getElementById('site-image');
@@ -290,7 +288,7 @@ var loading    = document.getElementById('frame-loading');
 var progBar    = document.getElementById('prog-bar');
 var counter    = document.getElementById('site-counter');
 
-/* ── State ─────────────────────────────────────────────── */
+/* â”€â”€ State â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 var sites       = [];
 var activeSites = [];
 var curIdx      = 0;
@@ -299,7 +297,7 @@ var rafId       = null;
 var wakeLock    = null;
 var running     = false;
 
-/* ── Wake Lock ─────────────────────────────────────────── */
+/* â”€â”€ Wake Lock â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function grabWake() {
   if (!('wakeLock' in navigator)) return;
   navigator.wakeLock.request('screen').then(function(wl) {
@@ -311,7 +309,7 @@ document.addEventListener('visibilitychange', function() {
   if (document.visibilityState === 'visible' && !wakeLock && running) grabWake();
 });
 
-/* ── Vollbild ───────────────────────────────────────────── */
+/* â”€â”€ Vollbild â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function goFull() {
   var el  = document.documentElement;
   var req = el.requestFullscreen || el.webkitRequestFullscreen || el.mozRequestFullScreen;
@@ -328,13 +326,13 @@ history.pushState(null, '', location.href);
 window.addEventListener('popstate', function() { history.pushState(null, '', location.href); });
 document.addEventListener('contextmenu', function(e) { e.preventDefault(); });
 
-/* ── Fit-Modus ─────────────────────────────────────────── */
+/* â”€â”€ Fit-Modus â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function setFit(mode) {
   video.style.objectFit = mode;
   img.style.objectFit   = mode;
 }
 
-/* ── YouTube / Vimeo Embed ─────────────────────────────── */
+/* â”€â”€ YouTube / Vimeo Embed â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function resolveWebUrl(url) {
   var yt = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]+)/);
   if (yt) return 'https://www.youtube-nocookie.com/embed/' + yt[1] + '?autoplay=1&mute=1&loop=1&playlist=' + yt[1] + '&controls=0&disablekb=1';
@@ -343,7 +341,7 @@ function resolveWebUrl(url) {
   return url;
 }
 
-/* ── Cloudinary expandieren (via cloudinary-cache.json) ── */
+/* â”€â”€ Cloudinary expandieren (via cloudinary-cache.json) â”€â”€ */
 function expandSites(list) {
   var result = [];
   var promises = [];
@@ -376,7 +374,7 @@ function expandSites(list) {
   return Promise.all(promises).then(function() { return result; });
 }
 
-/* ── Version check ─────────────────────────────────────── */
+/* â”€â”€ Version check â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 fetchText(versionUrl()).then(function(t) { loadedVersion = t.trim(); }).catch(function() {});
 
 function checkVersion() {
@@ -385,7 +383,7 @@ function checkVersion() {
   }).catch(function() {});
 }
 
-/* ── Remote Identify ───────────────────────────────────── */
+/* â”€â”€ Remote Identify â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function showIdentifyOverlay() {
   var ov = document.getElementById('device-overlay');
   document.getElementById('do-id').textContent = DEVICE_ID.substring(0, 8).toUpperCase();
@@ -420,7 +418,7 @@ function checkCommands() {
   }).catch(function() {});
 }
 
-/* ── Config neu laden ──────────────────────────────────── */
+/* â”€â”€ Config neu laden â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function reloadConfig(callback) {
   fetchJSON(configUrl()).then(function(cfg) {
     var dflt   = cfg['default'] || cfg;
@@ -433,7 +431,7 @@ function reloadConfig(callback) {
   }).catch(function() { callback(); });
 }
 
-/* ── Kiosk starten ─────────────────────────────────────── */
+/* â”€â”€ Kiosk starten â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function startKiosk() {
   expandSites(sites).then(function(expanded) {
     activeSites = expanded.length ? expanded : [];
@@ -447,7 +445,7 @@ function startKiosk() {
   });
 }
 
-/* ── Navigation ────────────────────────────────────────── */
+/* â”€â”€ Navigation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function nextSite() {
   var next = (curIdx + 1) % activeSites.length;
   if (next === 0) {
@@ -506,7 +504,7 @@ function showSite(idx) {
   }
 }
 
-/* ── Fortschrittsbalken ────────────────────────────────── */
+/* â”€â”€ Fortschrittsbalken â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 function startProgress(durationSec) {
   cancelAnimationFrame(rafId);
   var start = Date.now(), totalMs = durationSec * 1000;
@@ -529,7 +527,7 @@ function startVideoProgress() {
   rafId = requestAnimationFrame(tick);
 }
 
-/* ── Lade-Events ───────────────────────────────────────── */
+/* â”€â”€ Lade-Events â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 frame.addEventListener('load',  function() { loading.classList.remove('show'); });
 img.addEventListener('load',    function() { loading.classList.remove('show'); });
 img.addEventListener('error',   function() { loading.classList.remove('show'); });
@@ -537,13 +535,13 @@ img.addEventListener('error',   function() { loading.classList.remove('show'); }
 video.addEventListener('error', function() {
   video.classList.remove('show');
   var msg = 'Video kann nicht geladen werden.';
-  var detail = 'Weiter zum nächsten Inhalt…';
+  var detail = 'Weiter zum nÃ¤chsten Inhaltâ€¦';
   var err = video.error;
   if (err) {
     if (err.code === 1) { msg = 'Wiedergabe abgebrochen.'; detail = 'Laden wurde unterbrochen (Code 1).'; }
-    else if (err.code === 2) { msg = 'Netzwerkfehler.'; detail = 'Video konnte nicht heruntergeladen werden. WLAN prüfen.'; }
-    else if (err.code === 3) { msg = 'Format nicht unterstützt.'; detail = 'Gerät kann dieses Videoformat nicht dekodieren (Code 3).'; }
-    else if (err.code === 4) { msg = 'Quelle nicht erreichbar.'; detail = 'Video-URL nicht verfügbar oder Format abgelehnt (Code 4).'; }
+    else if (err.code === 2) { msg = 'Netzwerkfehler.'; detail = 'Video konnte nicht heruntergeladen werden. WLAN prÃ¼fen.'; }
+    else if (err.code === 3) { msg = 'Format nicht unterstÃ¼tzt.'; detail = 'GerÃ¤t kann dieses Videoformat nicht dekodieren (Code 3).'; }
+    else if (err.code === 4) { msg = 'Quelle nicht erreichbar.'; detail = 'Video-URL nicht verfÃ¼gbar oder Format abgelehnt (Code 4).'; }
     else { detail = 'Fehler Code ' + err.code + ': ' + (err.message || ''); }
   }
   document.getElementById('ve-msg').textContent    = msg;
@@ -553,7 +551,7 @@ video.addEventListener('error', function() {
   if (running) setTimeout(nextSite, 5000);
 });
 
-/* ── Online-Wiederherstellung ──────────────────────────── */
+/* â”€â”€ Online-Wiederherstellung â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 window.addEventListener('online', function() {
   if (!running) return;
   reloadConfig(function() {
@@ -564,21 +562,21 @@ window.addEventListener('online', function() {
   });
 });
 
-/* ── 3:00 Reload ───────────────────────────────────────── */
+/* â”€â”€ 3:00 Reload â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 setInterval(function() {
   var n = new Date();
   if (n.getHours() === 3 && n.getMinutes() === 0) location.reload();
 }, 60000);
 
-/* ── Heartbeat alle 5 Minuten ──────────────────────────── */
+/* â”€â”€ Heartbeat alle 5 Minuten â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 sendHeartbeat();
 setInterval(sendHeartbeat, 5 * 60 * 1000);
 
-/* ── Remote-Identify alle 15 Sekunden prüfen ───────────── */
+/* â”€â”€ Remote-Identify alle 15 Sekunden prÃ¼fen â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 checkCommands();
 setInterval(checkCommands, 15 * 1000);
 
-/* ── Init ──────────────────────────────────────────────── */
+/* â”€â”€ Init â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 loading.classList.add('show');
 reloadConfig(function() { startKiosk(); });
 </script>
